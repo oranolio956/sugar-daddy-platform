@@ -1,0 +1,29 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next",
+      "config": {
+        "installCommand": "npm install --no-audit --no-fund",
+        "buildCommand": "next build",
+        "zeroConfig": true
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/"
+    }
+  ],
+  "env": {
+    "NODE_VERSION": "18.x",
+    "NEXT_TELEMETRY_DISABLED": "1"
+  },
+  "installCommand": "npm install --no-audit --no-fund",
+  "buildCommand": "next build",
+  "outputDirectory": ".next",
+  "cleanUrls": true,
+  "trailingSlash": false
+}

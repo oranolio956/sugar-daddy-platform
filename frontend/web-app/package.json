@@ -13,6 +13,17 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "format": "prettier --write .",
+    "analyze": "next build && next export && next analyze",
+    "vercel-build": "next build"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "format": "prettier --write .",
     "analyze": "next build && next export && next analyze"
   },
   "dependencies": {
