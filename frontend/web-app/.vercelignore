@@ -1,0 +1,18 @@
+# Ignore unnecessary files for Vercel deployment
+Dockerfile
+.vercel
+.next
+node_modules
+*.log
+*.md
+LICENSE
+README.md
+.test-cache
+coverage
+.DS_Store
+*.pyc
+__pycache__
+.env.local
+.env*.local
+*.swp
+*.swo
