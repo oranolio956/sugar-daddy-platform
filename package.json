@@ -1,0 +1,36 @@
+{
+  "name": "sugar-daddy-platform",
+  "version": "1.0.0",
+  "description": "Sugar Daddy/Sugar Baby Platform - Microservices Architecture",
+  "private": true,
+  "workspaces": [
+    "frontend/*",
+    "backend/*",
+    "ai-ml/*",
+    "infrastructure/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix frontend/web-app\" \"npm run dev --prefix backend/api-gateway\"",
+    "build": "npm run build --prefix frontend/web-app && npm run build --prefix backend/api-gateway",
+    "test": "npm run test --prefix frontend/web-app && npm run test --prefix backend/api-gateway",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "k8s:apply": "kubectl apply -f infrastructure/kubernetes/",
+    "terraform:apply": "cd infrastructure/terraform && terraform apply",
+    "lint": "eslint frontend/ backend/ ai-ml/",
+    "format": "prettier --write frontend/ backend/ ai-ml/",
+    "clean": "rm -rf node_modules && rm -rf frontend/*/node_modules && rm -rf backend/*/node_modules && rm -rf ai-ml/*/node_modules"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "concurrently": "^8.2.2",
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.4",
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}
