@@ -1,0 +1,12 @@
+{
+  "name": "pwa",
+  "version": "1.0.0",
+  "description": "Progressive Web Application",
+  "main": "index.js",
+  "scripts": {
+    "start": "echo \"PWA placeholder\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

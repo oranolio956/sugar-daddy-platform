@@ -123,10 +123,9 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
   
-  // Disable turbopack and use webpack for compatibility
-  experimental: {
-    // Disable turbopack to use webpack
-    disableTurbopack: true,
+  // Configure turbopack for compatibility
+  turbopack: {
+    root: __dirname,
   },
 };
 

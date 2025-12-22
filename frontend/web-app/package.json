@@ -48,7 +48,6 @@
     "react-chartjs-2": "^5.2.0",
     "chart.js": "^4.4.0",
     "react-dropzone": "^14.2.3",
-    "react-avatar-editor": "^13.0.8",
     "react-image-crop": "^10.0.12",
     "react-quill": "^2.0.0",
     "react-markdown": "^9.0.0",
