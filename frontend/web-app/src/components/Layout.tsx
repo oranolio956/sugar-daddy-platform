@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { Bell, MessageCircle, User, Menu, X, LogOut, Settings, Shield, DollarSign, Heart } from 'lucide-react';
+import { Bell, MessageCircle, User, Menu, X, LogOut, Settings, DollarSign, Heart } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 

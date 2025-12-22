@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import toast from 'react-hot-toast';
 
 // API Response types
@@ -18,6 +18,21 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
   };
 }
 
+// Match type
+export interface Match {
+  id: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    profileImage?: string;
+    location?: string;
+  };
+  status: 'pending' | 'accepted' | 'rejected';
+  createdAt: string;
+  updatedAt: string;
+}
+
 // API Error class
 export class ApiError extends Error {
   constructor(
@@ -33,7 +48,7 @@ export class ApiError extends Error {
 // Create axios instance with default config
 const createApiClient = (): AxiosInstance => {
   const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
+    baseURL: process.env['NEXT_PUBLIC_API_URL'] || 'http://localhost:3001',
     timeout: 10000,
     headers: {
       'Content-Type': 'application/json',
@@ -69,7 +84,7 @@ const createApiClient = (): AxiosInstance => {
           const refreshToken = localStorage.getItem('refresh_token');
           if (refreshToken) {
             const refreshResponse = await axios.post(
-              `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`,
+              `${process.env['NEXT_PUBLIC_API_URL']}/auth/refresh`,
               { refreshToken }
             );
 
@@ -187,7 +202,7 @@ export const userApi = {
 // Match API endpoints
 export const matchApi = {
   getMatches: async (page: number = 1, limit: number = 10) => {
-    const response = await api.get<PaginatedResponse>(`/matches`, {
+    const response = await api.get<PaginatedResponse<Match>>(`/matches`, {
       params: { page, limit },
     });
     return response.data;
@@ -209,7 +224,7 @@ export const matchApi = {
   },
 
   getPotentialMatches: async (filters?: any) => {
-    const response = await api.get<PaginatedResponse>('/matches/potential', {
+    const response = await api.get<PaginatedResponse<Match>>('/matches/potential', {
       params: filters,
     });
     return response.data;
@@ -219,14 +234,14 @@ export const matchApi = {
 // Message API endpoints
 export const messageApi = {
   getConversations: async (page: number = 1, limit: number = 20) => {
-    const response = await api.get<PaginatedResponse>('/messages/conversations', {
+    const response = await api.get<PaginatedResponse<any>>('/messages/conversations', {
       params: { page, limit },
     });
     return response.data;
   },
 
   getMessages: async (conversationId: string, page: number = 1, limit: number = 50) => {
-    const response = await api.get<PaginatedResponse>(`/messages/${conversationId}`, {
+    const response = await api.get<PaginatedResponse<any>>(`/messages/${conversationId}`, {
       params: { page, limit },
     });
     return response.data;
@@ -268,7 +283,7 @@ export const paymentApi = {
   },
 
   getTransactions: async (page: number = 1, limit: number = 10) => {
-    const response = await api.get<PaginatedResponse>('/payments/transactions', {
+    const response = await api.get<PaginatedResponse<any>>('/payments/transactions', {
       params: { page, limit },
     });
     return response.data;
@@ -284,7 +299,7 @@ export const paymentApi = {
   },
 
   getGiftHistory: async (page: number = 1, limit: number = 10) => {
-    const response = await api.get<PaginatedResponse>('/payments/gifts', {
+    const response = await api.get<PaginatedResponse<any>>('/payments/gifts', {
       params: { page, limit },
     });
     return response.data;
@@ -294,7 +309,7 @@ export const paymentApi = {
 // Notification API endpoints
 export const notificationApi = {
   getNotifications: async (page: number = 1, limit: number = 20) => {
-    const response = await api.get<PaginatedResponse>('/notifications', {
+    const response = await api.get<PaginatedResponse<any>>('/notifications', {
       params: { page, limit },
     });
     return response.data;

@@ -5,19 +5,18 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { 
-  Heart, 
-  MessageCircle, 
-  DollarSign, 
-  User, 
-  Calendar, 
-  TrendingUp, 
+import {
+  Heart,
+  MessageCircle,
+  DollarSign,
+  User,
+  Calendar,
   Users,
   Shield,
   Star
 } from 'lucide-react';
-import { useApi, usePaginatedApi } from '@/hooks/useApi';
-import { matchApi, messageApi, paymentApi, notificationApi } from '@/lib/api';
+import { usePaginatedApi } from '@/hooks/useApi';
+import { matchApi, messageApi, notificationApi } from '@/lib/api';
 
 interface DashboardStats {
   totalMatches: number;
@@ -67,13 +66,6 @@ export default function DashboardPage() {
       profileCompleteness: 85,
     });
   };
-
-  const getProfileCompletenessColor = (percentage: number) => {
-    if (percentage >= 90) return 'success';
-    if (percentage >= 70) return 'warning';
-    return 'error';
-  };
-
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -147,8 +139,9 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats?.profileCompleteness || 0}%</div>
-            <Badge variant={getProfileCompletenessColor(stats?.profileCompleteness || 0)}>
-              {stats?.profileCompleteness && stats.profileCompleteness >= 90 ? 'Excellent' : 
+            <Badge variant={stats?.profileCompleteness && stats.profileCompleteness >= 90 ? "default" :
+                             stats?.profileCompleteness && stats.profileCompleteness >= 70 ? "default" : "destructive"}>
+              {stats?.profileCompleteness && stats.profileCompleteness >= 90 ? 'Excellent' :
                stats?.profileCompleteness && stats.profileCompleteness >= 70 ? 'Good' : 'Needs Work'}
             </Badge>
           </CardContent>
@@ -190,7 +183,7 @@ export default function DashboardPage() {
                       <h3 className="font-medium text-gray-900">{match.user?.name || 'Unknown'}</h3>
                       <p className="text-sm text-gray-600">{match.user?.location || 'Location not set'}</p>
                     </div>
-                    <Badge variant="success">Matched</Badge>
+                    <Badge variant="default">Matched</Badge>
                   </div>
                 ))
               )}
@@ -268,7 +261,7 @@ export default function DashboardPage() {
                       <p className="text-sm text-gray-600 truncate">{message.lastMessage?.content || 'No messages yet'}</p>
                     </div>
                     {message.unreadCount > 0 && (
-                      <Badge variant="error" className="ml-2">{message.unreadCount}</Badge>
+                      <Badge variant="destructive" className="ml-2">{message.unreadCount}</Badge>
                     )}
                   </div>
                 ))

@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Sugar Daddy Platform',
     description: 'Connect with sugar daddies and sugar babies in a safe and discreet environment.',
-    url: process.env.NEXT_PUBLIC_APP_URL || 'https://sugar-daddy-platform.vercel.app',
+    url: process.env['NEXT_PUBLIC_APP_URL'] || 'https://sugar-daddy-platform.vercel.app',
     type: 'website',
     locale: 'en_US',
   },

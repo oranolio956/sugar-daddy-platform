@@ -1,12 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
-import { Eye, EyeOff, Mail, Lock, Sparkles, Heart, Shield, ArrowRight } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, Sparkles, Heart, Shield } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -16,7 +15,6 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
   
   const { login } = useAuth();
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

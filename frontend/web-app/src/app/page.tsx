@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import { Layout } from '@/components/Layout';
+import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/Button';
 import { Shield, Heart, Users, Clock, Star, CheckCircle, ArrowRight, Sparkles, Lock, MessageCircle } from 'lucide-react';
 
@@ -18,7 +18,7 @@ const AnimatedCounter: React.FC<{ end: number; suffix?: string; duration?: numbe
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry?.isIntersecting) {
           setIsVisible(true);
         }
       },
