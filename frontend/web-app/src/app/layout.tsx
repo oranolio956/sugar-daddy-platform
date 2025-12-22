@@ -1,25 +1,33 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Playfair_Display } from 'next/font/google';
 import '@/styles/globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { Toaster } from 'react-hot-toast';
 import ErrorBoundary from '@/components/ErrorBoundary';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ 
+  subsets: ['latin'],
+  variable: '--font-inter',
+});
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair',
+});
 
 export const metadata: Metadata = {
-  title: 'Sugar Daddy Platform',
-  description: 'Connect with sugar daddies and sugar babies in a safe and discreet environment.',
-  keywords: ['sugar daddy', 'sugar baby', 'dating', 'relationships'],
-  authors: [{ name: 'Sugar Daddy Platform' }],
+  title: 'LuxeMatch - Premium Dating',
+  description: 'Connect with successful individuals in a safe and discreet environment.',
+  keywords: ['sugar daddy', 'sugar baby', 'dating', 'relationships', 'luxury dating'],
+  authors: [{ name: 'LuxeMatch' }],
   viewport: {
     width: 'device-width',
     initialScale: 1,
     maximumScale: 1,
   },
   openGraph: {
-    title: 'Sugar Daddy Platform',
-    description: 'Connect with sugar daddies and sugar babies in a safe and discreet environment.',
+    title: 'LuxeMatch - Premium Dating',
+    description: 'Connect with successful individuals in a safe and discreet environment.',
     url: process.env['NEXT_PUBLIC_APP_URL'] || 'https://sugar-daddy-platform.vercel.app',
     type: 'website',
     locale: 'en_US',
@@ -45,11 +53,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <meta name="theme-color" content="#3b82f6" />
+        <meta name="theme-color" content="#d4af37" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.variable} ${playfair.variable} font-sans bg-ivory-pearl text-luxury-charcoal`}>
         <ErrorBoundary>
           <AuthProvider>
             {children}
@@ -58,13 +66,14 @@ export default function RootLayout({
               toastOptions={{
                 duration: 4000,
                 style: {
-                  background: '#363636',
+                  background: '#1a1a1a',
                   color: '#fff',
+                  fontFamily: 'var(--font-inter)',
                 },
                 success: {
                   duration: 3000,
                   iconTheme: {
-                    primary: '#4ade80',
+                    primary: '#d4af37',
                     secondary: '#fff',
                   },
                 },
