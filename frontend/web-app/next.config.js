@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+const path = require('path');
+
 const nextConfig = {
   // Enable strict mode for better development experience
   reactStrictMode: true,
@@ -13,22 +15,9 @@ const nextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   
-  // Enable SWC minification for faster builds
-  swcMinify: true,
-  
   // Configure compiler options
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
-  },
-  
-  // Enable experimental features
-  experimental: {
-    // Enable app directory (Next.js 13+)
-    appDir: true,
-    // Enable server components
-    serverComponentsExternalPackages: [],
-    // Enable concurrent features
-    concurrentFeatures: true,
   },
   
   // Configure webpack for better optimization
@@ -48,7 +37,7 @@ const nextConfig = {
     }
     
     // Add aliases for better imports
-    config.resolve.alias['@'] = require('path').resolve('./src');
+    config.resolve.alias['@'] = path.resolve(__dirname, './src');
     
     return config;
   },
@@ -125,12 +114,6 @@ const nextConfig = {
     NEXT_PUBLIC_VERSION: process.env.npm_package_version || '1.0.0',
   },
   
-  // Configure i18n if needed
-  i18n: {
-    locales: ['en'],
-    defaultLocale: 'en',
-  },
-  
   // Configure typescript plugin
   typescript: {
     // !! WARN !!
@@ -140,12 +123,10 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
   
-  // Configure eslint
-  eslint: {
-    dirs: ['src'],
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
-    ignoreDuringBuilds: false,
+  // Disable turbopack and use webpack for compatibility
+  experimental: {
+    // Disable turbopack to use webpack
+    disableTurbopack: true,
   },
 };
 
