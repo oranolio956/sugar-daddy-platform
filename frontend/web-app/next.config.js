@@ -122,11 +122,6 @@ const nextConfig = {
     // !! WARN !!
     ignoreBuildErrors: false,
   },
-  
-  // Configure turbopack for compatibility
-  turbopack: {
-    root: __dirname,
-  },
 };
 
 module.exports = nextConfig;
