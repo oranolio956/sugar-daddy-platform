@@ -2,6 +2,20 @@
 
 This document provides detailed redesign specifications for the Sugar Daddy Platform, aligning with the [Design System](docs/architecture/design-system.md) and addressing the gaps identified in the [Current Design Analysis](docs/architecture/current-design-analysis.md).
 
+## Table of Contents
+1. [Homepage Redesign](#1-homepage-redesign)
+2. [Login Page Redesign](#2-login-page-redesign)
+3. [Registration Page Redesign](#3-registration-page-redesign)
+4. [Dashboard Redesign](#4-dashboard-redesign)
+5. [Layout & Navigation Redesign](#5-layout--navigation-redesign)
+6. [Premium Components Specifications](#6-premium-components-specifications)
+7. [Animation & Interaction Specifications](#7-animation--interaction-specifications)
+8. [Responsive Design Specifications](#8-responsive-design-specifications)
+9. [Accessibility & Performance](#9-accessibility--performance)
+10. [Implementation Guidelines](#10-implementation-guidelines)
+
+---
+
 ## 1. Homepage (`frontend/web-app/src/app/page.tsx`)
 
 ### Page Overview
@@ -34,14 +48,50 @@ This document provides detailed redesign specifications for the Sugar Daddy Plat
 - **Buttons:** `animate-pulse-gold` on primary "Start Your Journey" button.
 - **Scroll:** Reveal animations (fade-in-up) as sections enter viewport.
 
-### Missing Elements (Based on Analysis)
-- **Lifestyle Video Background:** Cinematic footage of luxury lifestyle
-- **Featured Members Carousel:** 5-7 attractive member profiles with verification badges
-- **Trust Indicators:** SSL encryption, privacy policy, verification badges
-- **Social Proof:** Member count, success stories, testimonials
-- **Statistics Display:** "X matches made", "X verified members"
-- **How It Works Animation:** Step-by-step animated illustrations
-- **Premium Benefits Preview:** Showcase premium features without full access
+### Missing Elements (From Analysis)
+- **Hero Video/Image:** Add cinematic lifestyle background
+- **Featured Members Carousel:** Show attractive member profiles with blur overlay
+- **Success Stories:** Testimonials with photos and results
+- **Trust Indicators:** SSL badges, verification info, member statistics
+- **Lifestyle Imagery:** Photos conveying luxury lifestyle
+- **Statistics Display:** Member count, matches made, success rate
+
+### Enhanced Homepage Structure
+```jsx
+export default function HomePage() {
+  return (
+    <div className="min-h-screen bg-ivory-pearl">
+      {/* Hero Section with Video Background */}
+      <HeroSection />
+      
+      {/* Trust Bar with Statistics */}
+      <TrustBar 
+        memberCount="500K+"
+        matchesMade="100K+"
+        verifiedMembers="95%"
+      />
+      
+      {/* Featured Members Carousel */}
+      <FeaturedMembersCarousel />
+      
+      {/* How It Works Section */}
+      <HowItWorksSection />
+      
+      {/* Lifestyle Gallery */}
+      <LifestyleGallery />
+      
+      {/* Success Stories */}
+      <SuccessStories />
+      
+      {/* Premium Benefits */}
+      <PremiumBenefits />
+      
+      {/* Final CTA */}
+      <FinalCTA />
+    </div>
+  );
+}
+```
 
 ---
 
@@ -71,14 +121,58 @@ This document provides detailed redesign specifications for the Sugar Daddy Plat
 
 ### Premium Features
 - **Biometric Login:** Face ID/Touch ID integration
-- **Remember Me:** Persistent login with security warnings
-- **Forgot Password:** Animated modal with email verification
-- **Demo Login:** "View Demo" option for showcasing platform
-- **Security Reassurance:** "Your data is encrypted" messaging
+- **Demo Login:** "View Demo" option for showcasing
+- **Branded Social Buttons:** Custom Google/Apple icons
+- **Security Messaging:** "Your privacy is our priority" reassurance
+
+### Enhanced Login Structure
+```jsx
+export default function LoginPage() {
+  return (
+    <div className="min-h-screen flex">
+      {/* Left Side - Form */}
+      <div className="w-full lg:w-2/5 bg-luxury-charcoal p-8 lg:p-12">
+        <div className="max-w-md mx-auto">
+          <h1 className="font-display text-3xl font-bold text-white mb-2">
+            Welcome Back
+          </h1>
+          <p className="text-neutral-300 mb-8">
+            Sign in to your exclusive account
+          </p>
+          
+          <LoginForm />
+          
+          <div className="mt-6">
+            <SocialLoginGroup />
+          </div>
+          
+          <div className="mt-8 text-center text-sm text-neutral-400">
+            <SecurityBadges />
+          </div>
+        </div>
+      </div>
+      
+      {/* Right Side - Lifestyle Image */}
+      <div className="hidden lg:block lg:w-3/5 bg-gradient-to-r from-primary-900 to-secondary-900">
+        <div className="h-full flex items-center justify-center">
+          <div className="text-center text-white p-12">
+            <h2 className="font-display text-4xl font-bold mb-4">
+              Luxury Lifestyle Awaits
+            </h2>
+            <p className="text-lg opacity-90">
+              Join thousands of successful individuals
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
 
 ---
 
-## 3. Register Page (`frontend/web-app/src/app/register/page.tsx`)
+## 3. Registration Page (`frontend/web-app/src/app/register/page.tsx`)
 
 ### Page Overview
 - **Purpose:** Guide users through a multi-step onboarding process without overwhelming them.
@@ -105,15 +199,98 @@ This document provides detailed redesign specifications for the Sugar Daddy Plat
 - **Transitions:** Horizontal slide animation between steps.
 - **Validation:** Shake animation on form fields with errors.
 
-### Enhanced Registration Flow
-- **Progress Visualization:** Circular progress indicator with step names
-- **Role Selection:** Visual cards with lifestyle imagery and descriptions
-- **Photo Upload:** Drag-and-drop interface with real-time preview and guidelines
-- **Profile Completion:** Live progress bar showing completion percentage
-- **Smart Validation:** Real-time validation with helpful error messages
-- **Skip Options:** Allow users to skip non-critical fields
-- **Email Verification:** Post-registration email verification step
-- **Profile Preview:** Final preview before submission
+### Missing Elements (From Analysis)
+- **Progress Indicator:** Visual stepper showing completion
+- **Visual Role Selection:** Cards with imagery instead of dropdown
+- **Photo Upload:** Drag & drop interface with guidelines
+- **Profile Questions:** Lifestyle, interests, expectations
+- **Income Verification:** Range selection for sugar daddies
+- **Email Verification:** Post-registration verification step
+
+### Enhanced Registration Structure
+```jsx
+export default function RegisterPage() {
+  const [currentStep, setCurrentStep] = useState(1);
+  
+  return (
+    <div className="min-h-screen bg-gradient-champagne py-12">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Progress & Form */}
+          <div className="lg:col-span-2">
+            <RegistrationWizard 
+              currentStep={currentStep}
+              onStepChange={setCurrentStep}
+            />
+          </div>
+          
+          {/* Side Panel */}
+          <div className="lg:col-span-1">
+            <RegistrationSidebar />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Step Components
+const Step1_AccountType = () => (
+  <div className="space-y-6">
+    <div className="text-center">
+      <h2 className="font-display text-2xl font-bold text-neutral-800">
+        Choose Your Journey
+      </h2>
+      <p className="text-neutral-600 mt-2">
+        Select your role to get started
+      </p>
+    </div>
+    
+    <div className="grid md:grid-cols-2 gap-4">
+      <RoleCard 
+        type="sugar-daddy"
+        title="Sugar Daddy"
+        description="Successful professional seeking companionship"
+        icon={<BriefcaseIcon />}
+      />
+      <RoleCard 
+        type="sugar-baby"
+        title="Sugar Baby"
+        description="Attractive individual seeking guidance"
+        icon={<SparklesIcon />}
+      />
+    </div>
+  </div>
+);
+
+const Step3_PhotoUpload = () => (
+  <div className="space-y-6">
+    <div>
+      <h3 className="font-display text-xl font-semibold text-neutral-800 mb-2">
+        Add Your Photos
+      </h3>
+      <p className="text-neutral-600">
+        Upload clear, recent photos that showcase your personality
+      </p>
+    </div>
+    
+    <PhotoUploadZone 
+      guidelines={[
+        "Clear, well-lit photos",
+        "Recent images (within 6 months)",
+        "No group photos",
+        "Professional quality preferred"
+      ]}
+    />
+    
+    <div className="grid grid-cols-3 gap-4 mt-6">
+      <PhotoPreview src="/placeholder1.jpg" />
+      <PhotoPreview src="/placeholder2.jpg" />
+      <PhotoPreview src="/placeholder3.jpg" />
+    </div>
+  </div>
+);
+```
 
 ---
 
@@ -144,16 +321,85 @@ This document provides detailed redesign specifications for the Sugar Daddy Plat
 - **Swipe:** Touch-enabled carousel for match suggestions.
 - **Real-time:** Pulse animation on the "Online" status indicator.
 
-### Premium Dashboard Features
-- **Profile Photo Prominence:** Large profile photo with edit option
+### Missing Elements (From Analysis)
+- **Profile Photo Prominence:** User's photo should be featured prominently
 - **Profile Completion:** Progress ring showing completion percentage
-- **Who Viewed You:** List of recent profile viewers
-- **New Members:** Carousel of recent sign-ups in area
-- **Match Suggestions:** AI-powered suggestions with photos
-- **Boost Feature:** Option to boost profile visibility
-- **Daily Matches:** Curated matches for the day
-- **Safety Tips:** Rotating safety and etiquette tips
-- **Premium Upsell:** Contextual upgrade prompts
+- **Who Viewed You:** Activity section showing profile views
+- **Match Suggestions:** "People you might like" with photos
+- **Premium Upsell:** Upgrade prompts and feature highlights
+- **Boost Features:** Spotlight/boost functionality
+- **Activity Feed:** Real-time notifications and updates
+
+### Enhanced Dashboard Structure
+```jsx
+export default function DashboardPage() {
+  return (
+    <div className="min-h-screen bg-ivory-linen">
+      {/* Header with User Info */}
+      <DashboardHeader />
+      
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Main Content */}
+          <div className="lg:col-span-3 space-y-6">
+            {/* Stats Overview */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <StatCard 
+                title="Matches" 
+                value="12" 
+                trend="+3 this week"
+                icon={<HeartIcon className="w-6 h-6" />}
+              />
+              <StatCard 
+                title="Profile Views" 
+                value="45" 
+                trend="+12 today"
+                icon={<EyeIcon className="w-6 h-6" />}
+              />
+              <StatCard 
+                title="Messages" 
+                value="8" 
+                trend="2 unread"
+                icon={<MessageIcon className="w-6 h-6" />}
+              />
+              <StatCard 
+                title="Balance" 
+                value="$250" 
+                trend="Available credits"
+                icon={<CreditCardIcon className="w-6 h-6" />}
+              />
+            </div>
+            
+            {/* Profile Completion */}
+            <ProfileCompletionCard />
+            
+            {/* Match Suggestions */}
+            <MatchSuggestionsCarousel />
+            
+            {/* Activity Feed */}
+            <ActivityFeed />
+          </div>
+          
+          {/* Sidebar */}
+          <div className="lg:col-span-1 space-y-6">
+            {/* Quick Actions */}
+            <QuickActionsCard />
+            
+            {/* Who Viewed You */}
+            <WhoViewedYouCard />
+            
+            {/* Premium Upgrade */}
+            <PremiumUpgradeCard />
+            
+            {/* Recent Messages */}
+            <RecentMessagesCard />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
 
 ---
 
@@ -180,266 +426,1074 @@ This document provides detailed redesign specifications for the Sugar Daddy Plat
 - **Hover:** Subtle gold glow on nav items.
 - **Notifications:** Bouncing badge animation for new alerts.
 
-### Enhanced Navigation Features
-- **Logo Design:** Elegant logo with premium typography
-- **Search Functionality:** Global search with filters
-- **User Menu:** Comprehensive dropdown with account options
-- **Dark Mode Toggle:** Integrated theme switcher
-- **Quick Actions:** Floating action button for key features
-- **Breadcrumbs:** Contextual navigation trail
-- **Keyboard Shortcuts:** Desktop keyboard navigation
-- **Accessibility:** Full keyboard and screen reader support
+### Missing Elements (From Analysis)
+- **Logo:** Professional logo instead of plain text
+- **User Menu:** Dropdown with profile options
+- **Global Search:** Search functionality across platform
+- **Dark Mode Toggle:** Proper dark mode integration
+- **Notification Rich Cards:** Detailed notification content
+
+### Enhanced Layout Structure
+```jsx
+export default function Layout({ children }) {
+  return (
+    <div className="min-h-screen bg-ivory-pearl dark:bg-luxury-charcoal">
+      {/* Mobile Bottom Navigation */}
+      <BottomNavigation />
+      
+      <div className="flex">
+        {/* Desktop Sidebar */}
+        <Sidebar />
+        
+        {/* Main Content Area */}
+        <div className="flex-1">
+          {/* Top Navigation Bar */}
+          <TopBar />
+          
+          {/* Page Content */}
+          <main className="p-6">
+            {children}
+          </main>
+        </div>
+        
+        {/* Right Sidebar (Optional) */}
+        <RightSidebar />
+      </div>
+      
+      {/* Global Modals */}
+      <GlobalModals />
+    </div>
+  );
+}
+
+// Enhanced Sidebar Component
+const Sidebar = () => (
+  <aside className="hidden lg:block w-64 bg-white dark:bg-luxury-slate border-r border-neutral-200 dark:border-luxury-graphite fixed left-0 top-0 h-full">
+    <div className="p-6">
+      {/* Logo */}
+      <div className="flex items-center gap-3 mb-8">
+        <Logo className="w-8 h-8" />
+        <span className="font-display text-xl font-bold text-neutral-800 dark:text-neutral-100">
+          LuxeMatch
+        </span>
+      </div>
+      
+      {/* Navigation Links */}
+      <nav className="space-y-2">
+        {navigationItems.map((item) => (
+          <SidebarItem 
+            key={item.href}
+            icon={item.icon}
+            label={item.label}
+            href={item.href}
+            isActive={item.isActive}
+          />
+        ))}
+      </nav>
+      
+      {/* User Profile Section */}
+      <div className="mt-8 pt-6 border-t border-neutral-200 dark:border-luxury-graphite">
+        <UserProfileCard />
+      </div>
+    </div>
+  </aside>
+);
+
+// Enhanced Top Bar
+const TopBar = () => (
+  <header className="bg-white dark:bg-luxury-slate border-b border-neutral-200 dark:border-luxury-graphite sticky top-0 z-50">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex items-center justify-between h-16">
+        {/* Left Side */}
+        <div className="flex items-center gap-4">
+          <MobileMenuButton />
+          <SearchBar />
+        </div>
+        
+        {/* Right Side */}
+        <div className="flex items-center gap-4">
+          <NotificationBell />
+          <UserMenu />
+          <DarkModeToggle />
+        </div>
+      </div>
+    </div>
+  </header>
+);
+```
 
 ---
 
-## 6. Component Specifications
+## 6. Premium Components Specifications
 
-### 6.1 Premium Components Required
+### 6.1 ProfileCard Component
+```jsx
+interface ProfileCardProps {
+  user: UserProfile;
+  variant?: 'standard' | 'premium' | 'featured';
+  showActions?: boolean;
+  onLike?: () => void;
+  onMessage?: () => void;
+  onViewProfile?: () => void;
+}
 
-#### ProfileCard Component
-- **Purpose**: Rich user profile display with verification badges and lifestyle indicators
-- **Props**: `user`, `showActions`, `variant` (compact, detailed, match)
-- **Features**: 
-  - Profile photo with verification overlay
-  - Lifestyle tags (VIP, Travel, Luxury)
-  - Income range indicator (for verified users)
-  - Online status with real-time updates
-  - Match percentage with compatibility breakdown
+const ProfileCard = ({ user, variant = 'standard', ...props }) => {
+  return (
+    <div className={cn(
+      "bg-white dark:bg-luxury-slate rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300",
+      variant === 'premium' && "border-2 border-primary-200 dark:border-primary-800",
+      variant === 'featured' && "relative bg-gradient-champagne"
+    )}>
+      {/* Profile Image */}
+      <div className="relative h-48 bg-gradient-premium">
+        <img 
+          src={user.profilePhoto} 
+          alt={user.name}
+          className="w-full h-full object-cover"
+        />
+        
+        {/* Verification Badge */}
+        {user.isVerified && (
+          <div className="absolute top-3 left-3">
+            <VerificationBadge type="photo" />
+          </div>
+        )}
+        
+        {/* Premium Badge */}
+        {user.isPremium && (
+          <div className="absolute top-3 right-3">
+            <PremiumBadge tier="gold" />
+          </div>
+        )}
+      </div>
+      
+      {/* Profile Info */}
+      <div className="p-4">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="font-display text-lg font-semibold text-neutral-800 dark:text-neutral-100">
+            {user.name}, {user.age}
+          </h3>
+          <div className="flex items-center gap-2">
+            <OnlineStatus isOnline={user.isOnline} />
+            <span className="text-sm text-neutral-500 dark:text-neutral-400">
+              {user.distance} miles away
+            </span>
+          </div>
+        </div>
+        
+        <p className="text-neutral-600 dark:text-neutral-400 text-sm mb-3">
+          {user.bio}
+        </p>
+        
+        {/* Lifestyle Tags */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          {user.tags.map(tag => (
+            <LifestyleTag key={tag} tag={tag} />
+          ))}
+        </div>
+        
+        {/* Actions */}
+        {props.showActions && (
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={props.onViewProfile}>
+              View Profile
+            </Button>
+            <Button size="sm" onClick={props.onMessage}>
+              Message
+            </Button>
+            <LikeButton isActive={user.hasLiked} onClick={props.onLike} />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+```
 
-#### Avatar Component
-- **Purpose**: Profile photos with verification badges and premium indicators
-- **Props**: `src`, `size`, `verified`, `premium`, `online`
-- **Features**:
-  - Circular/cropped shapes with gold border for premium users
-  - Verification badge overlay (photo, ID, income)
-  - Online status indicator with pulse animation
-  - Hover effect to show full photo
+### 6.2 Avatar Component
+```jsx
+interface AvatarProps {
+  src?: string;
+  alt: string;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  variant?: 'circle' | 'rounded' | 'square';
+  status?: 'online' | 'offline' | 'away';
+  verification?: 'none' | 'email' | 'photo' | 'income';
+  premium?: boolean;
+}
 
-#### VerificationBadge Component
-- **Purpose**: Trust indicators for various verification types
-- **Types**: Photo, ID, Income, Social Media, Background Check
-- **Visual**: Gold/platinum icons with hover tooltips
-- **Animation**: Subtle glow for verified status
+const Avatar = ({ 
+  src, 
+  alt, 
+  size = 'md', 
+  variant = 'circle',
+  status,
+  verification = 'none',
+  premium = false
+}) => {
+  const sizeClasses = {
+    sm: 'w-8 h-8 text-sm',
+    md: 'w-12 h-12 text-base',
+    lg: 'w-16 h-16 text-lg',
+    xl: 'w-20 h-20 text-xl'
+  };
+  
+  return (
+    <div className="relative inline-block">
+      <div className={cn(
+        "relative bg-gradient-gold text-luxury-black font-bold overflow-hidden",
+        sizeClasses[size],
+        variant === 'circle' && "rounded-full",
+        variant === 'rounded' && "rounded-xl",
+        variant === 'square' && "rounded-none"
+      )}>
+        {src ? (
+          <img src={src} alt={alt} className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            {alt.charAt(0).toUpperCase()}
+          </div>
+        )}
+        
+        {/* Premium Border */}
+        {premium && (
+          <div className="absolute inset-0 rounded-full border-2 border-primary-500"></div>
+        )}
+      </div>
+      
+      {/* Status Indicator */}
+      {status && (
+        <div className={cn(
+          "absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white dark:border-luxury-charcoal",
+          status === 'online' && "bg-success-500",
+          status === 'offline' && "bg-neutral-400",
+          status === 'away' && "bg-warning-500"
+        )}></div>
+      )}
+      
+      {/* Verification Badge */}
+      {verification !== 'none' && (
+        <div className="absolute -top-1 -right-1">
+          <VerificationBadge type={verification} size="sm" />
+        </div>
+      )}
+    </div>
+  );
+};
+```
 
-#### PhotoGallery Component
-- **Purpose**: Multiple photo carousel with premium features
-- **Features**:
-  - Swipe gestures on mobile
-  - Zoom and pan on desktop
-  - Private photo access (requires approval)
-  - Video profile support
-  - Loading states with shimmer effect
+### 6.3 VerificationBadge Component
+```jsx
+interface VerificationBadgeProps {
+  type: 'email' | 'photo' | 'income' | 'phone' | 'social';
+  size?: 'sm' | 'md' | 'lg';
+  showLabel?: boolean;
+}
 
-#### MatchPercentage Component
-- **Purpose**: Compatibility indicator with detailed breakdown
-- **Visual**: Circular progress bar with gold accent
-- **Details**: Shared interests, location, lifestyle compatibility
-- **Animation**: Animated fill on component mount
+const VerificationBadge = ({ type, size = 'md', showLabel = false }) => {
+  const badgeConfig = {
+    email: { icon: <MailIcon />, color: 'success', label: 'Email' },
+    photo: { icon: <CameraIcon />, color: 'primary', label: 'Photo' },
+    income: { icon: <DollarSignIcon />, color: 'gold', label: 'Income' },
+    phone: { icon: <PhoneIcon />, color: 'info', label: 'Phone' },
+    social: { icon: <UserCheckIcon />, color: 'secondary', label: 'Social' }
+  };
+  
+  const config = badgeConfig[type];
+  
+  return (
+    <div className={cn(
+      "inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium",
+      config.color === 'success' && "bg-success-100 text-success-700",
+      config.color === 'primary' && "bg-primary-100 text-primary-700",
+      config.color === 'gold' && "bg-gradient-gold text-luxury-black",
+      config.color === 'info' && "bg-info-100 text-info-700",
+      config.color === 'secondary' && "bg-secondary-100 text-secondary-700"
+    )}>
+      {config.icon}
+      {showLabel && config.label}
+    </div>
+  );
+};
+```
 
-### 6.2 Enhanced Form Components
+### 6.4 PremiumBadge Component
+```jsx
+interface PremiumBadgeProps {
+  tier: 'silver' | 'gold' | 'platinum';
+  size?: 'sm' | 'md' | 'lg';
+  showLabel?: boolean;
+}
 
-#### FloatingLabelInput
-- **Purpose**: Elegant form inputs with floating labels
-- **Features**:
-  - Label animates to top on focus
-  - Gold focus ring with glow effect
-  - Validation states with icons
-  - Character counter for text areas
-  - Password strength indicator
+const PremiumBadge = ({ tier, size = 'md', showLabel = true }) => {
+  const tierConfig = {
+    silver: { 
+      gradient: 'bg-gradient-to-r from-gray-300 to-gray-400',
+      icon: <StarIcon className="text-gray-600" />,
+      label: 'Silver'
+    },
+    gold: { 
+      gradient: 'bg-gradient-gold',
+      icon: <CrownIcon className="text-luxury-black" />,
+      label: 'Gold'
+    },
+    platinum: { 
+      gradient: 'bg-gradient-to-r from-blue-400 to-blue-600',
+      icon: <DiamondIcon className="text-white" />,
+      label: 'Platinum'
+    }
+  };
+  
+  const config = tierConfig[tier];
+  
+  return (
+    <div className={cn(
+      "inline-flex items-center gap-2 px-3 py-1.5 rounded-full font-bold text-sm",
+      size === 'sm' && "text-xs px-2 py-1",
+      size === 'lg' && "text-base px-4 py-2"
+    )}>
+      <div className={cn(
+        "w-4 h-4 rounded-full flex items-center justify-center",
+        config.gradient
+      )}>
+        {config.icon}
+      </div>
+      {showLabel && (
+        <span className="text-luxury-black">{config.label}</span>
+      )}
+    </div>
+  );
+};
+```
 
-#### RoleSelectionCard
-- **Purpose**: Visual role selection for registration
-- **Features**:
-  - Large cards with lifestyle imagery
-  - Gold accent border on selection
-  - Animated checkmark confirmation
-  - Role-specific form field reveals
+### 6.5 PhotoGallery Component
+```jsx
+interface PhotoGalleryProps {
+  photos: string[];
+  isVerified?: boolean;
+  canView?: boolean;
+  onPhotoClick?: (index: number) => void;
+}
 
-#### PhotoUpload
-- **Purpose**: Profile photo upload with guidelines
-- **Features**:
-  - Drag and drop interface
-  - Real-time preview with crop tool
-  - Photo quality validation
-  - Multiple photo support
-  - Verification status indicator
+const PhotoGallery = ({ photos, isVerified = false, canView = true, onPhotoClick }) => {
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+      {photos.map((photo, index) => (
+        <div key={index} className="relative group cursor-pointer">
+          <img
+            src={photo}
+            alt={`Photo ${index + 1}`}
+            className={cn(
+              "w-full h-32 md:h-40 object-cover rounded-lg",
+              !canView && "blur-sm",
+              "transition-all duration-300 group-hover:scale-105"
+            )}
+            onClick={() => canView && onPhotoClick?.(index)}
+          />
+          
+          {!canView && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <LockIcon className="w-8 h-8 text-white opacity-80" />
+            </div>
+          )}
+          
+          {index === 0 && isVerified && (
+            <div className="absolute top-2 left-2">
+              <VerificationBadge type="photo" size="sm" />
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
+```
 
 ---
 
 ## 7. Animation & Interaction Specifications
 
 ### 7.1 Page Transitions
-- **Route Changes**: 300ms fade with slide effect
-- **Modal Open/Close**: 250ms scale with backdrop fade
-- **Card Hover**: 200ms lift effect with shadow enhancement
-- **Button Press**: 150ms scale down with color shift
+```css
+/* Page Transition Animations */
+.page-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
 
-### 7.2 Micro-Interactions
-- **Like Button**: Heart fill animation with particle effect
-- **Message Typing**: Animated dots with typing sound option
-- **Online Status**: Pulsing green dot with hover tooltip
-- **New Match**: Celebration animation with confetti
-- **Profile Complete**: Progress ring animation with success glow
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-### 7.3 Loading States
-- **Skeleton Screens**: Gold shimmer effect on cards
-- **Button Loading**: Spinner with text fade
-- **Image Loading**: Blur to sharp transition
-- **Form Submission**: Progress bar with success checkmark
+.page-exit {
+  opacity: 1;
+}
 
-### 7.4 Scroll Interactions
-- **Parallax Effects**: Subtle background movement on hero sections
-- **Sticky Headers**: Smooth transition with shadow
-- **Infinite Scroll**: Load more with fade-in animation
-- **Scroll Progress**: Top-of-page progress indicator
+.page-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+```
+
+### 7.2 Component Animations
+```css
+/* Card Hover Effects */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Button Press Animation */
+.btn-press:active {
+  transform: scale(0.98);
+}
+
+/* Loading Shimmer */
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Pulse Gold Animation */
+.pulse-gold {
+  animation: pulseGold 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulseGold {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); 
+  }
+  50% { 
+    box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); 
+  }
+}
+```
+
+### 7.3 Micro-interactions
+```jsx
+// Like Button Animation
+const LikeButton = ({ isActive, onClick }) => {
+  const [isAnimating, setIsAnimating] = useState(false);
+  
+  const handleClick = () => {
+    setIsAnimating(true);
+    setTimeout(() => setIsAnimating(false), 500);
+    onClick();
+  };
+  
+  return (
+    <button 
+      onClick={handleClick}
+      className={cn(
+        "p-2 rounded-full transition-all duration-300",
+        isActive ? "text-primary-500" : "text-neutral-400 hover:text-primary-500"
+      )}
+    >
+      <HeartIcon 
+        className={cn(
+          "w-5 h-5",
+          isAnimating && "animate-heartBeat"
+        )}
+      />
+    </button>
+  );
+};
+
+// Heart Beat Animation
+@keyframes heartBeat {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.3); }
+  50% { transform: scale(1); }
+  75% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+```
+
+### 7.4 Scroll Animations
+```jsx
+// Intersection Observer for Scroll Animations
+const useScrollAnimation = (threshold = 0.1) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef();
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold }
+    );
+    
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+    
+    return () => observer.disconnect();
+  }, [threshold]);
+  
+  return { ref, isVisible };
+};
+
+// Usage in Components
+const AnimatedSection = ({ children }) => {
+  const { ref, isVisible } = useScrollAnimation();
+  
+  return (
+    <div 
+      ref={ref}
+      className={cn(
+        "transition-all duration-1000 ease-out",
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+      )}
+    >
+      {children}
+    </div>
+  );
+};
+```
 
 ---
 
 ## 8. Responsive Design Specifications
 
 ### 8.1 Breakpoint Strategy
-- **Mobile (≤475px)**: Bottom navigation, single column layout
-- **Phablet (476px-767px)**: Collapsible sidebar, optimized forms
-- **Tablet (768px-1023px)**: Mini sidebar, grid layouts
-- **Desktop (≥1024px)**: Full sidebar, multi-column layouts
-- **Ultra-wide (≥1536px)**: Extended content areas, larger cards
+```css
+/* Custom Breakpoints for Premium Experience */
+:root {
+  --breakpoint-xs: 475px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+}
 
-### 8.2 Mobile-Specific Features
-- **Bottom Navigation**: 5-icon bar with active state glow
-- **Swipe Gestures**: Card swipe for matches, pull-to-refresh
-- **Touch Targets**: Minimum 44px touch areas
-- **Gesture Feedback**: Haptic feedback on key interactions
-- **Mobile Keyboard**: Optimized for form inputs
+/* Mobile-First Approach */
+.homepage-hero {
+  /* Mobile styles */
+  height: 60vh;
+  
+  @media (min-width: 768px) {
+    /* Tablet styles */
+    height: 70vh;
+  }
+  
+  @media (min-width: 1024px) {
+    /* Desktop styles */
+    height: 80vh;
+  }
+  
+  @media (min-width: 1280px) {
+    /* Large desktop styles */
+    height: 100vh;
+  }
+}
+```
+
+### 8.2 Mobile-Specific Components
+```jsx
+// Bottom Navigation for Mobile
+const BottomNavigation = () => {
+  const navigationItems = [
+    { icon: <HomeIcon />, label: 'Home', href: '/' },
+    { icon: <SearchIcon />, label: 'Search', href: '/search' },
+    { icon: <MessageCircleIcon />, label: 'Messages', href: '/messages' },
+    { icon: <BellIcon />, label: 'Activity', href: '/activity' },
+    { icon: <UserIcon />, label: 'Profile', href: '/profile' }
+  ];
+  
+  return (
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-luxury-charcoal border-t border-neutral-200 dark:border-luxury-graphite">
+      <div className="flex justify-around items-center py-2">
+        {navigationItems.map((item) => (
+          <button key={item.href} className="flex flex-col items-center gap-1 p-2">
+            <item.icon className="w-6 h-6 text-neutral-500" />
+            <span className="text-xs text-neutral-500">{item.label}</span>
+          </button>
+        ))}
+      </div>
+    </nav>
+  );
+};
+
+// Mobile Sidebar Overlay
+const MobileSidebar = ({ isOpen, onClose }) => {
+  return (
+    <div className={cn(
+      "lg:hidden fixed inset-0 z-50",
+      isOpen ? "block" : "hidden"
+    )}>
+      <div className="absolute inset-0 bg-black bg-opacity-50" onClick={onClose}></div>
+      
+      <div className="absolute left-0 top-0 bottom-0 w-64 bg-white dark:bg-luxury-slate shadow-xl">
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-8">
+            <Logo />
+            <button onClick={onClose}>
+              <XIcon className="w-6 h-6" />
+            </button>
+          </div>
+          
+          <nav className="space-y-2">
+            {/* Navigation items */}
+          </nav>
+        </div>
+      </div>
+    </div>
+  );
+};
+```
 
 ### 8.3 Tablet Optimizations
-- **Sidebar Behavior**: Mini sidebar (60px width) with hover expand
-- **Form Layout**: Two-column forms on landscape
-- **Card Grid**: 2-column grid with larger touch targets
-- **Modal Behavior**: Full-screen modals on small tablets
+```css
+/* Tablet-Specific Layouts */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  
+  @media (min-width: 768px) {
+    /* Tablet landscape */
+    grid-template-columns: 2fr 1fr;
+  }
+  
+  @media (min-width: 1024px) {
+    /* Desktop */
+    grid-template-columns: 3fr 1fr;
+  }
+}
 
-### 8.4 Desktop Enhancements
-- **Hover States**: Enhanced shadows, color shifts, scale effects
-- **Keyboard Navigation**: Tab navigation with focus rings
-- **Multi-column Layouts**: 3-4 column grids for dashboards
-- **Drag and Drop**: Photo upload, card reordering
-- **Context Menus**: Right-click options for actions
+/* Form Layouts for Tablet */
+.registration-form {
+  max-width: 500px;
+  
+  @media (min-width: 768px) {
+    /* Side-by-side layout for tablet */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+}
+```
+
+### 8.4 Touch Interactions
+```css
+/* Touch-Friendly Styles */
+.touch-target {
+  min-height: 44px; /* Minimum touch target size */
+  min-width: 44px;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+/* Swipe Gestures for Mobile */
+.carousel-item {
+  touch-action: pan-y; /* Allow vertical scrolling, handle horizontal swipes */
+}
+
+/* Mobile Form Optimizations */
+.mobile-form {
+  input, select, textarea {
+    font-size: 16px; /* Prevent zoom on iOS */
+    padding: 12px;
+    border-radius: 8px;
+  }
+}
+```
 
 ---
 
 ## 9. Accessibility & Performance
 
 ### 9.1 Accessibility Standards
-- **WCAG 2.1 AA Compliance**: All color combinations tested
-- **Keyboard Navigation**: Full keyboard accessibility
-- **Screen Reader Support**: ARIA labels and roles
-- **Focus Management**: Logical tab order and focus indicators
-- **Motion Preferences**: Respect `prefers-reduced-motion`
-- **Color Contrast**: Minimum 4.5:1 for text, 3:1 for large text
+```jsx
+// Accessible Button Component
+const AccessibleButton = ({ 
+  children, 
+  onClick, 
+  variant = 'primary',
+  disabled = false,
+  ariaLabel,
+  ...props 
+}) => {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={ariaLabel || children}
+      className={cn(
+        "inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2",
+        variant === 'primary' && "bg-primary-500 text-white hover:bg-primary-600 focus:ring-primary-500",
+        variant === 'secondary' && "bg-white text-neutral-700 border border-neutral-300 hover:bg-neutral-50 focus:ring-neutral-500",
+        disabled && "opacity-50 cursor-not-allowed"
+      )}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
 
-### 9.2 Performance Optimization
-- **Image Optimization**: WebP format with fallbacks
-- **Lazy Loading**: Images and non-critical components
-- **Code Splitting**: Route-based and component-based
-- **Bundle Analysis**: Monitor bundle size with webpack-bundle-analyzer
-- **Caching Strategy**: Service worker for assets and API responses
-- **Critical CSS**: Inline critical styles for above-the-fold content
+// Accessible Form Labels
+const AccessibleInput = ({ 
+  id, 
+  label, 
+  error, 
+  helpText, 
+  required = false,
+  ...inputProps 
+}) => {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={id} className="flex items-center gap-2">
+        {label}
+        {required && <span className="text-error-500">*</span>}
+      </Label>
+      
+      <Input
+        id={id}
+        aria-invalid={!!error}
+        aria-describedby={error ? `${id}-error` : undefined}
+        {...inputProps}
+      />
+      
+      {helpText && (
+        <p className="text-sm text-neutral-500" id={`${id}-help`}>
+          {helpText}
+        </p>
+      )}
+      
+      {error && (
+        <p className="text-sm text-error-500" id={`${id}-error`}>
+          {error}
+        </p>
+      )}
+    </div>
+  );
+};
+```
 
-### 9.3 SEO Considerations
-- **Structured Data**: JSON-LD for profiles and reviews
-- **Meta Tags**: Dynamic title and description per page
-- **Open Graph**: Rich social media previews
-- **Sitemap**: Dynamic sitemap generation
-- **Canonical URLs**: Prevent duplicate content issues
+### 9.2 Performance Optimizations
+```jsx
+// Lazy Loading for Images
+const LazyImage = ({ src, alt, className, ...props }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const imgRef = useRef();
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsLoaded(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    
+    if (imgRef.current) {
+      observer.observe(imgRef.current);
+    }
+    
+    return () => observer.disconnect();
+  }, []);
+  
+  return (
+    <div ref={imgRef} className={className}>
+      {isLoaded && (
+        <img 
+          src={src} 
+          alt={alt} 
+          loading="lazy"
+          {...props}
+        />
+      )}
+    </div>
+  );
+};
+
+// Virtualization for Long Lists
+const VirtualizedList = ({ items, itemHeight, renderItem }) => {
+  const [scrollTop, setScrollTop] = useState(0);
+  const containerRef = useRef();
+  
+  const visibleRange = useMemo(() => {
+    const startIndex = Math.floor(scrollTop / itemHeight);
+    const endIndex = Math.min(
+      startIndex + Math.ceil(containerHeight / itemHeight) + 1,
+      items.length
+    );
+    return { startIndex, endIndex };
+  }, [scrollTop, itemHeight, items.length]);
+  
+  return (
+    <div 
+      ref={containerRef}
+      className="overflow-auto"
+      onScroll={(e) => setScrollTop(e.target.scrollTop)}
+    >
+      <div style={{ height: items.length * itemHeight }}>
+        {items.slice(visibleRange.startIndex, visibleRange.endIndex).map((item, index) => (
+          <div
+            key={item.id}
+            style={{
+              height: itemHeight,
+              transform: `translateY(${(visibleRange.startIndex + index) * itemHeight}px)`
+            }}
+          >
+            {renderItem(item)}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+```
+
+### 9.3 Color Contrast & Readability
+```css
+/* High Contrast Text */
+.text-high-contrast {
+  color: #000000;
+  background-color: #ffffff;
+}
+
+.text-medium-contrast {
+  color: #333333;
+  background-color: #f8f8f8;
+}
+
+/* Dark Mode Contrast */
+.dark .text-high-contrast {
+  color: #ffffff;
+  background-color: #000000;
+}
+
+.dark .text-medium-contrast {
+  color: #e0e0e0;
+  background-color: #1a1a1a;
+}
+
+/* Focus Indicators */
+.focus-visible {
+  outline: 2px solid #d4af37;
+  outline-offset: 2px;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+```
 
 ---
 
 ## 10. Implementation Guidelines
 
-### 10.1 Technology Stack
-- **Framework**: Next.js 14 with App Router
-- **Styling**: Tailwind CSS with custom design tokens
-- **State Management**: Zustand for global state, React Query for data
-- **Animations**: Framer Motion for complex animations
-- **Forms**: React Hook Form with Zod validation
-- **Icons**: Lucide React with custom SVG for premium elements
+### 10.1 Development Workflow
+```bash
+# 1. Component Development
+npm run dev
+# Develop components in isolation using Storybook
 
-### 10.2 Development Workflow
-1. **Component First**: Build components in isolation
-2. **Storybook**: Document all components with variants
-3. **Design Tokens**: Use consistent color, spacing, and typography tokens
-4. **Testing**: Unit tests for components, E2E for critical flows
-5. **Performance**: Monitor with Lighthouse and WebPageTest
-6. **Accessibility**: Test with axe-core and manual screen reader testing
+# 2. Design System Integration
+npm run build:design-system
+# Build and test design tokens
 
-### 10.3 Quality Assurance
-- **Cross-browser Testing**: Chrome, Firefox, Safari, Edge
-- **Device Testing**: iOS, Android, various screen sizes
-- **Performance Budget**: <3s load time, <100ms interaction response
-- **Accessibility Audit**: Automated and manual testing
-- **User Testing**: Real user feedback on premium experience
+# 3. Responsive Testing
+npm run test:responsive
+# Test across all breakpoints
 
-### 10.4 Deployment & Monitoring
-- **CI/CD**: Automated testing and deployment
-- **Error Tracking**: Sentry for error monitoring
-- **Performance Monitoring**: Real User Monitoring (RUM)
-- **A/B Testing**: Feature flag system for experiments
-- **Analytics**: Privacy-focused analytics with user consent
+# 4. Performance Testing
+npm run analyze
+# Bundle analysis and performance metrics
+
+# 5. Accessibility Testing
+npm run test:a11y
+# Automated accessibility testing
+```
+
+### 10.2 Component Naming Conventions
+```typescript
+// Component File Structure
+components/
+├── ui/                    # Base UI components
+│   ├── Button/
+│   │   ├── index.tsx     # Main component
+│   │   ├── variants.ts   # CVA variants
+│   │   └── styles.css    # Component styles
+│   └── Card/
+├── premium/              # Premium-specific components
+│   ├── ProfileCard/
+│   ├── VerificationBadge/
+│   └── PremiumBadge/
+└── layout/               # Layout components
+    ├── Layout/
+    └── Navigation/
+```
+
+### 10.3 State Management
+```typescript
+// Zustand Store for Premium Features
+interface PremiumState {
+  user: UserProfile | null;
+  isPremium: boolean;
+  credits: number;
+  features: PremiumFeatures;
+  actions: {
+    upgrade: (plan: PremiumPlan) => Promise<void>;
+    useCredit: (feature: string) => void;
+    refreshUser: () => Promise<void>;
+  };
+}
+
+const usePremiumStore = create<PremiumState>((set, get) => ({
+  user: null,
+  isPremium: false,
+  credits: 0,
+  features: {},
+  actions: {
+    upgrade: async (plan) => {
+      // Handle premium upgrade
+    },
+    useCredit: (feature) => {
+      // Deduct credits for feature usage
+    },
+    refreshUser: async () => {
+      // Refresh user data
+    }
+  }
+}));
+```
+
+### 10.4 Testing Strategy
+```typescript
+// Component Testing with Jest & Testing Library
+describe('ProfileCard', () => {
+  it('should render user information correctly', () => {
+    const user = mockUser();
+    render(<ProfileCard user={user} />);
+    
+    expect(screen.getByText(user.name)).toBeInTheDocument();
+    expect(screen.getByText(`${user.age}`)).toBeInTheDocument();
+  });
+  
+  it('should show verification badge when user is verified', () => {
+    const user = { ...mockUser(), isVerified: true };
+    render(<ProfileCard user={user} />);
+    
+    expect(screen.getByLabelText('Verified')).toBeInTheDocument();
+  });
+  
+  it('should handle like action', async () => {
+    const user = mockUser();
+    const onLike = jest.fn();
+    
+    render(<ProfileCard user={user} onLike={onLike} />);
+    
+    await userEvent.click(screen.getByLabelText('Like'));
+    expect(onLike).toHaveBeenCalled();
+  });
+});
+```
+
+### 10.5 Performance Monitoring
+```typescript
+// Performance Monitoring Hook
+const usePerformanceMonitor = () => {
+  useEffect(() => {
+    // Monitor component render time
+    const startTime = performance.now();
+    
+    return () => {
+      const renderTime = performance.now() - startTime;
+      if (renderTime > 16) { // More than one frame
+        console.warn(`Slow render: ${renderTime.toFixed(2)}ms`);
+      }
+    };
+  });
+  
+  // Monitor image loading
+  const trackImageLoad = (src: string) => {
+    const startTime = performance.now();
+    const img = new Image();
+    
+    img.onload = () => {
+      const loadTime = performance.now() - startTime;
+      if (loadTime > 1000) {
+        console.warn(`Slow image load: ${src} took ${loadTime.toFixed(2)}ms`);
+      }
+    };
+    
+    img.src = src;
+  };
+  
+  return { trackImageLoad };
+};
+```
+
+### 10.6 Deployment Checklist
+- [ ] All components pass accessibility tests
+- [ ] Performance metrics meet targets (Lighthouse scores)
+- [ ] Responsive design tested on all breakpoints
+- [ ] Dark mode implementation complete
+- [ ] Premium features properly gated
+- [ ] Error boundaries in place
+- [ ] Loading states implemented
+- [ ] Form validation working
+- [ ] Security measures implemented
+- [ ] Analytics tracking in place
 
 ---
 
-## 11. Success Metrics
+## Implementation Timeline
 
-### 11.1 User Experience Metrics
-- **Conversion Rate**: Registration completion rate
-- **Engagement**: Time on page, interaction depth
-- **Satisfaction**: User feedback and ratings
-- **Retention**: Returning user rate and session frequency
+### Phase 1: Foundation (Week 1-2)
+- [ ] Update color palette and typography
+- [ ] Implement core design system components
+- [ ] Create premium component library
 
-### 11.2 Performance Metrics
-- **Core Web Vitals**: LCP < 2.5s, FID < 100ms, CLS < 0.1
-- **Load Time**: First Contentful Paint < 1.5s
-- **Bundle Size**: JavaScript < 500KB gzipped
-- **Image Performance**: Lighthouse score > 90 for images
+### Phase 2: Page Redesign (Week 3-4)
+- [ ] Redesign homepage with premium elements
+- [ ] Update login page with split-screen layout
+- [ ] Convert registration to multi-step wizard
+- [ ] Enhance dashboard with rich components
 
-### 11.3 Business Metrics
-- **Premium Conversion**: Free to paid user conversion rate
-- **Match Quality**: Message response rate and match success
-- **User Safety**: Report and block feature usage
-- **Revenue Impact**: Feature adoption and premium feature usage
+### Phase 3: Polish & Performance (Week 5-6)
+- [ ] Add animations and micro-interactions
+- [ ] Implement responsive optimizations
+- [ ] Performance optimization and testing
+- [ ] Accessibility improvements
 
----
-
-## 12. Future Enhancements
-
-### 12.1 Phase 2 Features
-- **Video Profiles**: Video introduction recording and playback
-- **Virtual Gifts**: Animated gift sending with notifications
-- **Advanced Matching**: AI-powered compatibility scoring
-- **Event Integration**: Local event suggestions and RSVP
-- **Premium Analytics**: Detailed profile insights and suggestions
-
-### 12.2 Phase 3 Features
-- **Video Chat**: In-app video calling with premium features
-- **Background Verification**: Integration with third-party verification services
-- **Travel Mode**: Location-based features for travel arrangements
-- **Premium Concierge**: Personalized matching assistance
-- **Social Features**: Group chats and community features
-
-### 12.3 Technology Evolution
-- **Web Components**: Reusable components across platforms
-- **Progressive Web App**: Enhanced mobile experience
-- **AI Integration**: Smart replies, profile optimization suggestions
-- **AR/VR Features**: Virtual meetups and experiences
-- **Blockchain**: Secure identity verification and transactions
+### Phase 4: Testing & Deployment (Week 7)
+- [ ] Comprehensive testing
+- [ ] User acceptance testing
+- [ ] Performance monitoring setup
+- [ ] Production deployment
 
 ---
 
-## Implementation Notes
-- **Framework**: Next.js 14 (App Router).
-- **Styling**: Tailwind CSS with custom configuration from `design-system.md`.
-- **Animations**: Framer Motion for page transitions and scroll reveals.
-- **Icons**: Lucide React for standard UI, custom SVG for premium badges.
-- **Accessibility**: Ensure 4.5:1 contrast ratio for all text; ARIA labels for all interactive elements.
-- **Performance**: Image optimization with WebP, lazy loading, and code splitting.
-- **Testing**: Jest for unit tests, Cypress for E2E testing, Storybook for component documentation.
-- **Monitoring**: Real User Monitoring (RUM) for performance and error tracking.
+*Document Version: 2.0*
+*Created: December 2024*
+*Last Updated: December 2024*
+*Next Review: January 2025*
