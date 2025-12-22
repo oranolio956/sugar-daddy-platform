@@ -23,7 +23,5 @@
   },
   "installCommand": "npm install --no-audit --no-fund",
   "buildCommand": "next build",
-  "outputDirectory": ".next",
-  "cleanUrls": true,
-  "trailingSlash": false
+  "outputDirectory": ".next"
 }
