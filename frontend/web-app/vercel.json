@@ -3,12 +3,7 @@
   "builds": [
     {
       "src": "package.json",
-      "use": "@vercel/next",
-      "config": {
-        "installCommand": "npm install --no-audit --no-fund",
-        "buildCommand": "next build",
-        "zeroConfig": true
-      }
+      "use": "@vercel/next"
     }
   ],
   "routes": [
@@ -20,8 +15,5 @@
   "env": {
     "NODE_VERSION": "18.x",
     "NEXT_TELEMETRY_DISABLED": "1"
-  },
-  "installCommand": "npm install --no-audit --no-fund",
-  "buildCommand": "next build",
-  "outputDirectory": ".next"
+  }
 }
