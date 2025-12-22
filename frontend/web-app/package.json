@@ -14,7 +14,7 @@
     "test:coverage": "jest --coverage",
     "format": "prettier --write .",
     "analyze": "next build && next export && next analyze",
-    "vercel-build": "./build.sh",
+    "vercel-build": "bash ./build.sh",
     "build:vercel": "next build"
   },
   "dependencies": {
@@ -85,5 +85,8 @@
     "next": ">=14.0.0",
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }
