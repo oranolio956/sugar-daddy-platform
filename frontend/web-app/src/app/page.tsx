@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/Button';
-import { Shield, Heart, Users, Star, ArrowRight, Sparkles, Lock, MessageCircle, Crown } from 'lucide-react';
+import { Shield, Heart, Users, Star, ArrowRight, Sparkles, Lock, Crown } from 'lucide-react';
 import { ProfileCard, UserProfile } from '@/components/premium/ProfileCard';
 import { VerificationBadge } from '@/components/premium/VerificationBadge';
 
