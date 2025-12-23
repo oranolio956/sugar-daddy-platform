@@ -9,9 +9,7 @@ import { Badge } from '@/components/ui/Badge';
 import {
   Heart,
   MessageCircle,
-  DollarSign,
   User,
-  Calendar,
   Users,
   Shield,
   Star,
@@ -45,7 +43,6 @@ export default function DashboardPage() {
   } = usePaginatedApi(matchApi.getMatches);
 
   const {
-    data: recentMessages,
     loading: messagesLoading,
     execute: fetchMessages
   } = usePaginatedApi(messageApi.getConversations);
