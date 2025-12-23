@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/Textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { ProfileBadge } from './ProfileBadge';
+import { FeatureGate } from '../subscription/FeatureGate';
 import {
   User,
   MapPin,
@@ -636,7 +637,10 @@ export const ProfileForm: React.FC = () => {
         </Card>
 
         {/* Social Links */}
-        {(isPremium || isElite) && (
+        <FeatureGate
+          feature="social_links"
+          upgradeMessage="Add your social media profiles to build credibility and trust"
+        >
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -685,7 +689,7 @@ export const ProfileForm: React.FC = () => {
               </div>
             </CardContent>
           </Card>
-        )}
+        </FeatureGate>
 
         {/* Privacy Settings */}
         <Card>
