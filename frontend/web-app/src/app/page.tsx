@@ -5,7 +5,7 @@ import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/Button';
 import { Shield, Heart, Users, Star, ArrowRight, Sparkles, Lock, Crown } from 'lucide-react';
 import { ProfileCard, UserProfile } from '@/components/premium/ProfileCard';
-import { VerificationBadge } from '@/components/premium/VerificationBadge';
+
 
 // Mock Data for Featured Members
 const FEATURED_MEMBERS: UserProfile[] = [

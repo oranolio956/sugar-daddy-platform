@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, MessageCircle, MapPin, Star, Crown } from 'lucide-react';
+import { Heart, MessageCircle, MapPin, Crown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { VerificationBadge } from './VerificationBadge';
@@ -29,7 +29,7 @@ interface ProfileCardProps {
   className?: string;
 }
 
-const LikeButton = ({ isActive, onClick }: { isActive?: boolean; onClick?: () => void }) => {
+const LikeButton = ({ isActive, onClick }: { isActive?: boolean; onClick?: (() => void) | undefined }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   
   const handleClick = (e: React.MouseEvent) => {
