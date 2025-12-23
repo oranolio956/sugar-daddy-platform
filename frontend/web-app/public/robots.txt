@@ -1,0 +1,22 @@
+# Robots.txt for Dandy Babe - Aggressive SEO Strategy
+# Allow all legitimate crawlers, block shadow pages
+
+User-agent: *
+Allow: /
+
+# Block shadow landing pages from indexing
+Disallow: /shadow/
+Disallow: /admin/
+Disallow: /api/
+Disallow: /_next/
+
+# Allow important pages
+Allow: /blog/
+Allow: /register
+Allow: /login
+
+# Crawl delay to be respectful
+Crawl-delay: 1
+
+# Sitemap
+Sitemap: https://www.dandybabe.com/sitemap.xml

@@ -4,6 +4,7 @@ import '@/styles/globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { Toaster } from 'react-hot-toast';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -16,21 +17,38 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: 'LuxeMatch - Premium Dating',
+  title: 'Dandy Babe - Premium Dating',
   description: 'Connect with successful individuals in a safe and discreet environment.',
   keywords: ['sugar daddy', 'sugar baby', 'dating', 'relationships', 'luxury dating'],
-  authors: [{ name: 'LuxeMatch' }],
+  authors: [{ name: 'Dandy Babe' }],
   viewport: {
     width: 'device-width',
     initialScale: 1,
     maximumScale: 1,
   },
   openGraph: {
-    title: 'LuxeMatch - Premium Dating',
+    title: 'Dandy Babe - Premium Dating',
     description: 'Connect with successful individuals in a safe and discreet environment.',
-    url: process.env['NEXT_PUBLIC_APP_URL'] || 'https://sugar-daddy-platform.vercel.app',
+    url: process.env['NEXT_PUBLIC_APP_URL'] || 'https://dandybabe.com',
     type: 'website',
     locale: 'en_US',
+    images: [
+      {
+        url: 'https://www.dandybabe.com/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Dandy Babe - Premium Dating Platform',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Dandy Babe - Premium Dating',
+    description: 'Connect with successful individuals in a safe and discreet environment.',
+    images: ['https://www.dandybabe.com/og-image.jpg'],
+  },
+  alternates: {
+    canonical: process.env['NEXT_PUBLIC_APP_URL'] || 'https://dandybabe.com',
   },
   robots: {
     index: true,
@@ -56,6 +74,15 @@ export default function RootLayout({
         <meta name="theme-color" content="#F7E7CE" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <SchemaMarkup
+          brandName="Dandy Babe"
+          description="Premium dating platform connecting successful singles for meaningful relationships with verified profiles and transparent pricing."
+          url="https://www.dandybabe.com"
+          logo="https://www.dandybabe.com/logo.png"
+          ratingValue="4.7"
+          reviewCount="2847"
+          price="29.99"
+        />
       </head>
       <body className={`${inter.variable} ${playfair.variable} font-sans bg-champagne-50 text-charcoal-900 dark:bg-charcoal-900 dark:text-champagne-50 antialiased`}>
         <ErrorBoundary>
