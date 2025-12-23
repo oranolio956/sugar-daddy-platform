@@ -9,58 +9,37 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        champagne: {
+          50: '#FAF9F6', // Soft Ivory
+          100: '#F3EFE5',
+          200: '#E7DFC9',
+          300: '#DBCFAD',
+          400: '#CFAF91',
+          500: '#F7E7CE', // Champagne 500
+          600: '#E8D4B4', // Champagne 600
+          700: '#745A41',
+          800: '#52402E',
+          900: '#30261B',
+        },
+        charcoal: {
+          50: '#F2F2F2',
+          100: '#E6E6E6',
+          200: '#CCCCCC',
+          300: '#B3B3B3',
+          400: '#808080',
+          500: '#4D4D4D',
+          600: '#333333',
+          700: '#262626',
+          800: '#1A1A1A', // Deep Charcoal 800
+          900: '#121212', // Deep Charcoal 900
+        },
         primary: {
-          50: '#fdf2f8',
-          100: '#fce7f3',
-          200: '#fbcfe8',
-          300: '#f9a8d4',
-          400: '#f472b6',
-          500: '#ec4899', // Rose/Pink base
-          600: '#db2777',
-          700: '#be185d',
-          800: '#9d174d',
-          900: '#831843',
-          950: '#500724',
-        },
-        // Luxury Gold/Champagne Palette
-        gold: {
-          50: '#fbf9f1',
-          100: '#f5f0db',
-          200: '#ebe0b5',
-          300: '#dec685',
-          400: '#d4af37', // Classic Gold
-          500: '#b89225',
-          600: '#967019',
-          700: '#785516',
-          800: '#634418',
-          900: '#543a19',
-          950: '#301f0a',
-        },
-        // Luxury Dark Palette
-        luxury: {
-          black: '#0f0f0f',
-          charcoal: '#1a1a1a',
-          slate: '#2a2a2a',
-          graphite: '#3a3a3a',
-        },
-        // Ivory/Cream Palette
-        ivory: {
-          DEFAULT: '#fffff0',
-          pearl: '#fcfcfc',
-          linen: '#fafaf0',
-          cream: '#fffdd0',
+          DEFAULT: '#F7E7CE', // Champagne 500
+          foreground: '#121212',
         },
         secondary: {
-          50: '#f8fafc',
-          100: '#f1f5f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94a3b8',
-          500: '#64748b',
-          600: '#475569',
-          700: '#334155',
-          800: '#1e293b',
-          900: '#0f172a',
+          DEFAULT: '#1A1A1A', // Charcoal 800
+          foreground: '#F7E7CE',
         },
         success: {
           50: '#f0fdf4',
@@ -105,19 +84,12 @@ module.exports = {
         mono: ['JetBrains Mono', 'monospace'],
       },
       fontSize: {
-        'xs': ['0.75rem', { lineHeight: '1rem' }],
-        'sm': ['0.875rem', { lineHeight: '1.25rem' }],
-        'base': ['1rem', { lineHeight: '1.5rem' }],
-        'lg': ['1.125rem', { lineHeight: '1.75rem' }],
-        'xl': ['1.25rem', { lineHeight: '1.75rem' }],
-        '2xl': ['1.5rem', { lineHeight: '2rem' }],
-        '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
-        '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
-        '5xl': ['3rem', { lineHeight: '1' }],
-        '6xl': ['3.75rem', { lineHeight: '1' }],
-        '7xl': ['4.5rem', { lineHeight: '1' }],
-        '8xl': ['6rem', { lineHeight: '1' }],
-        '9xl': ['8rem', { lineHeight: '1' }],
+        'display-2xl': ['clamp(2.5rem, 5vw + 1rem, 5rem)', { lineHeight: '1.1' }],
+        'display-xl': ['clamp(2rem, 4vw + 1rem, 3.5rem)', { lineHeight: '1.2' }],
+        'display-lg': ['clamp(1.75rem, 3vw + 1rem, 3rem)', { lineHeight: '1.2' }],
+        'display-md': ['clamp(1.5rem, 2vw + 1rem, 2.5rem)', { lineHeight: '1.2' }],
+        'display-sm': ['clamp(1.25rem, 1.5vw + 1rem, 2rem)', { lineHeight: '1.2' }],
+        'body-main': ['clamp(1rem, 0.5vw + 0.8rem, 1.125rem)', { lineHeight: '1.6' }],
       },
       spacing: {
         '18': '4.5rem',
@@ -146,11 +118,12 @@ module.exports = {
         'premium': '0 20px 40px -5px rgba(0, 0, 0, 0.1), 0 10px 20px -5px rgba(0, 0, 0, 0.04)',
         'card': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
         'card-hover': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        'ambient': '0 0 50px -12px rgba(0, 0, 0, 0.5)',
       },
       backgroundImage: {
-        'gradient-gold': 'linear-gradient(135deg, #f5f0db 0%, #d4af37 50%, #b89225 100%)',
-        'gradient-champagne': 'linear-gradient(135deg, #fffdd0 0%, #f5f0db 100%)',
-        'gradient-premium': 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 100%)',
+        'gradient-gold': 'linear-gradient(135deg, #F7E7CE 0%, #E8D4B4 50%, #B8926A 100%)',
+        'gradient-champagne': 'linear-gradient(135deg, #FAF9F6 0%, #F7E7CE 100%)',
+        'gradient-premium': 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(18,18,18,0.8) 100%)',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
@@ -158,8 +131,8 @@ module.exports = {
         'slide-down': 'slideDown 0.3s ease-out',
         'bounce-slow': 'bounce 2s infinite',
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'pulse-gold': 'pulseGold 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'shimmer': 'shimmer 2s infinite',
+        'shimmer': 'shimmer 2.5s linear infinite',
+        'float': 'float 6s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: {
@@ -174,13 +147,13 @@ module.exports = {
           '0%': { transform: 'translateY(-10px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
-        pulseGold: {
-          '0%, 100%': { boxShadow: '0 0 0 0 rgba(212, 175, 55, 0.4)' },
-          '50%': { boxShadow: '0 0 0 15px rgba(212, 175, 55, 0)' },
-        },
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
         },
       },
       backdropBlur: {

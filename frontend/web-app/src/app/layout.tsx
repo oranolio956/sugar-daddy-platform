@@ -53,11 +53,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <meta name="theme-color" content="#d4af37" />
+        <meta name="theme-color" content="#F7E7CE" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
-      <body className={`${inter.variable} ${playfair.variable} font-sans bg-ivory-pearl text-luxury-charcoal`}>
+      <body className={`${inter.variable} ${playfair.variable} font-sans bg-champagne-50 text-charcoal-900 dark:bg-charcoal-900 dark:text-champagne-50 antialiased`}>
         <ErrorBoundary>
           <AuthProvider>
             {children}
@@ -66,15 +66,17 @@ export default function RootLayout({
               toastOptions={{
                 duration: 4000,
                 style: {
-                  background: '#1a1a1a',
-                  color: '#fff',
+                  background: '#121212',
+                  color: '#F7E7CE',
                   fontFamily: 'var(--font-inter)',
+                  border: '1px solid rgba(247, 231, 206, 0.1)',
+                  backdropFilter: 'blur(12px)',
                 },
                 success: {
                   duration: 3000,
                   iconTheme: {
-                    primary: '#d4af37',
-                    secondary: '#fff',
+                    primary: '#F7E7CE',
+                    secondary: '#121212',
                   },
                 },
                 error: {

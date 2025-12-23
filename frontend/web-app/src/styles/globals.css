@@ -4,72 +4,89 @@
 
 /* Custom base styles */
 @layer base {
+  :root {
+    --fluid-min-width: 320;
+    --fluid-max-width: 1280;
+    --fluid-min-size: 16;
+    --fluid-max-size: 20;
+    --fluid-min-ratio: 1.2;
+    --fluid-max-ratio: 1.33;
+
+    --font-size-base: clamp(
+      1rem,
+      calc(1rem + (20 - 16) * ((100vw - 320px) / (1280 - 320))),
+      1.25rem
+    );
+  }
+
   html {
     font-feature-settings: "rlig" 1, "calt" 1;
+    font-size: var(--font-size-base);
   }
   
   body {
-    @apply bg-ivory-pearl text-luxury-charcoal;
+    @apply bg-champagne-50 text-charcoal-900;
     font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display;
+    @apply font-display tracking-tight;
   }
 
   /* Custom scrollbar */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
   
   ::-webkit-scrollbar-track {
-    @apply bg-ivory-linen;
+    @apply bg-transparent;
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply bg-gold-300 rounded-full;
+    @apply bg-charcoal-200/50 rounded-full backdrop-blur-md transition-colors;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gold-400;
+    @apply bg-champagne-400;
   }
   
   /* Focus styles for accessibility */
   :focus-visible {
-    @apply outline outline-2 outline-offset-2 outline-gold-500;
+    @apply outline outline-1 outline-offset-4 outline-champagne-500;
   }
   
   /* Selection styles */
   ::selection {
-    @apply bg-gold-100 text-gold-900;
+    @apply bg-champagne-200 text-charcoal-900;
   }
 }
 
 /* Custom components */
 @layer components {
   .btn-primary {
-    @apply bg-gradient-gold hover:bg-gold-400 text-luxury-black font-medium py-2 px-4 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 transform hover:-translate-y-0.5;
+    @apply bg-gradient-gold hover:opacity-90 text-charcoal-900 font-medium py-2 px-4 rounded-full transition-all duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-champagne-500 focus:ring-offset-2 transform hover:-translate-y-0.5;
   }
   
   .btn-secondary {
-    @apply bg-white hover:bg-ivory-linen text-luxury-charcoal border border-gold-200 font-medium py-2 px-4 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2;
+    @apply bg-white hover:bg-champagne-50 text-charcoal-800 border border-champagne-200 font-medium py-2 px-4 rounded-full transition-all duration-300 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-champagne-500 focus:ring-offset-2;
   }
   
   .btn-ghost {
-    @apply bg-transparent hover:bg-gold-50 text-luxury-charcoal font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2;
+    @apply bg-transparent hover:bg-champagne-50 text-charcoal-800 font-medium py-2 px-4 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-champagne-500 focus:ring-offset-2;
   }
   
   .input-field {
-    @apply w-full px-3 py-2 border border-gold-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-colors duration-200 bg-white;
+    @apply w-full px-4 py-3 border border-champagne-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-champagne-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm;
   }
   
   .card {
-    @apply bg-white rounded-xl shadow-card hover:shadow-card-hover border border-gold-100 transition-all duration-300;
+    @apply bg-white/70 backdrop-blur-md rounded-2xl shadow-ambient hover:shadow-xl border border-champagne-100 transition-all duration-500;
   }
   
   .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800;
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-charcoal-100 text-charcoal-800;
   }
   
   .badge-success {
@@ -85,16 +102,28 @@
   }
   
   .badge-primary {
-    @apply bg-gold-100 text-gold-800;
+    @apply bg-champagne-100 text-champagne-800;
   }
   
   .badge-premium {
-    @apply bg-gradient-gold text-luxury-black shadow-sm;
+    @apply bg-gradient-gold text-charcoal-900 shadow-sm;
   }
 }
 
 /* Utilities for animations */
 @layer utilities {
+  .glass {
+    @apply bg-white/40 backdrop-blur-md border border-white/20 shadow-xl;
+  }
+
+  .glass-dark {
+    @apply bg-charcoal-900/40 backdrop-blur-md border border-white/10 shadow-xl;
+  }
+
+  .shimmer-effect {
+    @apply relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent;
+  }
+
   .animate-in {
     animation: fadeIn 0.5s ease-out;
   }
@@ -107,16 +136,12 @@
     animation: slideDown 0.3s ease-out;
   }
   
-  .transition-all-slow {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  .transition-spring {
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
   
-  .shadow-glow {
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
-  }
-  
-  .text-gradient-gold {
-    @apply bg-clip-text text-transparent bg-gradient-gold;
+  .shadow-ambient {
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1), 0 20px 40px -20px rgba(0, 0, 0, 0.05);
   }
 }
 
@@ -127,35 +152,35 @@
   }
   
   body {
-    @apply bg-luxury-charcoal text-ivory-pearl;
+    @apply bg-charcoal-900 text-champagne-50;
   }
   
   .btn-secondary {
-    @apply bg-luxury-slate hover:bg-luxury-graphite text-white border-luxury-graphite;
+    @apply bg-charcoal-800 hover:bg-charcoal-700 text-white border-white/10;
   }
   
   .input-field {
-    @apply bg-luxury-slate border-luxury-graphite text-white focus:ring-gold-500;
+    @apply bg-charcoal-800 border-white/10 text-white focus:ring-champagne-500;
   }
   
   .card {
-    @apply bg-luxury-slate border-luxury-graphite shadow-none;
+    @apply bg-charcoal-800 border-white/10 shadow-none;
   }
   
   .badge {
-    @apply bg-luxury-graphite text-gray-200;
+    @apply bg-charcoal-700 text-gray-200;
   }
   
   ::-webkit-scrollbar-track {
-    @apply bg-luxury-charcoal;
+    @apply bg-charcoal-900;
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply bg-luxury-graphite;
+    @apply bg-charcoal-700;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gold-600;
+    @apply bg-champagne-600;
   }
 }
 
