@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/Button';
-import { Shield, Heart, Users, Clock, Star, ArrowRight, Sparkles, Lock, MessageCircle, Crown } from 'lucide-react';
+import { Shield, Heart, Users, Star, ArrowRight, Sparkles, Lock, MessageCircle, Crown } from 'lucide-react';
 import { ProfileCard, UserProfile } from '@/components/premium/ProfileCard';
 import { VerificationBadge } from '@/components/premium/VerificationBadge';
 
@@ -53,50 +53,6 @@ const FEATURED_MEMBERS: UserProfile[] = [
   }
 ];
 
-// Animated Counter Component
-const AnimatedCounter: React.FC<{ end: number; suffix?: string; duration?: number }> = ({ 
-  end, 
-  suffix = '', 
-  duration = 2000 
-}) => {
-  const [count, setCount] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef<HTMLSpanElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!isVisible) return;
-
-    let startTime: number;
-    const animate = (currentTime: number) => {
-      if (!startTime) startTime = currentTime;
-      const progress = Math.min((currentTime - startTime) / duration, 1);
-      setCount(Math.floor(progress * end));
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
-    };
-    requestAnimationFrame(animate);
-  }, [isVisible, end, duration]);
-
-  return <span ref={ref}>{count.toLocaleString()}{suffix}</span>;
-};
 
 // Testimonial Card Component
 const TestimonialCard: React.FC<{
@@ -151,13 +107,8 @@ const HomePage: React.FC = () => {
     <Layout>
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center overflow-hidden bg-luxury-black">
-        {/* Background with gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-luxury-black via-luxury-charcoal to-luxury-slate">
-          {/* Decorative elements */}
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
-          <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-gold-500/10 to-transparent"></div>
-          <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-gradient-to-tr from-primary-500/10 to-transparent"></div>
-        </div>
+        {/* Background with subtle overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-luxury-black to-luxury-charcoal"></div>
 
         <div className="relative container-custom py-20 lg:py-32">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -169,13 +120,13 @@ const HomePage: React.FC = () => {
               </div>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold text-white leading-tight">
-                Where Ambition
-                <span className="block text-transparent bg-clip-text bg-gradient-gold">Meets Beauty</span>
+                Exclusive Connections
+                <span className="block text-transparent bg-clip-text bg-gradient-gold">For Discerning Tastes</span>
               </h1>
-              
+
               <p className="text-xl text-neutral-300 max-w-xl leading-relaxed font-light">
-                Join the most exclusive community for successful individuals and attractive companions. 
-                Experience dating redefined with elegance, privacy, and authenticity.
+                A curated sanctuary where successful professionals meet sophisticated companions.
+                Where genuine connections transcend the ordinary, in an atmosphere of absolute discretion.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4">
@@ -197,116 +148,64 @@ const HomePage: React.FC = () => {
                 </Button>
               </div>
 
-              {/* Trust Indicators */}
-              <div className="flex items-center gap-8 pt-4 border-t border-white/10">
-                <div className="flex items-center gap-2">
-                  <VerificationBadge type="photo" size="sm" className="bg-transparent border-none text-neutral-400 p-0" />
-                  <span className="text-sm text-neutral-400">Verified Profiles</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Lock className="w-4 h-4 text-gold-400" />
-                  <span className="text-sm text-neutral-400">100% Discreet</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Star className="w-4 h-4 text-gold-400" />
-                  <span className="text-sm text-neutral-400">Premium Support</span>
-                </div>
-              </div>
             </div>
 
             {/* Right Content - Premium Visual */}
             <div className={`hidden lg:block relative ${isLoaded ? 'animate-slide-up' : 'opacity-0'}`} style={{ animationDelay: '0.2s' }}>
-              <div className="relative z-10 transform rotate-3 hover:rotate-0 transition-transform duration-500">
+              <div className="relative z-10">
                 <ProfileCard
                   user={FEATURED_MEMBERS[0]!}
                   variant="premium"
                   className="max-w-sm mx-auto shadow-2xl border-gold-500/30"
                 />
-                
-                {/* Floating Elements */}
-                <div className="absolute -right-12 top-1/4 bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-xl animate-bounce-slow">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-gold flex items-center justify-center">
-                      <Heart className="w-5 h-5 text-luxury-black" />
-                    </div>
-                    <div>
-                      <p className="text-white font-medium text-sm">New Match!</p>
-                      <p className="text-xs text-neutral-300">Just now</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="absolute -left-8 bottom-1/4 bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-xl animate-pulse-slow">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center">
-                      <MessageCircle className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <p className="text-white font-medium text-sm">Message Received</p>
-                      <p className="text-xs text-neutral-300">2 min ago</p>
-                    </div>
-                  </div>
-                </div>
               </div>
-              
-              {/* Background Glow */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gold-500/20 blur-[100px] -z-10 rounded-full"></div>
             </div>
           </div>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-          <div className="w-6 h-10 rounded-full border-2 border-gold-400/50 flex items-start justify-center p-2">
-            <div className="w-1 h-2 bg-gold-400 rounded-full animate-pulse"></div>
-          </div>
-        </div>
       </section>
 
-      {/* Statistics Section */}
-      <section className="py-20 bg-ivory-pearl relative overflow-hidden">
-        <div className="relative container-custom">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="text-center p-6 border-r border-gold-100 last:border-0">
-              <p className="text-4xl md:text-5xl font-display font-bold text-transparent bg-clip-text bg-gradient-gold mb-2">
-                <AnimatedCounter end={500} suffix="K+" />
-              </p>
-              <p className="text-luxury-charcoal font-medium">Active Members</p>
+      {/* Trust & Quality Section */}
+      <section className="py-20 bg-ivory-pearl">
+        <div className="container-custom">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+            <div className="space-y-4">
+              <div className="w-16 h-16 mx-auto rounded-full bg-gradient-gold flex items-center justify-center">
+                <Shield className="w-8 h-8 text-luxury-black" />
+              </div>
+              <h3 className="text-xl font-display font-semibold text-luxury-charcoal">Rigorous Verification</h3>
+              <p className="text-neutral-600">Every profile undergoes comprehensive background checks and identity verification</p>
             </div>
-            <div className="text-center p-6 border-r border-gold-100 last:border-0">
-              <p className="text-4xl md:text-5xl font-display font-bold text-transparent bg-clip-text bg-gradient-gold mb-2">
-                <AnimatedCounter end={150} suffix="K+" />
-              </p>
-              <p className="text-luxury-charcoal font-medium">Successful Matches</p>
+            <div className="space-y-4">
+              <div className="w-16 h-16 mx-auto rounded-full bg-gradient-gold flex items-center justify-center">
+                <Lock className="w-8 h-8 text-luxury-black" />
+              </div>
+              <h3 className="text-xl font-display font-semibold text-luxury-charcoal">Absolute Discretion</h3>
+              <p className="text-neutral-600">Bank-level encryption and privacy protocols protect all interactions</p>
             </div>
-            <div className="text-center p-6 border-r border-gold-100 last:border-0">
-              <p className="text-4xl md:text-5xl font-display font-bold text-transparent bg-clip-text bg-gradient-gold mb-2">
-                <AnimatedCounter end={98} suffix="%" />
-              </p>
-              <p className="text-luxury-charcoal font-medium">Satisfaction Rate</p>
-            </div>
-            <div className="text-center p-6">
-              <p className="text-4xl md:text-5xl font-display font-bold text-transparent bg-clip-text bg-gradient-gold mb-2">
-                <AnimatedCounter end={50} suffix="+" />
-              </p>
-              <p className="text-luxury-charcoal font-medium">Countries</p>
+            <div className="space-y-4">
+              <div className="w-16 h-16 mx-auto rounded-full bg-gradient-gold flex items-center justify-center">
+                <Crown className="w-8 h-8 text-luxury-black" />
+              </div>
+              <h3 className="text-xl font-display font-semibold text-luxury-charcoal">Curated Excellence</h3>
+              <p className="text-neutral-600">Only the most sophisticated and successful individuals join our exclusive community</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Featured Members Preview */}
+      {/* Exclusive Community Preview */}
       <section className="py-24 bg-white">
         <div className="container-custom">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="inline-block px-4 py-1 rounded-full bg-gold-100 text-gold-800 text-sm font-medium mb-4">
-              Elite Community
+              By Invitation Only
             </span>
             <h2 className="text-4xl md:text-5xl font-display font-bold text-luxury-charcoal mb-6">
-              Discover Exceptional People
+              A Sanctuary of Sophistication
             </h2>
             <p className="text-xl text-neutral-600">
-              Browse our curated selection of verified profiles.
+              Where ambition, elegance, and genuine connection converge in perfect harmony.
             </p>
           </div>
 
@@ -315,265 +214,221 @@ const HomePage: React.FC = () => {
               <ProfileCard key={member.id} user={member} />
             ))}
           </div>
-          
-          <div className="text-center mt-12">
-            <Button variant="outline" className="border-gold-300 text-gold-700 hover:bg-gold-50">
-              View More Members
-            </Button>
-          </div>
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* The LuxeMatch Difference */}
       <section className="py-24 bg-ivory-linen">
         <div className="container-custom">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="inline-block px-4 py-1 rounded-full bg-gold-100 text-gold-800 text-sm font-medium mb-4">
-              Why Choose LuxeMatch
+              Beyond Ordinary Dating
             </span>
             <h2 className="text-4xl md:text-5xl font-display font-bold text-luxury-charcoal mb-6">
-              The Premium Experience You Deserve
+              Where Luxury Meets Authenticity
             </h2>
             <p className="text-xl text-neutral-600">
-              We've crafted every detail to ensure your journey to finding the perfect connection is seamless, secure, and sophisticated.
+              Unlike conventional platforms, we curate an environment where sophistication and genuine connection take precedence over quantity.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <FeatureCard
-              icon={<Shield className="w-8 h-8" />}
-              title="Verified & Secure"
-              description="Every profile undergoes rigorous verification. Your privacy and security are our top priorities with bank-level encryption."
+              icon={<Crown className="w-8 h-8" />}
+              title="Curated Admissions"
+              description="Membership by invitation only, ensuring every individual meets our exacting standards of success and sophistication."
               delay="0.1s"
             />
             <FeatureCard
-              icon={<Heart className="w-8 h-8" />}
-              title="Smart Matching"
-              description="Our AI-powered algorithm learns your preferences to connect you with highly compatible matches tailored to your desires."
+              icon={<Shield className="w-8 h-8" />}
+              title="Fortress Privacy"
+              description="Military-grade security protocols and absolute discretion. What happens in LuxeMatch stays in LuxeMatch."
               delay="0.2s"
             />
             <FeatureCard
-              icon={<Users className="w-8 h-8" />}
-              title="Elite Community"
-              description="Join a curated community of successful, attractive individuals who value quality connections and meaningful relationships."
+              icon={<Sparkles className="w-8 h-8" />}
+              title="Personal Concierge"
+              description="Dedicated relationship specialists who understand the nuances of sophisticated matchmaking."
               delay="0.3s"
             />
             <FeatureCard
-              icon={<MessageCircle className="w-8 h-8" />}
-              title="Private Messaging"
-              description="Communicate securely with end-to-end encrypted messaging. Share moments privately with those who matter."
+              icon={<Heart className="w-8 h-8" />}
+              title="Authentic Connections"
+              description="No games, no pretense. We facilitate genuine relationships between equals who share similar ambitions and values."
               delay="0.4s"
             />
             <FeatureCard
-              icon={<Clock className="w-8 h-8" />}
-              title="24/7 Concierge"
-              description="Our dedicated support team is available around the clock to assist you with any questions or concerns."
+              icon={<Users className="w-8 h-8" />}
+              title="Elite Networking"
+              description="Access to exclusive events, private gatherings, and connections that extend beyond romantic interests."
               delay="0.5s"
             />
             <FeatureCard
-              icon={<Sparkles className="w-8 h-8" />}
-              title="Premium Features"
-              description="Unlock exclusive features like priority visibility, advanced filters, and VIP events for premium members."
+              icon={<Lock className="w-8 h-8" />}
+              title="Zero Compromise"
+              description="Quality over quantity. We'd rather have 100 perfect matches than 100,000 mediocre ones."
               delay="0.6s"
             />
           </div>
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section className="py-24 bg-luxury-charcoal text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
-        <div className="relative container-custom">
+      {/* The Experience */}
+      <section className="py-24 bg-luxury-charcoal text-white">
+        <div className="container-custom">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="inline-block px-4 py-1 rounded-full bg-gold-500/20 text-gold-400 text-sm font-medium mb-4">
-              Getting Started
+              A Different Approach
             </span>
             <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">
-              Your Journey to <span className="text-transparent bg-clip-text bg-gradient-gold">Connection</span>
+              Redefining <span className="text-transparent bg-clip-text bg-gradient-gold">Sophisticated Connection</span>
             </h2>
             <p className="text-xl text-neutral-400">
-              Finding your perfect match is just a few steps away
+              While others focus on algorithms and swipes, we believe in the art of genuine human connection
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
-            <div className="relative text-center group">
-              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-gold 
-                            flex items-center justify-center text-3xl font-display font-bold text-luxury-black
-                            group-hover:scale-110 group-hover:shadow-glow transition-all duration-500">
-                1
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <h3 className="text-2xl font-display font-semibold">Personal Curation</h3>
+                <p className="text-neutral-400 leading-relaxed">
+                  Our relationship specialists personally review and curate potential connections based on your unique profile,
+                  lifestyle, and aspirations. No generic algorithms here.
+                </p>
               </div>
-              <h3 className="text-2xl font-display font-semibold mb-4">Create Your Profile</h3>
-              <p className="text-neutral-400 leading-relaxed">
-                Sign up and create a stunning profile that showcases your personality and what you're looking for.
-              </p>
-              {/* Connector line */}
-              <div className="hidden md:block absolute top-10 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-gold-500 to-transparent opacity-30"></div>
+              <div className="space-y-4">
+                <h3 className="text-2xl font-display font-semibold">Meaningful Introductions</h3>
+                <p className="text-neutral-400 leading-relaxed">
+                  When we sense a genuine connection, we facilitate elegant introductions with context and warmth,
+                  setting the stage for authentic relationships.
+                </p>
+              </div>
+              <div className="space-y-4">
+                <h3 className="text-2xl font-display font-semibold">Ongoing Guidance</h3>
+                <p className="text-neutral-400 leading-relaxed">
+                  Your journey doesn't end with a match. We provide discreet counsel and support throughout
+                  your relationship development.
+                </p>
+              </div>
             </div>
 
-            <div className="relative text-center group">
-              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-gold 
-                            flex items-center justify-center text-3xl font-display font-bold text-luxury-black
-                            group-hover:scale-110 group-hover:shadow-glow transition-all duration-500">
-                2
+            <div className="relative">
+              <div className="aspect-square rounded-2xl bg-gradient-to-br from-gold-500/20 to-primary-500/20 backdrop-blur-sm border border-white/10 p-8 flex items-center justify-center">
+                <div className="text-center space-y-6">
+                  <Crown className="w-16 h-16 mx-auto text-gold-400" />
+                  <div>
+                    <h4 className="text-xl font-display font-semibold mb-2">Exclusivity by Design</h4>
+                    <p className="text-neutral-400">
+                      Quality connections require quality curation. We maintain an intimate community where every member matters.
+                    </p>
+                  </div>
+                </div>
               </div>
-              <h3 className="text-2xl font-display font-semibold mb-4">Discover Matches</h3>
-              <p className="text-neutral-400 leading-relaxed">
-                Browse through verified profiles and let our smart algorithm suggest your most compatible matches.
-              </p>
-              {/* Connector line */}
-              <div className="hidden md:block absolute top-10 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-gold-500 to-transparent opacity-30"></div>
-            </div>
-
-            <div className="relative text-center group">
-              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-gold 
-                            flex items-center justify-center text-3xl font-display font-bold text-luxury-black
-                            group-hover:scale-110 group-hover:shadow-glow transition-all duration-500">
-                3
-              </div>
-              <h3 className="text-2xl font-display font-semibold mb-4">Connect & Meet</h3>
-              <p className="text-neutral-400 leading-relaxed">
-                Start meaningful conversations and take your connection to the next level with confidence.
-              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Testimonials Section */}
+      {/* Member Reflections */}
       <section className="py-24 bg-white">
         <div className="container-custom">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="inline-block px-4 py-1 rounded-full bg-gold-100 text-gold-800 text-sm font-medium mb-4">
-              Success Stories
+              Authentic Voices
             </span>
             <h2 className="text-4xl md:text-5xl font-display font-bold text-luxury-charcoal mb-6">
-              Real Connections, Real Stories
+              Stories of Genuine Connection
             </h2>
             <p className="text-xl text-neutral-600">
-              Hear from our members who found exactly what they were looking for
+              The quiet satisfaction of finding someone who shares your refined sensibilities
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             <TestimonialCard
-              quote="I never thought I'd find someone who truly understands what I'm looking for. This platform exceeded all my expectations."
-              author="Alexandra M."
-              role="Premium Member"
+              quote="After years of superficial encounters, I finally found someone who appreciates the finer details of life. The discretion and quality here are unparalleled."
+              author="Victoria E."
+              role="Art Collector"
               rating={5}
             />
             <TestimonialCard
-              quote="The verification process gave me confidence that I was connecting with genuine people. Found my perfect match within weeks!"
-              author="Michael R."
-              role="Verified Member"
+              quote="The difference is in the curation. Every introduction feels considered, not algorithmic. I've formed connections that extend beyond romance."
+              author="Jonathan K."
+              role="Executive Director"
               rating={5}
             />
             <TestimonialCard
-              quote="Elegant, discreet, and effective. The quality of connections here is unmatched. Worth every penny of the premium membership."
-              author="Sophia L."
-              role="VIP Member"
+              quote="In a world of noise, LuxeMatch provides sanctuary. The relationships I've built here have the depth and authenticity I value most."
+              author="Isabella R."
+              role="Gallery Owner"
               rating={5}
             />
           </div>
         </div>
       </section>
 
-      {/* Final CTA Section */}
-      <section className="py-24 bg-luxury-black relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
-        <div className="absolute top-0 left-0 w-1/3 h-full bg-gradient-to-r from-gold-500/10 to-transparent"></div>
-        <div className="absolute bottom-0 right-0 w-1/3 h-full bg-gradient-to-l from-primary-500/10 to-transparent"></div>
-        
-        <div className="relative container-custom text-center">
+      {/* Begin Your Journey */}
+      <section className="py-24 bg-luxury-black text-center">
+        <div className="container-custom">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-6">
-              Ready to Find Your
-              <span className="block text-transparent bg-clip-text bg-gradient-gold">Perfect Match?</span>
+              Your Invitation Awaits
             </h2>
             <p className="text-xl text-neutral-300 mb-10 max-w-2xl mx-auto">
-              Join thousands of successful members who have found meaningful connections. 
-              Your journey to luxury dating starts here.
+              Take the first step toward connections that match your sophistication and ambition.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                size="lg" 
-                className="btn-primary text-lg px-10 py-5 group"
-                onClick={() => window.location.href = '/register'}
-              >
-                Create Free Account
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="border-2 border-gold-400/50 text-gold-400 hover:bg-gold-500/10 text-lg px-10 py-5"
-                onClick={() => window.location.href = '/login'}
-              >
-                Already a Member? Sign In
-              </Button>
-            </div>
-            
+            <Button
+              size="lg"
+              className="btn-primary text-lg px-12 py-5 group"
+              onClick={() => window.location.href = '/register'}
+            >
+              Begin Your Application
+              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Button>
+
             <p className="mt-8 text-sm text-neutral-500">
-              Free to join • No credit card required • Cancel anytime
+              Complimentary initial consultation • Discreet process • No obligations
             </p>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-luxury-black text-neutral-400 py-16 border-t border-neutral-800">
+      <footer className="bg-luxury-black text-neutral-400 py-12">
         <div className="container-custom">
-          <div className="grid md:grid-cols-4 gap-12">
+          <div className="grid md:grid-cols-3 gap-8 text-center md:text-left">
             <div>
               <h3 className="text-2xl font-display font-bold text-transparent bg-clip-text bg-gradient-gold mb-4">LuxeMatch</h3>
-              <p className="text-sm leading-relaxed">
-                The premier platform for meaningful, upscale connections. Where luxury meets love.
+              <p className="text-sm leading-relaxed max-w-xs">
+                Curating sophisticated connections in an atmosphere of absolute discretion and elegance.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold text-white mb-4">Company</h4>
+              <h4 className="font-semibold text-white mb-4">Connect</h4>
               <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-gold-400 transition-colors">About Us</a></li>
-                <li><a href="#" className="hover:text-gold-400 transition-colors">Careers</a></li>
-                <li><a href="#" className="hover:text-gold-400 transition-colors">Press</a></li>
-                <li><a href="#" className="hover:text-gold-400 transition-colors">Blog</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-white mb-4">Support</h4>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-gold-400 transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-gold-400 transition-colors">Safety Tips</a></li>
                 <li><a href="#" className="hover:text-gold-400 transition-colors">Contact Us</a></li>
-                <li><a href="#" className="hover:text-gold-400 transition-colors">Community Guidelines</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-white mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm">
                 <li><a href="#" className="hover:text-gold-400 transition-colors">Privacy Policy</a></li>
                 <li><a href="#" className="hover:text-gold-400 transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-gold-400 transition-colors">Cookie Policy</a></li>
-                <li><a href="#" className="hover:text-gold-400 transition-colors">DMCA</a></li>
               </ul>
             </div>
-          </div>
-          
-          <div className="h-px bg-gradient-to-r from-transparent via-gold-900 to-transparent my-12"></div>
-          
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm">© 2024 LuxeMatch. All rights reserved.</p>
-            <div className="flex items-center gap-6">
-              <a href="#" className="hover:text-gold-400 transition-colors">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
-              </a>
-              <a href="#" className="hover:text-gold-400 transition-colors">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-              </a>
-              <a href="#" className="hover:text-gold-400 transition-colors">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg>
-              </a>
+            <div>
+              <h4 className="font-semibold text-white mb-4">Follow</h4>
+              <div className="flex justify-center md:justify-start gap-6">
+                <a href="#" className="hover:text-gold-400 transition-colors">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                </a>
+                <a href="#" className="hover:text-gold-400 transition-colors">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+                </a>
+              </div>
             </div>
+          </div>
+
+          <div className="h-px bg-gradient-to-r from-transparent via-gold-900 to-transparent my-8"></div>
+
+          <div className="text-center">
+            <p className="text-sm">© 2024 LuxeMatch. All rights reserved.</p>
           </div>
         </div>
       </footer>
