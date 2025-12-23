@@ -217,9 +217,9 @@ const HomePage: React.FC = () => {
             {/* Right Content - Premium Visual */}
             <div className={`hidden lg:block relative ${isLoaded ? 'animate-slide-up' : 'opacity-0'}`} style={{ animationDelay: '0.2s' }}>
               <div className="relative z-10 transform rotate-3 hover:rotate-0 transition-transform duration-500">
-                <ProfileCard 
-                  user={FEATURED_MEMBERS[0]} 
-                  variant="premium" 
+                <ProfileCard
+                  user={FEATURED_MEMBERS[0]!}
+                  variant="premium"
                   className="max-w-sm mx-auto shadow-2xl border-gold-500/30"
                 />
                 
