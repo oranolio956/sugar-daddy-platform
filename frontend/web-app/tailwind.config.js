@@ -98,12 +98,13 @@ module.exports = {
         '144': '36rem',
       },
       screens: {
-        'xs': '475px',
-        'sm': '640px',
-        'md': '768px',
-        'lg': '1024px',
-        'xl': '1280px',
-        '2xl': '1536px',
+        'xs': '320px',    // Extra small phones
+        'sm': '475px',    // Small phones
+        'md': '640px',    // Medium phones
+        'lg': '768px',    // Tablets
+        'xl': '1024px',   // Small desktops
+        '2xl': '1280px',  // Large desktops
+        '3xl': '1536px',  // Extra large desktops
       },
       borderRadius: {
         'xl': '0.75rem',
@@ -172,6 +173,66 @@ module.exports = {
     require('@tailwindcss/forms'),
     require('@tailwindcss/typography'),
     require('@tailwindcss/aspect-ratio'),
+    function({ addUtilities }) {
+      const newUtilities = {
+        // Mobile touch-friendly utilities
+        '.touch-target': {
+          'min-height': '44px',
+          'min-width': '44px',
+          'padding': '12px 16px',
+        },
+        '.touch-target-lg': {
+          'min-height': '48px',
+          'min-width': '48px',
+          'padding': '14px 20px',
+        },
+        '.touch-target-xl': {
+          'min-height': '56px',
+          'min-width': '56px',
+          'padding': '16px 24px',
+        },
+        // Mobile spacing utilities
+        '.mobile-p': {
+          'padding': '16px',
+        },
+        '.mobile-p-lg': {
+          'padding': '24px',
+        },
+        '.mobile-m': {
+          'margin': '16px',
+        },
+        '.mobile-m-lg': {
+          'margin': '24px',
+        },
+        // Mobile typography utilities
+        '.mobile-text-sm': {
+          'font-size': '14px',
+          'line-height': '1.4',
+        },
+        '.mobile-text-base': {
+          'font-size': '16px',
+          'line-height': '1.5',
+        },
+        '.mobile-text-lg': {
+          'font-size': '18px',
+          'line-height': '1.6',
+        },
+        // Mobile form utilities
+        '.mobile-input': {
+          'height': '48px',
+          'padding': '12px 16px',
+          'font-size': '16px',
+          'border-radius': '12px',
+        },
+        '.mobile-input-lg': {
+          'height': '56px',
+          'padding': '14px 18px',
+          'font-size': '18px',
+          'border-radius': '14px',
+        },
+      };
+      addUtilities(newUtilities);
+    },
   ],
   darkMode: 'class',
 };

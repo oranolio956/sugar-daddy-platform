@@ -1,22 +1,24 @@
 import type { Metadata } from 'next';
 import Layout from '@/components/Layout';
-import { ArticleSchema } from '@/components/seo/ArticleSchema';
+import MetaTags from '@/components/seo/MetaTags';
+import Breadcrumbs from '@/components/seo/Breadcrumbs';
+import DatingSchema from '@/components/seo/DatingSchema';
 
 export const metadata: Metadata = {
-  title: 'Sugar Dating Blog - Tips, Reviews & Success Stories | Dandy Babe',
+  title: 'Sugar Dating Blog - Tips, Reviews & Success Stories | BrandyBabe.com',
   description: 'Expert sugar dating advice, platform reviews, and success stories. Learn how to find sugar daddies, avoid scams, and build successful arrangements.',
   keywords: ['sugar dating blog', 'sugar daddy tips', 'sugar baby guide', 'dating advice', 'sugar dating reviews', 'arrangement dating'],
   openGraph: {
     title: 'Sugar Dating Blog - Tips, Reviews & Success Stories',
-    description: 'Expert sugar dating advice, platform reviews, and success stories from the Dandy Babe community.',
-    url: `${process.env['NEXT_PUBLIC_APP_URL'] || 'https://dandybabe.com'}/blog`,
+    description: 'Expert sugar dating advice, platform reviews, and success stories from the BrandyBabe.com community.',
+    url: `${process.env['NEXT_PUBLIC_APP_URL'] || 'https://brandybabe.com'}/blog`,
     type: 'website',
     images: [
       {
-        url: 'https://www.dandybabe.com/blog-og-image.jpg',
+        url: 'https://www.brandybabe.com/blog-og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'Sugar Dating Blog - Dandy Babe',
+        alt: 'Sugar Dating Blog - BrandyBabe.com',
       },
     ],
   },
@@ -24,10 +26,10 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Sugar Dating Blog - Tips, Reviews & Success Stories',
     description: 'Expert sugar dating advice, platform reviews, and success stories.',
-    images: ['https://www.dandybabe.com/blog-og-image.jpg'],
+    images: ['https://www.brandybabe.com/blog-og-image.jpg'],
   },
   alternates: {
-    canonical: `${process.env['NEXT_PUBLIC_APP_URL'] || 'https://dandybabe.com'}/blog`,
+    canonical: `${process.env['NEXT_PUBLIC_APP_URL'] || 'https://brandybabe.com'}/blog`,
   },
 };
 
@@ -91,16 +93,50 @@ const blogPosts = [
 export default function BlogPage() {
   return (
     <Layout>
-      <ArticleSchema
-        headline="Sugar Dating Blog - Tips, Reviews & Success Stories"
-        description="Expert sugar dating advice, platform reviews, and success stories from the Dandy Babe community."
-        datePublished="2024-12-01"
-        dateModified="2024-12-20"
-        authorName="Dandy Babe Editorial Team"
-        url={`${process.env['NEXT_PUBLIC_APP_URL'] || 'https://dandybabe.com'}/blog`}
-        wordCount={1200}
-        keywords={['sugar dating', 'sugar daddy', 'sugar baby', 'dating advice', 'platform reviews']}
+      {/* SEO Meta Tags */}
+      <MetaTags
+        title="Sugar Dating Blog - Tips, Reviews & Success Stories | BrandyBabe.com"
+        description="Expert sugar dating advice, platform reviews, and success stories. Learn how to find sugar daddies, avoid scams, and build successful arrangements."
+        keywords={['sugar dating blog', 'sugar daddy tips', 'sugar baby guide', 'dating advice', 'sugar dating reviews', 'arrangement dating']}
+        canonical={`${process.env['NEXT_PUBLIC_APP_URL'] || 'https://brandybabe.com'}/blog`}
+        ogTitle="Sugar Dating Blog - Tips, Reviews & Success Stories"
+        ogDescription="Expert sugar dating advice, platform reviews, and success stories from the BrandyBabe.com community."
+        ogImage="https://www.brandybabe.com/blog-og-image.jpg"
+        ogUrl={`${process.env['NEXT_PUBLIC_APP_URL'] || 'https://brandybabe.com'}/blog`}
+        twitterTitle="Sugar Dating Blog - Tips, Reviews & Success Stories"
+        twitterDescription="Expert sugar dating advice, platform reviews, and success stories."
+        twitterImage="https://www.brandybabe.com/blog-og-image.jpg"
+        robots="index, follow"
+        schemaType="WebPage"
+        author="BrandyBabe.com Editorial Team"
+        category="blog"
+        tags={['sugar dating', 'sugar daddy', 'sugar baby', 'dating advice', 'platform reviews']}
+        siteName="BrandyBabe.com"
+        type="website"
       />
+
+      {/* Dating Schema Markup */}
+      <DatingSchema
+        type="Organization"
+        name="BrandyBabe.com"
+        description="Premium sugar daddy dating platform providing expert advice and community insights."
+        url={`${process.env['NEXT_PUBLIC_APP_URL'] || 'https://brandybabe.com'}/blog`}
+        logo="https://www.brandybabe.com/logo.png"
+        foundingDate="2024"
+        contactType="Editorial"
+        telephone="+1-555-BRANDY"
+        email="editorial@brandybabe.com"
+        priceRange="$$$"
+        keywords={['sugar dating', 'sugar daddy', 'sugar baby', 'dating advice', 'platform reviews', 'success stories']}
+      />
+
+      {/* Breadcrumbs */}
+      <div className="container-custom py-4">
+        <Breadcrumbs
+          items={[{ label: 'Blog', current: true }]}
+          className="text-sm text-neutral-500"
+        />
+      </div>
 
       {/* Hero Section */}
       <section className="relative py-32 bg-charcoal-900">

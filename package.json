@@ -1,5 +1,5 @@
 {
-  "name": "sugar-daddy-platform",
+  "name": "dandy-babe-platform",
   "version": "1.0.0",
   "description": "Sugar Daddy/Sugar Baby Platform - Microservices Architecture",
   "private": true,
@@ -13,14 +13,20 @@
     "dev": "concurrently \"npm run dev --prefix frontend/web-app\" \"npm run dev --prefix backend/api-gateway\"",
     "build": "npm run build --prefix frontend/web-app && npm run build --prefix backend/api-gateway",
     "test": "npm run test --prefix frontend/web-app && npm run test --prefix backend/api-gateway",
+    "test:coverage": "npm run test:coverage --prefix frontend/web-app && npm run test:coverage --prefix backend/api-gateway",
     "docker:build": "docker-compose build",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
     "k8s:apply": "kubectl apply -f infrastructure/kubernetes/",
     "terraform:apply": "cd infrastructure/terraform && terraform apply",
     "lint": "eslint frontend/ backend/ ai-ml/",
+    "lint:fix": "eslint frontend/ backend/ ai-ml/ --fix",
     "format": "prettier --write frontend/ backend/ ai-ml/",
-    "clean": "rm -rf node_modules && rm -rf frontend/*/node_modules && rm -rf backend/*/node_modules && rm -rf ai-ml/*/node_modules"
+    "format:check": "prettier --check frontend/ backend/ ai-ml/",
+    "type-check": "tsc --noEmit --project frontend/web-app/tsconfig.json && tsc --noEmit --project backend/user-service/tsconfig.json",
+    "clean": "rm -rf node_modules && rm -rf frontend/*/node_modules && rm -rf backend/*/node_modules && rm -rf ai-ml/*/node_modules",
+    "setup": "npm install && husky install",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
@@ -84,8 +90,11 @@
     "@types/react-timeago": "^4.1.4",
     "concurrently": "^8.2.2",
     "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.35",
+    "husky": "^8.0.3",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
+    "lint-staged": "^15.0.0",
     "msw": "^2.0.0",
     "prettier": "^3.2.4",
     "prettier-plugin-tailwindcss": "^0.5.0",
@@ -97,7 +106,22 @@
     "react-dom": ">=18.0.0"
   },
   "engines": {
-    "node": ">=24.0.0",
-    "npm": ">=24.0.0"
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
   }
 }

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dandy-babe
+  labels:
+    name: dandy-babe
+    environment: production
+    project: dandy-babe-platform

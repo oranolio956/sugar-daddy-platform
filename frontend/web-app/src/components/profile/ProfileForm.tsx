@@ -252,19 +252,19 @@ export const ProfileForm: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-2xl lg:max-w-4xl mx-auto space-y-6 lg:space-y-8">
       {/* Profile Header */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-3">
-              <User className="w-6 h-6" />
-              Profile Settings
-            </CardTitle>
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <User className="w-6 h-6 text-champagne-500" />
+              <CardTitle className="text-lg lg:text-xl">Profile Settings</CardTitle>
+            </div>
+            <div className="flex flex-col lg:flex-row items-end lg:items-center gap-4">
               <div className="text-right">
-                <div className="text-sm text-neutral-500">Profile Completeness</div>
-                <div className="text-2xl font-bold text-champagne-500">{calculateCompleteness()}%</div>
+                <div className="text-xs lg:text-sm text-neutral-500">Profile Completeness</div>
+                <div className="text-xl lg:text-2xl font-bold text-champagne-500">{calculateCompleteness()}%</div>
               </div>
               <ProfileBadge
                 type={user?.subscription.tier === 'elite' ? 'elite' : user?.subscription.tier === 'premium' ? 'premium' : 'verified'}
@@ -275,19 +275,19 @@ export const ProfileForm: React.FC = () => {
         </CardHeader>
       </Card>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={handleSubmit} className="space-y-6 lg:space-y-8">
         {/* Profile Images */}
         <Card>
           <CardHeader>
-            <CardTitle>Profile Images</CardTitle>
+            <CardTitle className="text-lg lg:text-xl">Profile Images</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Profile Picture */}
             <div>
               <Label className="text-base font-semibold mb-4 block">Profile Picture</Label>
-              <div className="flex items-center gap-6">
+              <div className="flex flex-col lg:flex-row items-center gap-6">
                 <div className="relative">
-                  <div className="w-32 h-32 rounded-full border-4 border-champagne-500/20 overflow-hidden bg-charcoal-800">
+                  <div className="w-24 lg:w-32 h-24 lg:h-32 rounded-full border-4 border-champagne-500/20 overflow-hidden bg-charcoal-800">
                     {previewImage || user?.profile.profileImage ? (
                       <img
                         src={previewImage || user?.profile.profileImage}
@@ -296,7 +296,7 @@ export const ProfileForm: React.FC = () => {
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-neutral-400">
-                        <Camera className="w-8 h-8" />
+                        <Camera className="w-6 lg:w-8 h-6 lg:h-8" />
                       </div>
                     )}
                   </div>
@@ -304,7 +304,7 @@ export const ProfileForm: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => removeImage('profile')}
-                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors"
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors touch-target"
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -322,12 +322,12 @@ export const ProfileForm: React.FC = () => {
                     type="button"
                     variant="outline"
                     onClick={() => fileInputRef.current?.click()}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 touch-target"
                   >
                     <Upload className="w-4 h-4" />
                     Upload Photo
                   </Button>
-                  <p className="text-sm text-neutral-500 mt-2">
+                  <p className="text-xs lg:text-sm text-neutral-500 mt-2">
                     JPG, PNG or GIF. Max 5MB.
                   </p>
                 </div>
@@ -339,7 +339,7 @@ export const ProfileForm: React.FC = () => {
               <div>
                 <Label className="text-base font-semibold mb-4 block">Cover Image</Label>
                 <div className="space-y-4">
-                  <div className="relative h-48 rounded-xl border-2 border-dashed border-champagne-500/20 overflow-hidden bg-charcoal-800/50">
+                  <div className="relative h-32 lg:h-48 rounded-xl border-2 border-dashed border-champagne-500/20 overflow-hidden bg-charcoal-800/50">
                     {previewCover || user?.profile.coverImage ? (
                       <img
                         src={previewCover || user?.profile.coverImage}
@@ -348,15 +348,15 @@ export const ProfileForm: React.FC = () => {
                       />
                     ) : (
                       <div className="w-full h-full flex flex-col items-center justify-center text-neutral-400">
-                        <Camera className="w-12 h-12 mb-2" />
-                        <p>Upload cover image</p>
+                        <Camera className="w-10 lg:w-12 h-10 lg:h-12 mb-2" />
+                        <p className="text-sm lg:text-base">Upload cover image</p>
                       </div>
                     )}
                     {(previewCover || user?.profile.coverImage) && (
                       <button
                         type="button"
                         onClick={() => removeImage('cover')}
-                        className="absolute top-4 right-4 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors"
+                        className="absolute top-4 right-4 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors touch-target"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -373,7 +373,7 @@ export const ProfileForm: React.FC = () => {
                     type="button"
                     variant="outline"
                     onClick={() => coverInputRef.current?.click()}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 touch-target"
                   >
                     <Upload className="w-4 h-4" />
                     Upload Cover
@@ -387,49 +387,56 @@ export const ProfileForm: React.FC = () => {
         {/* Basic Information */}
         <Card>
           <CardHeader>
-            <CardTitle>Basic Information</CardTitle>
+            <CardTitle className="text-lg lg:text-xl">Basic Information</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <Label htmlFor="firstName">First Name</Label>
-              <Input
-                id="firstName"
-                value={formData.firstName}
-                onChange={(e) => handleInputChange('firstName', e.target.value)}
-                placeholder="Enter your first name"
-              />
-            </div>
-            <div>
-              <Label htmlFor="lastName">Last Name</Label>
-              <Input
-                id="lastName"
-                value={formData.lastName}
-                onChange={(e) => handleInputChange('lastName', e.target.value)}
-                placeholder="Enter your last name"
-              />
-            </div>
-            <div>
-              <Label htmlFor="age">Age</Label>
-              <Input
-                id="age"
-                type="number"
-                min="18"
-                max="99"
-                value={formData.age}
-                onChange={(e) => handleInputChange('age', parseInt(e.target.value))}
-              />
-            </div>
-            <div>
-              <Label htmlFor="location">Location</Label>
-              <div className="relative">
-                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+          <CardContent className="grid grid-cols-1 gap-4 lg:gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+              <div>
+                <Label htmlFor="firstName" className="text-sm lg:text-base">First Name</Label>
                 <Input
-                  id="location"
-                  value={formData.location}
-                  onChange={(e) => handleInputChange('location', e.target.value)}
-                  placeholder="City, State/Country"
-                  className="pl-10"
+                  id="firstName"
+                  value={formData.firstName}
+                  onChange={(e) => handleInputChange('firstName', e.target.value)}
+                  placeholder="Enter your first name"
+                  className="h-12 lg:h-14 text-base lg:text-lg touch-target"
                 />
+              </div>
+              <div>
+                <Label htmlFor="lastName" className="text-sm lg:text-base">Last Name</Label>
+                <Input
+                  id="lastName"
+                  value={formData.lastName}
+                  onChange={(e) => handleInputChange('lastName', e.target.value)}
+                  placeholder="Enter your last name"
+                  className="h-12 lg:h-14 text-base lg:text-lg touch-target"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+              <div>
+                <Label htmlFor="age" className="text-sm lg:text-base">Age</Label>
+                <Input
+                  id="age"
+                  type="number"
+                  min="18"
+                  max="99"
+                  value={formData.age}
+                  onChange={(e) => handleInputChange('age', parseInt(e.target.value))}
+                  className="h-12 lg:h-14 text-base lg:text-lg touch-target"
+                />
+              </div>
+              <div>
+                <Label htmlFor="location" className="text-sm lg:text-base">Location</Label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+                  <Input
+                    id="location"
+                    value={formData.location}
+                    onChange={(e) => handleInputChange('location', e.target.value)}
+                    placeholder="City, State/Country"
+                    className="pl-10 h-12 lg:h-14 text-base lg:text-lg touch-target"
+                  />
+                </div>
               </div>
             </div>
           </CardContent>
@@ -438,11 +445,11 @@ export const ProfileForm: React.FC = () => {
         {/* Bio */}
         <Card>
           <CardHeader>
-            <CardTitle>About Me</CardTitle>
+            <CardTitle className="text-lg lg:text-xl">About Me</CardTitle>
           </CardHeader>
           <CardContent>
             <div>
-              <Label htmlFor="bio">Bio</Label>
+              <Label htmlFor="bio" className="text-sm lg:text-base">Bio</Label>
               <Textarea
                 id="bio"
                 value={formData.bio}
@@ -450,8 +457,9 @@ export const ProfileForm: React.FC = () => {
                 placeholder="Tell others about yourself, your interests, and what you're looking for..."
                 rows={4}
                 maxLength={500}
+                className="min-h-[120px] lg:min-h-[140px] text-base lg:text-lg touch-target"
               />
-              <p className="text-sm text-neutral-500 mt-1">
+              <p className="text-xs lg:text-sm text-neutral-500 mt-2">
                 {formData.bio.length}/500 characters
               </p>
             </div>
@@ -462,59 +470,66 @@ export const ProfileForm: React.FC = () => {
         {user?.role === 'sugar_daddy' && (
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
                 <Briefcase className="w-5 h-5" />
                 Professional Information
               </CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label htmlFor="occupation">Occupation</Label>
-                <Input
-                  id="occupation"
-                  value={formData.occupation}
-                  onChange={(e) => handleInputChange('occupation', e.target.value)}
-                  placeholder="e.g. CEO, Entrepreneur, Investor"
-                />
+            <CardContent className="grid grid-cols-1 gap-4 lg:gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+                <div>
+                  <Label htmlFor="occupation" className="text-sm lg:text-base">Occupation</Label>
+                  <Input
+                    id="occupation"
+                    value={formData.occupation}
+                    onChange={(e) => handleInputChange('occupation', e.target.value)}
+                    placeholder="e.g. CEO, Entrepreneur, Investor"
+                    className="h-12 lg:h-14 text-base lg:text-lg touch-target"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="company" className="text-sm lg:text-base">Company</Label>
+                  <Input
+                    id="company"
+                    value={formData.company}
+                    onChange={(e) => handleInputChange('company', e.target.value)}
+                    placeholder="Company name (optional)"
+                    className="h-12 lg:h-14 text-base lg:text-lg touch-target"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+                <div>
+                  <Label htmlFor="education" className="text-sm lg:text-base">Education</Label>
+                  <Input
+                    id="education"
+                    value={formData.education}
+                    onChange={(e) => handleInputChange('education', e.target.value)}
+                    placeholder="e.g. MBA, PhD, Bachelor's"
+                    className="h-12 lg:h-14 text-base lg:text-lg touch-target"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="netWorth" className="text-sm lg:text-base">Net Worth</Label>
+                  <Select value={formData.netWorth} onValueChange={(value) => handleInputChange('netWorth', value)}>
+                    <SelectTrigger className="h-12 lg:h-14 text-base lg:text-lg touch-target">
+                      <SelectValue placeholder="Select net worth range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="under-100k">Under $100K</SelectItem>
+                      <SelectItem value="100k-500k">$100K - $500K</SelectItem>
+                      <SelectItem value="500k-1m">$500K - $1M</SelectItem>
+                      <SelectItem value="1m-5m">$1M - $5M</SelectItem>
+                      <SelectItem value="5m-10m">$5M - $10M</SelectItem>
+                      <SelectItem value="over-10m">Over $10M</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               <div>
-                <Label htmlFor="company">Company</Label>
-                <Input
-                  id="company"
-                  value={formData.company}
-                  onChange={(e) => handleInputChange('company', e.target.value)}
-                  placeholder="Company name (optional)"
-                />
-              </div>
-              <div>
-                <Label htmlFor="education">Education</Label>
-                <Input
-                  id="education"
-                  value={formData.education}
-                  onChange={(e) => handleInputChange('education', e.target.value)}
-                  placeholder="e.g. MBA, PhD, Bachelor's"
-                />
-              </div>
-              <div>
-                <Label htmlFor="netWorth">Net Worth</Label>
-                <Select value={formData.netWorth} onValueChange={(value) => handleInputChange('netWorth', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select net worth range" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="under-100k">Under $100K</SelectItem>
-                    <SelectItem value="100k-500k">$100K - $500K</SelectItem>
-                    <SelectItem value="500k-1m">$500K - $1M</SelectItem>
-                    <SelectItem value="1m-5m">$1M - $5M</SelectItem>
-                    <SelectItem value="5m-10m">$5M - $10M</SelectItem>
-                    <SelectItem value="over-10m">Over $10M</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="md:col-span-2">
-                <Label htmlFor="monthlyBudget">Monthly Allowance Budget</Label>
+                <Label htmlFor="monthlyBudget" className="text-sm lg:text-base">Monthly Allowance Budget</Label>
                 <Select value={formData.monthlyBudget} onValueChange={(value) => handleInputChange('monthlyBudget', value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="h-12 lg:h-14 text-base lg:text-lg touch-target">
                     <SelectValue placeholder="Select monthly budget range" />
                   </SelectTrigger>
                   <SelectContent>
@@ -534,103 +549,108 @@ export const ProfileForm: React.FC = () => {
         {/* Preferences */}
         <Card>
           <CardHeader>
-            <CardTitle>Preferences</CardTitle>
+            <CardTitle className="text-lg lg:text-xl">Preferences</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <Label>Looking For</Label>
-                <Select
-                  value={formData.preferences.lookingFor}
-                  onValueChange={(value) => handleNestedChange('preferences.lookingFor', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="sugar_daddy">Sugar Daddy</SelectItem>
-                    <SelectItem value="sugar_baby">Sugar Baby</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Age Range</Label>
-                <div className="flex gap-2">
+            <div className="grid grid-cols-1 gap-4 lg:gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+                <div>
+                  <Label className="text-sm lg:text-base">Looking For</Label>
+                  <Select
+                    value={formData.preferences.lookingFor}
+                    onValueChange={(value) => handleNestedChange('preferences.lookingFor', value)}
+                  >
+                    <SelectTrigger className="h-12 lg:h-14 text-base lg:text-lg touch-target">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="sugar_daddy">Sugar Daddy</SelectItem>
+                      <SelectItem value="sugar_baby">Sugar Baby</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-sm lg:text-base">Age Range</Label>
+                  <div className="flex gap-2 lg:gap-4">
+                    <Input
+                      type="number"
+                      min="18"
+                      max="99"
+                      value={formData.preferences.ageRange[0]}
+                      onChange={(e) => handleNestedChange('preferences.ageRange', [
+                        parseInt(e.target.value),
+                        formData.preferences.ageRange[1]
+                      ])}
+                      placeholder="Min"
+                      className="h-12 lg:h-14 text-base lg:text-lg touch-target"
+                    />
+                    <Input
+                      type="number"
+                      min="18"
+                      max="99"
+                      value={formData.preferences.ageRange[1]}
+                      onChange={(e) => handleNestedChange('preferences.ageRange', [
+                        formData.preferences.ageRange[0],
+                        parseInt(e.target.value)
+                      ])}
+                      placeholder="Max"
+                      className="h-12 lg:h-14 text-base lg:text-lg touch-target"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label className="text-sm lg:text-base">Maximum Distance (miles)</Label>
                   <Input
                     type="number"
-                    min="18"
-                    max="99"
-                    value={formData.preferences.ageRange[0]}
-                    onChange={(e) => handleNestedChange('preferences.ageRange', [
-                      parseInt(e.target.value),
-                      formData.preferences.ageRange[1]
-                    ])}
-                    placeholder="Min"
-                  />
-                  <Input
-                    type="number"
-                    min="18"
-                    max="99"
-                    value={formData.preferences.ageRange[1]}
-                    onChange={(e) => handleNestedChange('preferences.ageRange', [
-                      formData.preferences.ageRange[0],
-                      parseInt(e.target.value)
-                    ])}
-                    placeholder="Max"
+                    min="1"
+                    max="1000"
+                    value={formData.preferences.distance}
+                    onChange={(e) => handleNestedChange('preferences.distance', parseInt(e.target.value))}
+                    className="h-12 lg:h-14 text-base lg:text-lg touch-target"
                   />
                 </div>
               </div>
+
+              {/* Interests */}
               <div>
-                <Label>Maximum Distance (miles)</Label>
-                <Input
-                  type="number"
-                  min="1"
-                  max="1000"
-                  value={formData.preferences.distance}
-                  onChange={(e) => handleNestedChange('preferences.distance', parseInt(e.target.value))}
-                />
+                <Label className="text-base lg:text-lg font-semibold mb-3 block">Interests</Label>
+                <div className="grid grid-cols-2 gap-2 lg:gap-4">
+                  {interestOptions.map((interest) => (
+                    <button
+                      key={interest}
+                      type="button"
+                      onClick={() => handleInterestToggle(interest)}
+                      className={`px-3 py-2 lg:px-4 lg:py-3 rounded-lg border text-sm lg:text-base transition-colors touch-target ${
+                        formData.interests.includes(interest)
+                          ? 'bg-champagne-500 text-charcoal-900 border-champagne-500'
+                          : 'bg-charcoal-800 border-neutral-600 text-neutral-300 hover:border-champagne-500'
+                      }`}
+                    >
+                      {interest}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* Interests */}
-            <div>
-              <Label className="text-base font-semibold mb-3 block">Interests</Label>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-                {interestOptions.map((interest) => (
-                  <button
-                    key={interest}
-                    type="button"
-                    onClick={() => handleInterestToggle(interest)}
-                    className={`px-3 py-2 rounded-lg border text-sm transition-colors ${
-                      formData.interests.includes(interest)
-                        ? 'bg-champagne-500 text-charcoal-900 border-champagne-500'
-                        : 'bg-charcoal-800 border-neutral-600 text-neutral-300 hover:border-champagne-500'
-                    }`}
-                  >
-                    {interest}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Deal Breakers */}
-            <div>
-              <Label className="text-base font-semibold mb-3 block">Deal Breakers</Label>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-                {dealBreakerOptions.map((dealBreaker) => (
-                  <button
-                    key={dealBreaker}
-                    type="button"
-                    onClick={() => handleDealBreakerToggle(dealBreaker)}
-                    className={`px-3 py-2 rounded-lg border text-sm transition-colors ${
-                      formData.dealBreakers.includes(dealBreaker)
-                        ? 'bg-red-500 text-white border-red-500'
-                        : 'bg-charcoal-800 border-neutral-600 text-neutral-300 hover:border-red-500'
-                    }`}
-                  >
-                    {dealBreaker}
-                  </button>
-                ))}
+              {/* Deal Breakers */}
+              <div>
+                <Label className="text-base lg:text-lg font-semibold mb-3 block">Deal Breakers</Label>
+                <div className="grid grid-cols-2 gap-2 lg:gap-4">
+                  {dealBreakerOptions.map((dealBreaker) => (
+                    <button
+                      key={dealBreaker}
+                      type="button"
+                      onClick={() => handleDealBreakerToggle(dealBreaker)}
+                      className={`px-3 py-2 lg:px-4 lg:py-3 rounded-lg border text-sm lg:text-base transition-colors touch-target ${
+                        formData.dealBreakers.includes(dealBreaker)
+                          ? 'bg-red-500 text-white border-red-500'
+                          : 'bg-charcoal-800 border-neutral-600 text-neutral-300 hover:border-red-500'
+                      }`}
+                    >
+                      {dealBreaker}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </CardContent>
@@ -643,15 +663,15 @@ export const ProfileForm: React.FC = () => {
         >
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
                 <Globe className="w-5 h-5" />
                 Social Links
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4 lg:gap-6">
                 <div>
-                  <Label htmlFor="linkedin" className="flex items-center gap-2">
+                  <Label htmlFor="linkedin" className="flex items-center gap-2 text-sm lg:text-base">
                     <Linkedin className="w-4 h-4" />
                     LinkedIn
                   </Label>
@@ -660,10 +680,11 @@ export const ProfileForm: React.FC = () => {
                     value={formData.socialLinks.linkedin || ''}
                     onChange={(e) => handleNestedChange('socialLinks.linkedin', e.target.value)}
                     placeholder="linkedin.com/in/username"
+                    className="h-12 lg:h-14 text-base lg:text-lg touch-target"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="instagram" className="flex items-center gap-2">
+                  <Label htmlFor="instagram" className="flex items-center gap-2 text-sm lg:text-base">
                     <Instagram className="w-4 h-4" />
                     Instagram
                   </Label>
@@ -672,10 +693,11 @@ export const ProfileForm: React.FC = () => {
                     value={formData.socialLinks.instagram || ''}
                     onChange={(e) => handleNestedChange('socialLinks.instagram', e.target.value)}
                     placeholder="@username"
+                    className="h-12 lg:h-14 text-base lg:text-lg touch-target"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="twitter" className="flex items-center gap-2">
+                  <Label htmlFor="twitter" className="flex items-center gap-2 text-sm lg:text-base">
                     <Twitter className="w-4 h-4" />
                     Twitter
                   </Label>
@@ -684,6 +706,7 @@ export const ProfileForm: React.FC = () => {
                     value={formData.socialLinks.twitter || ''}
                     onChange={(e) => handleNestedChange('socialLinks.twitter', e.target.value)}
                     placeholder="@username"
+                    className="h-12 lg:h-14 text-base lg:text-lg touch-target"
                   />
                 </div>
               </div>
@@ -694,67 +717,69 @@ export const ProfileForm: React.FC = () => {
         {/* Privacy Settings */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
               <Eye className="w-5 h-5" />
               Privacy Settings
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label>Profile Visibility</Label>
-                <Select
-                  value={formData.settings.profileVisibility}
-                  onValueChange={(value) => handleNestedChange('settings.profileVisibility', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="public">Public</SelectItem>
-                    <SelectItem value="verified_only">Verified Users Only</SelectItem>
-                    <SelectItem value="private">Private</SelectItem>
-                  </SelectContent>
-                </Select>
+            <div className="grid grid-cols-1 gap-4 lg:gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+                <div>
+                  <Label className="text-sm lg:text-base">Profile Visibility</Label>
+                  <Select
+                    value={formData.settings.profileVisibility}
+                    onValueChange={(value) => handleNestedChange('settings.profileVisibility', value)}
+                  >
+                    <SelectTrigger className="h-12 lg:h-14 text-base lg:text-lg touch-target">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="public">Public</SelectItem>
+                      <SelectItem value="verified_only">Verified Users Only</SelectItem>
+                      <SelectItem value="private">Private</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-sm lg:text-base">Allow Messages From</Label>
+                  <Select
+                    value={formData.settings.allowMessages}
+                    onValueChange={(value) => handleNestedChange('settings.allowMessages', value)}
+                  >
+                    <SelectTrigger className="h-12 lg:h-14 text-base lg:text-lg touch-target">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="everyone">Everyone</SelectItem>
+                      <SelectItem value="verified">Verified Users</SelectItem>
+                      <SelectItem value="premium">Premium Users</SelectItem>
+                      <SelectItem value="none">No One</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              <div>
-                <Label>Allow Messages From</Label>
-                <Select
-                  value={formData.settings.allowMessages}
-                  onValueChange={(value) => handleNestedChange('settings.allowMessages', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="everyone">Everyone</SelectItem>
-                    <SelectItem value="verified">Verified Users</SelectItem>
-                    <SelectItem value="premium">Premium Users</SelectItem>
-                    <SelectItem value="none">No One</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
 
-            <div className="flex items-center gap-4">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={formData.settings.showOnlineStatus}
-                  onChange={(e) => handleNestedChange('settings.showOnlineStatus', e.target.checked)}
-                  className="rounded border-neutral-600"
-                />
-                <span className="text-sm">Show online status</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={formData.settings.showLastSeen}
-                  onChange={(e) => handleNestedChange('settings.showLastSeen', e.target.checked)}
-                  className="rounded border-neutral-600"
-                />
-                <span className="text-sm">Show last seen</span>
-              </label>
+              <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
+                <label className="flex items-center gap-3 cursor-pointer touch-target">
+                  <input
+                    type="checkbox"
+                    checked={formData.settings.showOnlineStatus}
+                    onChange={(e) => handleNestedChange('settings.showOnlineStatus', e.target.checked)}
+                    className="w-5 h-5 rounded border-neutral-600"
+                  />
+                  <span className="text-sm lg:text-base">Show online status</span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer touch-target">
+                  <input
+                    type="checkbox"
+                    checked={formData.settings.showLastSeen}
+                    onChange={(e) => handleNestedChange('settings.showLastSeen', e.target.checked)}
+                    className="w-5 h-5 rounded border-neutral-600"
+                  />
+                  <span className="text-sm lg:text-base">Show last seen</span>
+                </label>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -764,7 +789,7 @@ export const ProfileForm: React.FC = () => {
           <Button
             type="submit"
             disabled={loading}
-            className="flex items-center gap-2 px-8 py-3"
+            className="flex items-center gap-2 px-6 lg:px-8 py-3 lg:py-4 text-base lg:text-lg touch-target-lg"
           >
             <Save className="w-4 h-4" />
             {loading ? 'Saving...' : 'Save Profile'}

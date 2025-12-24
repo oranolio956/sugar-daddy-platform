@@ -9,11 +9,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Seeking.com Login Not Working? Account Flagged? (2024)',
     description: 'Frustrated with Seeking.com login issues? Discover why accounts get flagged and how to fix login problems.',
-    url: `${process.env['NEXT_PUBLIC_APP_URL'] || 'https://dandybabe.com'}/blog/seeking-com-login-not-working`,
+    url: `${process.env['NEXT_PUBLIC_APP_URL'] || 'https://brandybabe.com'}/blog/seeking-com-login-not-working`,
     type: 'article',
     publishedTime: '2024-12-20T10:00:00.000Z',
     modifiedTime: '2024-12-20T10:00:00.000Z',
-    authors: ['Dandy Babe Editorial Team'],
+    authors: ['BrandyBabe.com Editorial Team'],
     images: [
       {
         url: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1200&q=80',
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     images: ['https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1200&q=80'],
   },
   alternates: {
-    canonical: `${process.env['NEXT_PUBLIC_APP_URL'] || 'https://dandybabe.com'}/blog/seeking-com-login-not-working`,
+    canonical: `${process.env['NEXT_PUBLIC_APP_URL'] || 'https://brandybabe.com'}/blog/seeking-com-login-not-working`,
   },
 };
 
@@ -42,8 +42,8 @@ export default function SeekingComLoginArticle() {
         description="Frustrated with Seeking.com login issues? Discover why accounts get flagged, common login problems, and solutions to regain access to your sugar dating account."
         datePublished="2024-12-20"
         dateModified="2024-12-20"
-        authorName="Dandy Babe Editorial Team"
-        url={`${process.env['NEXT_PUBLIC_APP_URL'] || 'https://dandybabe.com'}/blog/seeking-com-login-not-working`}
+        authorName="BrandyBabe.com Editorial Team"
+        url={`${process.env['NEXT_PUBLIC_APP_URL'] || 'https://brandybabe.com'}/blog/seeking-com-login-not-working`}
         wordCount={2100}
         keywords={['seeking.com login', 'account flagged', 'login not working', 'seeking.com banned', 'sugar dating']}
       />
@@ -136,7 +136,7 @@ export default function SeekingComLoginArticle() {
           <p>If you're tired of Seeking.com's login issues and poor user experience, consider these alternatives:</p>
 
           <ul>
-            <li><strong>Dandy Babe:</strong> Verified profiles, transparent pricing, no arbitrary bans</li>
+            <li><strong>BrandyBabe.com:</strong> Verified profiles, transparent pricing, no arbitrary bans</li>
             <li><strong>Other Premium Platforms:</strong> Focus on quality over quantity</li>
           </ul>
 
@@ -159,7 +159,7 @@ export default function SeekingComLoginArticle() {
                 href="/register"
                 className="bg-gradient-gold text-charcoal-900 px-8 py-4 rounded-full font-bold tracking-widest uppercase text-sm hover:shadow-[0_0_30px_rgba(247,231,206,0.3)] transition-all duration-300"
               >
-                Try Dandy Babe Free
+                Try BrandyBabe.com Free
               </a>
               <a
                 href="/blog/seeking-com-alternatives"

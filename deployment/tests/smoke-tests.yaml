@@ -1,0 +1,74 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: smoke-tests
+  namespace: sugar-daddy
+  labels:
+    app: smoke-tests
+    component: test
+spec:
+  template:
+    metadata:
+      labels:
+        app: smoke-tests
+        component: test
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: smoke-tests
+          image: curlimages/curl:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Starting smoke tests..."
+              
+              # Test API Gateway health
+              echo "Testing API Gateway health..."
+              curl -f http://api-gateway-service:3001/health || exit 1
+              echo "API Gateway health check passed"
+              
+              # Test User Service health
+              echo "Testing User Service health..."
+              curl -f http://user-service:3002/health || exit 1
+              echo "User Service health check passed"
+              
+              # Test Matching Service health
+              echo "Testing Matching Service health..."
+              curl -f http://matching-service:3003/health || exit 1
+              echo "Matching Service health check passed"
+              
+              # Test Messaging Service health
+              echo "Testing Messaging Service health..."
+              curl -f http://messaging-service:3004/health || exit 1
+              echo "Messaging Service health check passed"
+              
+              # Test Payment Service health
+              echo "Testing Payment Service health..."
+              curl -f http://payment-service:3005/health || exit 1
+              echo "Payment Service health check passed"
+              
+              # Test Notification Service health
+              echo "Testing Notification Service health..."
+              curl -f http://notification-service:3006/health || exit 1
+              echo "Notification Service health check passed"
+              
+              # Test database connectivity (via API Gateway)
+              echo "Testing database connectivity..."
+              curl -f http://api-gateway-service:3001/api/v1/health/db || exit 1
+              echo "Database connectivity test passed"
+              
+              # Test Redis connectivity (via API Gateway)
+              echo "Testing Redis connectivity..."
+              curl -f http://api-gateway-service:3001/api/v1/health/redis || exit 1
+              echo "Redis connectivity test passed"
+              
+              echo "All smoke tests passed!"
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"
+  backoffLimit: 3
+  activeDeadlineSeconds: 300

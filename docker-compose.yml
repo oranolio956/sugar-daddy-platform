@@ -56,7 +56,7 @@ services:
       - "3004:3004"
     environment:
       - NODE_ENV=development
-      - JWT_SECRET=your_jwt_secret_key
+      - JWT_SECRET=${JWT_SECRET:-default_jwt_secret_change_in_production}
       - DATABASE_URL=postgres://user:password@postgres:5432/sugar_daddy_db
       - REDIS_URL=redis://redis:6379
     depends_on:
@@ -73,11 +73,11 @@ services:
       - "3005:3005"
     environment:
       - NODE_ENV=development
-      - JWT_SECRET=your_jwt_secret_key
+      - JWT_SECRET=${JWT_SECRET:-default_jwt_secret_change_in_production}
       - DATABASE_URL=postgres://user:password@postgres:5432/sugar_daddy_db
-      - STRIPE_SECRET_KEY=your_stripe_secret_key
-      - PAYPAL_CLIENT_ID=your_paypal_client_id
-      - PAYPAL_CLIENT_SECRET=your_paypal_client_secret
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-sk_test_placeholder}
+      - PAYPAL_CLIENT_ID=${PAYPAL_CLIENT_ID:-placeholder}
+      - PAYPAL_CLIENT_SECRET=${PAYPAL_CLIENT_SECRET:-placeholder}
     depends_on:
       - postgres
     networks:
@@ -91,9 +91,9 @@ services:
       - "3006:3006"
     environment:
       - NODE_ENV=development
-      - JWT_SECRET=your_jwt_secret_key
+      - JWT_SECRET=${JWT_SECRET:-default_jwt_secret_change_in_production}
       - DATABASE_URL=postgres://user:password@postgres:5432/sugar_daddy_db
-      - FIREBASE_CREDENTIALS_PATH=./firebase-credentials.json
+      - FIREBASE_CREDENTIALS_PATH=${FIREBASE_CREDENTIALS_PATH:-./firebase-credentials.json}
     depends_on:
       - postgres
     networks:

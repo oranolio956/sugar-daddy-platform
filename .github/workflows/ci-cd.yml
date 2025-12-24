@@ -1,0 +1,364 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: sugar-daddy-platform
+
+jobs:
+  # Security scanning job
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+    - name: Snyk security scan
+      uses: snyk/actions/node@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --severity-threshold=high
+
+  # Backend services testing
+  backend-test:
+    name: Backend Services Test
+    runs-on: ubuntu-latest
+    needs: security-scan
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    strategy:
+      matrix:
+        service: [api-gateway, user-service, matching-service, messaging-service, payment-service, notification-service]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: backend/${{ matrix.service }}/package-lock.json
+
+    - name: Install dependencies
+      working-directory: backend/${{ matrix.service }}
+      run: npm ci
+
+    - name: Run linting
+      working-directory: backend/${{ matrix.service }}
+      run: npm run lint
+
+    - name: Run type checking
+      working-directory: backend/${{ matrix.service }}
+      run: npm run type-check
+
+    - name: Run tests
+      working-directory: backend/${{ matrix.service }}
+      run: npm test
+      env:
+        NODE_ENV: test
+        DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
+        REDIS_URL: redis://localhost:6379
+        JWT_SECRET: test-secret-key
+
+  # Frontend testing
+  frontend-test:
+    name: Frontend Test
+    runs-on: ubuntu-latest
+    needs: security-scan
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: frontend/web-app/package-lock.json
+
+    - name: Install dependencies
+      working-directory: frontend/web-app
+      run: npm ci
+
+    - name: Run linting
+      working-directory: frontend/web-app
+      run: npm run lint
+
+    - name: Run type checking
+      working-directory: frontend/web-app
+      run: npm run type-check
+
+    - name: Run tests
+      working-directory: frontend/web-app
+      run: npm run test:coverage
+      env:
+        CI: true
+
+    - name: Build application
+      working-directory: frontend/web-app
+      run: npm run build
+
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./frontend/web-app/coverage/lcov.info
+        flags: frontend
+        name: frontend-coverage
+
+  # Build and push Docker images
+  build:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    needs: [backend-test, frontend-test]
+    if: github.ref == 'refs/heads/main'
+    
+    strategy:
+      matrix:
+        service: [api-gateway, user-service, matching-service, messaging-service, payment-service, notification-service, frontend]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/${{ matrix.service }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./
+        file: ${{ matrix.service == 'frontend' && 'deployment/docker/frontend.Dockerfile' || format('./deployment/docker/{0}.Dockerfile', matrix.service) }}
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        platforms: linux/amd64,linux/arm64
+
+  # Deploy to staging
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Setup kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'v1.28.0'
+
+    - name: Configure kubectl for EKS
+      run: |
+        aws eks update-kubeconfig --region us-east-1 --name sugar-daddy-staging-cluster
+
+    - name: Deploy to staging
+      run: |
+        kubectl apply -f deployment/kubernetes/namespace.yaml
+        kubectl apply -f deployment/kubernetes/configmaps/ -n sugar-daddy
+        kubectl apply -f deployment/kubernetes/secrets/ -n sugar-daddy
+        kubectl apply -f deployment/kubernetes/services/ -n sugar-daddy
+        kubectl apply -f deployment/kubernetes/deployments/ -n sugar-daddy
+
+    - name: Wait for rollout
+      run: |
+        kubectl rollout status deployment/api-gateway -n sugar-daddy --timeout=300s
+        kubectl rollout status deployment/user-service -n sugar-daddy --timeout=300s
+        kubectl rollout status deployment/matching-service -n sugar-daddy --timeout=300s
+        kubectl rollout status deployment/messaging-service -n sugar-daddy --timeout=300s
+        kubectl rollout status deployment/payment-service -n sugar-daddy --timeout=300s
+        kubectl rollout status deployment/notification-service -n sugar-daddy --timeout=300s
+        kubectl rollout status deployment/frontend -n sugar-daddy --timeout=300s
+
+    - name: Run smoke tests
+      run: |
+        kubectl apply -f deployment/kubernetes/tests/smoke-tests.yaml -n sugar-daddy
+        kubectl wait --for=condition=complete job/smoke-tests -n sugar-daddy --timeout=300s
+
+  # Deploy to production
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Setup kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'v1.28.0'
+
+    - name: Configure kubectl for EKS
+      run: |
+        aws eks update-kubeconfig --region us-east-1 --name sugar-daddy-production-cluster
+
+    - name: Deploy to production
+      run: |
+        kubectl apply -f deployment/kubernetes/namespace.yaml
+        kubectl apply -f deployment/kubernetes/configmaps/ -n sugar-daddy
+        kubectl apply -f deployment/kubernetes/secrets/ -n sugar-daddy
+        kubectl apply -f deployment/kubernetes/services/ -n sugar-daddy
+        kubectl apply -f deployment/kubernetes/deployments/ -n sugar-daddy
+
+    - name: Wait for rollout
+      run: |
+        kubectl rollout status deployment/api-gateway -n sugar-daddy --timeout=300s
+        kubectl rollout status deployment/user-service -n sugar-daddy --timeout=300s
+        kubectl rollout status deployment/matching-service -n sugar-daddy --timeout=300s
+        kubectl rollout status deployment/messaging-service -n sugar-daddy --timeout=300s
+        kubectl rollout status deployment/payment-service -n sugar-daddy --timeout=300s
+        kubectl rollout status deployment/notification-service -n sugar-daddy --timeout=300s
+        kubectl rollout status deployment/frontend -n sugar-daddy --timeout=300s
+
+    - name: Run smoke tests
+      run: |
+        kubectl apply -f deployment/kubernetes/tests/smoke-tests.yaml -n sugar-daddy
+        kubectl wait --for=condition=complete job/smoke-tests -n sugar-daddy --timeout=300s
+
+    - name: Notify deployment status
+      if: always()
+      run: |
+        if [ "${{ job.status }}" == "success" ]; then
+          echo "Production deployment successful"
+        else
+          echo "Production deployment failed"
+        fi
+
+  # Rollback on failure
+  rollback:
+    name: Rollback on Failure
+    runs-on: ubuntu-latest
+    needs: [deploy-production]
+    if: failure() && github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Setup kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'v1.28.0'
+
+    - name: Configure kubectl for EKS
+      run: |
+        aws eks update-kubeconfig --region us-east-1 --name sugar-daddy-production-cluster
+
+    - name: Rollback deployments
+      run: |
+        kubectl rollout undo deployment/api-gateway -n sugar-daddy
+        kubectl rollout undo deployment/user-service -n sugar-daddy
+        kubectl rollout undo deployment/matching-service -n sugar-daddy
+        kubectl rollout undo deployment/messaging-service -n sugar-daddy
+        kubectl rollout undo deployment/payment-service -n sugar-daddy
+        kubectl rollout undo deployment/notification-service -n sugar-daddy
+        kubectl rollout undo deployment/frontend -n sugar-daddy
+
+    - name: Wait for rollback
+      run: |
+        kubectl rollout status deployment/api-gateway -n sugar-daddy --timeout=300s
+        kubectl rollout status deployment/user-service -n sugar-daddy --timeout=300s
+        kubectl rollout status deployment/matching-service -n sugar-daddy --timeout=300s
+        kubectl rollout status deployment/messaging-service -n sugar-daddy --timeout=300s
+        kubectl rollout status deployment/payment-service -n sugar-daddy --timeout=300s
+        kubectl rollout status deployment/notification-service -n sugar-daddy --timeout=300s
+        kubectl rollout status deployment/frontend -n sugar-daddy --timeout=300s

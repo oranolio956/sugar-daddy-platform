@@ -1,170 +1,283 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
-import { Eye, EyeOff, Mail, Lock, Heart } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/components/ui/Toast';
+import { Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
-export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  
-  const { login } = useAuth();
+interface LoginFormData {
+  email: string;
+  password: string;
+}
 
+interface FormErrors {
+  email?: string;
+  password?: string;
+  general?: string;
+}
+
+export default function LoginPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState<LoginFormData>({
+    email: '',
+    password: ''
+  });
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [isClient, setIsClient] = useState(false);
+  const { toast, error: toastError } = useToast();
+
+  // Initialize client-side state
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Handle form input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // Clear field-specific errors when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
+  // Validate form fields
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    // Email validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+
+    // Password validation
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters long';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsLoading(true);
+    setErrors({});
 
     try {
-      await login(email, password);
-    } catch (error) {
-      // Error is handled in the auth context
-    } finally {
-      setLoading(false);
-    }
-  };
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-  const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 260,
-        damping: 20,
-        staggerChildren: 0.1
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Handle different error types
+        if (data.error) {
+          if (data.error.includes('Invalid credentials')) {
+            toastError('Invalid email or password. Please try again.');
+          } else if (data.error.includes('Validation')) {
+            toastError('Please check your input and try again.');
+          } else {
+            toastError(data.error);
+          }
+        } else {
+          toastError('An unexpected error occurred. Please try again.');
+        }
+        return;
       }
+
+      // Store token and user data
+      if (data.token) {
+        localStorage.setItem('auth_token', data.token);
+      }
+
+      if (data.user) {
+        localStorage.setItem('user_data', JSON.stringify(data.user));
+      }
+
+      // Redirect to dashboard or intended page
+      const redirectUrl = searchParams.get('redirect') || '/dashboard';
+      router.push(redirectUrl);
+
+    } catch (error) {
+      console.error('Login error:', error);
+      toastError('Network error. Please check your connection and try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0 }
-  };
+  // If not client-side yet, show loading state
+  if (!isClient) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-charcoal-900">
-      {/* Ambient Background Effects */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
-            x: [0, 100, 0],
-            y: [0, -50, 0]
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-champagne-500/10 blur-[120px]"
-        />
-        <motion.div 
-          animate={{ 
-            scale: [1.2, 1, 1.2],
-            opacity: [0.2, 0.4, 0.2],
-            x: [0, -80, 0],
-            y: [0, 100, 0]
-          }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute -bottom-[10%] -right-[10%] w-[50%] h-[50%] rounded-full bg-champagne-600/10 blur-[150px]"
-        />
-      </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 via-purple-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Welcome Back</h1>
+          <p className="text-gray-600">Sign in to your Sugar Daddy Platform account</p>
+        </div>
 
-      <motion.div 
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-        className="relative z-10 w-full max-w-md px-6"
-      >
-        {/* Logo */}
-        <motion.div variants={itemVariants} className="flex justify-center mb-12">
-          <Link href="/" className="inline-flex items-center gap-3 group">
-            <div className="w-12 h-12 rounded-2xl bg-charcoal-800 border border-champagne-500/20 flex items-center justify-center transition-all duration-500 group-hover:border-champagne-500/50 group-hover:shadow-[0_0_20px_rgba(247,231,206,0.2)]">
-              <Heart className="w-6 h-6 text-champagne-500" />
-            </div>
-            <span className="text-3xl font-serif font-bold tracking-tight text-champagne-500">LuxeMatch</span>
-          </Link>
-        </motion.div>
+        <Card className="backdrop-blur-sm bg-white/80 border-none shadow-xl">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold text-center">Sign In</CardTitle>
+            <CardDescription className="text-center text-gray-600">
+              Enter your email and password to access your account
+            </CardDescription>
+          </CardHeader>
 
-        {/* Login Card */}
-        <div className="bg-charcoal-800/60 backdrop-blur-xl rounded-[2rem] p-8 md:p-10 border border-white/5 shadow-ambient">
-          <motion.div variants={itemVariants} className="text-center mb-10">
-            <h1 className="text-display-sm font-serif text-champagne-50 mb-3">Welcome Back</h1>
-            <p className="text-charcoal-400">Enter your credentials to access your sanctuary.</p>
-          </motion.div>
+          <CardContent>
+            {/* General Error Alert */}
+            {/* Toast notifications are handled by the useToast hook */}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <motion.div variants={itemVariants} className="space-y-2">
-              <Label htmlFor="email" className="text-champagne-200/70 ml-1">Email Address</Label>
-              <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-charcoal-500 transition-colors group-focus-within:text-champagne-500" />
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Email Field */}
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
-                  placeholder="name@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="pl-12 bg-charcoal-900/50 border-white/5 focus:border-champagne-500/50"
+                  placeholder="your@email.com"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className={`border-gray-300 focus:border-purple-500 focus:ring-purple-500 ${
+                    errors.email ? 'border-red-500 focus:border-red-500' : ''
+                  }`}
+                  disabled={isLoading}
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-sm">{errors.email}</p>
+                )}
               </div>
-            </motion.div>
 
-            <motion.div variants={itemVariants} className="space-y-2">
-              <div className="flex justify-between items-center ml-1">
-                <Label htmlFor="password" university-className="text-champagne-200/70">Password</Label>
-                <Link href="/forgot-password" university-className="text-xs text-champagne-500/60 hover:text-champagne-500 transition-colors">
-                  Forgot Password?
-                </Link>
+              {/* Password Field */}
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Enter your password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className={`pr-10 border-gray-300 focus:border-purple-500 focus:ring-purple-500 ${
+                      errors.password ? 'border-red-500 focus:border-red-500' : ''
+                    }`}
+                    disabled={isLoading}
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    onClick={() => setShowPassword(!showPassword)}
+                    disabled={isLoading}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    ) : (
+                      <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    )}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p className="text-red-500 text-sm">{errors.password}</p>
+                )}
               </div>
-              <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-charcoal-500 transition-colors group-focus-within:text-champagne-500" />
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="pl-12 pr-12 bg-charcoal-900/50 border-white/5 focus:border-champagne-500/50"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-charcoal-500 hover:text-champagne-500 transition-colors"
-                >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-            </motion.div>
 
-            <motion.div variants={itemVariants} className="pt-4">
-              <Button 
-                type="submit" 
-                variant="primary" 
-                className="w-full h-14 text-base tracking-widest uppercase font-medium"
-                disabled={loading}
+              {/* Remember Me & Forgot Password */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <input
+                    id="remember-me"
+                    name="remember-me"
+                    type="checkbox"
+                    className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+                    Remember me
+                  </label>
+                </div>
+                <div className="text-sm">
+                  <Link href="/forgot-password" className="font-medium text-purple-600 hover:text-purple-500">
+                    Forgot your password?
+                  </Link>
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isLoading}
               >
-                {loading ? 'Authenticating...' : 'Sign In'}
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  'Sign In'
+                )}
               </Button>
-            </motion.div>
-          </form>
+            </form>
 
-          <motion.div variants={itemVariants} className="mt-10 text-center">
-            <p className="text-charcoal-400 text-sm">
-              New to the circle?{' '}
-              <Link href="/register" className="text-champagne-500 hover:text-champagne-400 font-medium transition-colors">
-                Request Membership
-              </Link>
-            </p>
-          </motion.div>
-        </div>
-      </motion.div>
+            {/* Sign Up Link */}
+            <div className="mt-6 text-center">
+              <p className="text-sm text-gray-600">
+                Don't have an account?{' '}
+                <Link href="/register" className="font-medium text-purple-600 hover:text-purple-500">
+                  Sign up here
+                </Link>
+              </p>
+            </div>
+
+            {/* Security Notice */}
+            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+              <p className="text-xs text-gray-600 text-center">
+                🔒 Your security is our priority. All data is encrypted and protected.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

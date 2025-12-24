@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: sugar-daddy
+  labels:
+    app: sugar-daddy-platform
+    component: config
+data:
+  NODE_ENV: "production"
+  LOG_LEVEL: "info"
+  API_VERSION: "v1"
+  CORS_ORIGIN: "https://sugardaddyplatform.com,https://www.sugardaddyplatform.com"
+  RATE_LIMIT_WINDOW: "15"
+  RATE_LIMIT_MAX: "100"
+  SESSION_TIMEOUT: "86400000"
+  PASSWORD_RESET_EXPIRY: "3600000"
+  EMAIL_VERIFICATION_EXPIRY: "86400000"
+  MATCH_EXPIRY_HOURS: "24"
+  MAX_UPLOAD_SIZE: "5242880"
+  ALLOWED_FILE_TYPES: "image/jpeg,image/png,image/gif"
+  REDIS_KEY_PREFIX: "sugar_daddy:"
+  CACHE_TTL_DEFAULT: "300"
+  CACHE_TTL_USER_PROFILE: "900"
+  CACHE_TTL_MATCH_RESULTS: "300"
+  CACHE_TTL_SEARCH_RESULTS: "120"

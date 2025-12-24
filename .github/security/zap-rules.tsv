@@ -1,0 +1,32 @@
+# OWASP ZAP Security Scan Rules Configuration
+# This file contains rules for OWASP ZAP security scanning
+
+# Ignore false positives for development endpoints
+10021	IGNORE	GET	.*\/_next\/.*
+10021	IGNORE	POST	.*\/_next\/.*
+10021	IGNORE	PUT	.*\/_next\/.*
+10021	IGNORE	DELETE	.*\/_next\/.*
+
+# Ignore development server endpoints
+10021	IGNORE	GET	.*\/__webpack_hmr.*
+10021	IGNORE	GET	.*\/__nextjs_original-stacktrace.* 
+
+# Ignore common false positives for modern web applications
+10021	IGNORE	GET	.*\/api\/health.*
+10021	IGNORE	GET	.*\/api\/status.*
+10021	IGNORE	GET	.*\/favicon.ico.*
+10021	IGNORE	GET	.*\/robots.txt.*
+10021	IGNORE	GET	.*\/sitemap.xml.*
+
+# Ignore development and test endpoints
+10021	IGNORE	GET	.*\/test.*
+10021	IGNORE	GET	.*\/dev.*
+10021	IGNORE	GET	.*\/debug.*
+10021	IGNORE	GET	.*\/admin\/debug.*
+
+# Ignore common third-party resources
+10021	IGNORE	GET	.*\/cdn.*\.js.*
+10021	IGNORE	GET	.*\/cdn.*\.css.*
+10021	IGNORE	GET	.*\/fonts\/.*\.(woff|woff2|ttf|eot).*$
+10021	IGNORE	GET	.*\/images\/.*\.(png|jpg|jpeg|gif|svg).*$
+10021	IGNORE	GET	.*\/assets\/.*\.(png|jpg|jpeg|gif|svg).*$

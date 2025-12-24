@@ -3,16 +3,16 @@ import Layout from '@/components/Layout';
 import { SubscriptionManager } from '@/components/subscription/SubscriptionManager';
 
 export const metadata: Metadata = {
-  title: 'Premium Membership - Dandy Babe',
-  description: 'Upgrade to premium membership for unlimited messaging, priority matching, and exclusive features.',
+  title: 'Premium Membership - BrandyBabe.com',
+  description: 'Upgrade to premium membership for unlimited messaging, priority matching, and exclusive features on BrandyBabe.com.',
   openGraph: {
-    title: 'Premium Membership - Dandy Babe',
-    description: 'Unlock premium features with our elite membership tiers.',
-    url: `${process.env['NEXT_PUBLIC_APP_URL'] || 'https://dandybabe.com'}/subscription`,
+    title: 'Premium Membership - BrandyBabe.com',
+    description: 'Unlock premium features with our elite membership tiers on BrandyBabe.com.',
+    url: `${process.env['NEXT_PUBLIC_APP_URL'] || 'https://brandybabe.com'}/subscription`,
     type: 'website',
   },
   alternates: {
-    canonical: `${process.env['NEXT_PUBLIC_APP_URL'] || 'https://dandybabe.com'}/subscription`,
+    canonical: `${process.env['NEXT_PUBLIC_APP_URL'] || 'https://brandybabe.com'}/subscription`,
   },
 };
 

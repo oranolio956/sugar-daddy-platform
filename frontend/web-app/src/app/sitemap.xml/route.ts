@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://www.dandybabe.com'
+  const baseUrl = 'https://www.brandybabe.com'
 
   // Only include URLs that definitely exist or will exist
   return [

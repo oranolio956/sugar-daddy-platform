@@ -1,0 +1,120 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running pre-commit checks..."
+
+# Check if we're in a git repository
+if ! git rev-parse --git-dir > /dev/null 2>&1; then
+    echo "❌ Not in a git repository"
+    exit 1
+fi
+
+# Get list of staged files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+
+if [ -z "$STAGED_FILES" ]; then
+    echo "ℹ️  No staged files to check"
+    exit 0
+fi
+
+echo "📁 Checking staged files: $STAGED_FILES"
+
+# Check for sensitive information
+echo "🔒 Checking for sensitive information..."
+if echo "$STAGED_FILES" | xargs grep -l "password\|secret\|key\|token" --include="*.js" --include="*.ts" --include="*.tsx" 2>/dev/null; then
+    echo "❌ Potential sensitive information found in staged files"
+    echo "   Please review and remove any hardcoded secrets, passwords, or keys"
+    exit 1
+fi
+
+# Check for console.log statements in production files
+echo "📝 Checking for console.log statements..."
+if echo "$STAGED_FILES" | xargs grep -n "console\." --include="*.js" --include="*.ts" --include="*.tsx" 2>/dev/null | grep -v "\.test\." | grep -v "\.spec\."; then
+    echo "❌ Found console.log statements in production code"
+    echo "   Please remove or replace with proper logging"
+    exit 1
+fi
+
+# Check for TODO/FIXME comments
+echo "⚠️  Checking for TODO/FIXME comments..."
+if echo "$STAGED_FILES" | xargs grep -n "TODO\|FIXME" --include="*.js" --include="*.ts" --include="*.tsx" 2>/dev/null; then
+    echo "⚠️  Found TODO/FIXME comments in staged files"
+    echo "   Consider addressing these before committing"
+fi
+
+# Run linting for frontend files
+if echo "$STAGED_FILES" | grep -E "\.(js|jsx|ts|tsx)$" | grep -v "node_modules" | grep -v "\.test\." | grep -v "\.spec\." > /dev/null; then
+    echo "🔧 Running ESLint for frontend files..."
+    if [ -f "frontend/web-app/.eslintrc.js" ]; then
+        cd frontend/web-app
+        npm run lint 2>/dev/null || {
+            echo "❌ ESLint failed for frontend files"
+            exit 1
+        }
+        cd ../..
+    fi
+fi
+
+# Run linting for backend files
+if echo "$STAGED_FILES" | grep -E "backend/.*\.(js|ts)$" | grep -v "node_modules" | grep -v "\.test\." | grep -v "\.spec\." > /dev/null; then
+    echo "🔧 Running ESLint for backend files..."
+    if [ -f "backend/user-service/.eslintrc.js" ]; then
+        cd backend/user-service
+        npm run lint 2>/dev/null || {
+            echo "❌ ESLint failed for backend files"
+            exit 1
+        }
+        cd ../..
+    fi
+fi
+
+# Run TypeScript type checking for frontend
+if echo "$STAGED_FILES" | grep -E "frontend/.*\.(ts|tsx)$" > /dev/null; then
+    echo "🔍 Running TypeScript type checking for frontend..."
+    if [ -f "frontend/web-app/tsconfig.json" ]; then
+        cd frontend/web-app
+        npm run type-check 2>/dev/null || {
+            echo "❌ TypeScript type checking failed for frontend"
+            exit 1
+        }
+        cd ../..
+    fi
+fi
+
+# Run TypeScript type checking for backend
+if echo "$STAGED_FILES" | grep -E "backend/.*\.ts$" > /dev/null; then
+    echo "🔍 Running TypeScript type checking for backend..."
+    if [ -f "backend/user-service/tsconfig.json" ]; then
+        cd backend/user-service
+        npm run type-check 2>/dev/null || {
+            echo "❌ TypeScript type checking failed for backend"
+            exit 1
+        }
+        cd ../..
+    fi
+fi
+
+# Run Prettier formatting check
+echo "✨ Checking code formatting with Prettier..."
+if echo "$STAGED_FILES" | xargs npx prettier --check 2>/dev/null; then
+    echo "✅ Code formatting is correct"
+else
+    echo "❌ Code formatting issues found"
+    echo "   Please run 'npm run format' to fix formatting issues"
+    exit 1
+fi
+
+# Check for large files
+echo "📏 Checking for large files..."
+for file in $STAGED_FILES; do
+    if [ -f "$file" ]; then
+        size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null)
+        if [ "$size" -gt 1048576 ]; then  # 1MB
+            echo "⚠️  Large file detected: $file ($(($size / 1024))KB)"
+            echo "   Consider if this file should be in the repository"
+        fi
+    fi
+done
+
+echo "✅ Pre-commit checks passed!"
+exit 0

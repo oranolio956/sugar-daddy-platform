@@ -252,22 +252,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return () => clearInterval(activityInterval);
   }, []);
 
-  const updateLastActivity = async () => {
-    if (!user) return;
-
-    try {
-      await fetch('/api/auth/activity', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-          'Content-Type': 'application/json',
-        },
-      });
-    } catch (error) {
-      // Silent fail for activity updates
-    }
-  };
-
   const login = async (email: string, password: string, rememberMe = false) => {
     try {
       setLoading(true);

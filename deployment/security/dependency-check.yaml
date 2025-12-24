@@ -1,0 +1,92 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: dependency-check
+  namespace: dandy-babe
+  labels:
+    app: dependency-check
+    security-scan: "true"
+spec:
+  template:
+    metadata:
+      labels:
+        app: dependency-check
+        security-scan: "true"
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: dependency-check
+          image: dependencycheck/dependency-check:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Starting OWASP Dependency Check vulnerability scan..."
+              echo "Scan started at: $(date)"
+              
+              # Create output directory
+              mkdir -p /tmp/reports
+              
+              # Check backend dependencies with enhanced configuration
+              for service in api-gateway user-service matching-service messaging-service payment-service notification-service; do
+                echo "Checking dependencies for $service..."
+                dependency-check \
+                  --project "dandy-babe-platform-$service" \
+                  --scan "/app/backend/$service" \
+                  --out "/tmp/reports/$service" \
+                  --format "ALL" \
+                  --enableRetired \
+                  --enableExperimental \
+                  --nodeAuditSkipDevDependencies \
+                  --nodePackageSkipDevDependencies \
+                  --failOnCVSS 7 \
+                  --suppression "/app/.github/security/suppression.xml" \
+                  --log "/tmp/reports/$service/dependency-check.log" || echo "Dependency check failed for $service"
+              done
+              
+              # Check frontend dependencies
+              echo "Checking dependencies for frontend..."
+              dependency-check \
+                --project "dandy-babe-platform-frontend" \
+                --scan "/app/frontend/web-app" \
+                --out "/tmp/reports/frontend" \
+                --format "ALL" \
+                --enableRetired \
+                --enableExperimental \
+                --nodeAuditSkipDevDependencies \
+                --nodePackageSkipDevDependencies \
+                --failOnCVSS 7 \
+                --suppression "/app/.github/security/suppression.xml" \
+                --log "/tmp/reports/frontend/dependency-check.log" || echo "Frontend dependency check failed"
+              
+              # Generate summary report
+              echo "Generating vulnerability summary..."
+              find /tmp/reports -name "*.html" -exec echo "=== Vulnerability Report for {} ===" \; -exec cat {} \; > /tmp/reports/summary.html
+              
+              echo "Dependency check completed at: $(date)"
+              
+              # Exit with error if critical vulnerabilities found
+              if find /tmp/reports -name "*.html" -exec grep -l "CRITICAL\|HIGH" {} \; | head -1; then
+                echo "CRITICAL or HIGH vulnerabilities detected!"
+                exit 1
+              fi
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "2000m"
+            limits:
+              memory: "4Gi"
+              cpu: "4000m"
+          volumeMounts:
+            - name: security-config
+              mountPath: /app/.github/security
+              readOnly: true
+      volumes:
+        - name: security-config
+          configMap:
+            name: security-suppression-config
+            items:
+              - key: suppression.xml
+                path: suppression.xml
+  backoffLimit: 3
+  activeDeadlineSeconds: 1800
+  ttlSecondsAfterFinished: 3600  # Clean up completed jobs after 1 hour

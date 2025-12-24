@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
 import Layout from '@/components/Layout';
+import MetaTags from '@/components/seo/MetaTags';
+import Breadcrumbs from '@/components/seo/Breadcrumbs';
+import DatingSchema from '@/components/seo/DatingSchema';
 
 export const metadata: Metadata = {
   title: 'Seeking.com Alternatives That Actually Work - Real User Results',
@@ -16,11 +19,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Seeking.com Alternatives That Actually Work - Real Results',
     description: 'Frustrated with Seeking.com? Discover verified alternatives with real profiles and transparent pricing.',
-    url: `${process.env['NEXT_PUBLIC_APP_URL'] || 'https://dandybabe.com'}/shadow/seeking-alternative`,
+    url: `${process.env['NEXT_PUBLIC_APP_URL'] || 'https://brandybabe.com'}/shadow/seeking-alternative`,
     type: 'website',
     images: [
       {
-        url: 'https://www.dandybabe.com/shadow-og-image.jpg',
+        url: 'https://www.brandybabe.com/shadow-og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'Seeking.com Alternatives - Real Sugar Dating Success',
@@ -31,13 +34,63 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Seeking.com Alternatives That Actually Work',
     description: 'Frustrated with Seeking.com? Discover verified alternatives with real profiles.',
-    images: ['https://www.dandybabe.com/shadow-og-image.jpg'],
+    images: ['https://www.brandybabe.com/shadow-og-image.jpg'],
   },
 };
 
 export default function SeekingAlternativeShadowPage() {
   return (
     <Layout>
+      {/* SEO Meta Tags */}
+      <MetaTags
+        title="Seeking.com Alternatives That Actually Work - Real User Results"
+        description="Frustrated with Seeking.com? Discover verified alternatives with real profiles, transparent pricing, and no fake accounts. Join thousands who found success elsewhere."
+        keywords={['seeking.com alternative', 'sugar dating sites', 'sugar daddy platform', 'sugar baby dating', 'verified sugar dating', 'seeking.com alternatives', 'sugar dating reviews']}
+        canonical={`${process.env['NEXT_PUBLIC_APP_URL'] || 'https://brandybabe.com'}/shadow/seeking-alternative`}
+        ogTitle="Seeking.com Alternatives That Actually Work - Real Results"
+        ogDescription="Frustrated with Seeking.com? Discover verified alternatives with real profiles and transparent pricing."
+        ogImage="https://www.brandybabe.com/shadow-og-image.jpg"
+        ogUrl={`${process.env['NEXT_PUBLIC_APP_URL'] || 'https://brandybabe.com'}/shadow/seeking-alternative`}
+        twitterTitle="Seeking.com Alternatives That Actually Work"
+        twitterDescription="Frustrated with Seeking.com? Discover verified alternatives with real profiles."
+        twitterImage="https://www.brandybabe.com/shadow-og-image.jpg"
+        robots="noindex, nofollow"
+        schemaType="WebPage"
+        author="BrandyBabe.com Team"
+        category="comparison"
+        tags={['seeking.com', 'alternatives', 'sugar dating', 'reviews', 'comparison']}
+        siteName="BrandyBabe.com"
+        type="website"
+      />
+
+      {/* Dating Schema Markup */}
+      <DatingSchema
+        type="Service"
+        name="BrandyBabe.com"
+        description="Premium sugar daddy dating platform offering a superior alternative to Seeking.com with verified profiles and transparent pricing."
+        url={`${process.env['NEXT_PUBLIC_APP_URL'] || 'https://brandybabe.com'}/shadow/seeking-alternative`}
+        logo="https://www.brandybabe.com/logo.png"
+        foundingDate="2024"
+        contactType="Customer Service"
+        telephone="+1-555-BRANDY"
+        email="support@brandybabe.com"
+        priceRange="$$$"
+        serviceType="Online Dating Service"
+        audience={{
+          ageMin: 18,
+          ageMax: 65,
+          gender: "Unspecified"
+        }}
+        keywords={['seeking.com alternative', 'sugar dating', 'verified profiles', 'transparent pricing', 'premium dating']}
+      />
+
+      {/* Breadcrumbs */}
+      <div className="container-custom py-4">
+        <Breadcrumbs
+          items={[{ label: 'Seeking.com Alternative', current: true }]}
+          className="text-sm text-neutral-500"
+        />
+      </div>
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center bg-charcoal-900">
         <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-orange-500/10" />
@@ -160,9 +213,9 @@ export default function SeekingAlternativeShadowPage() {
                 </div>
               </div>
 
-              {/* Dandy Babe Column */}
+              {/* BrandyBabe.com Column */}
               <div className="bg-champagne-500/10 border border-champagne-500/20 rounded-3xl p-8">
-                <h3 className="text-2xl font-display font-bold text-champagne-500 mb-6">Dandy Babe Reality</h3>
+                <h3 className="text-2xl font-display font-bold text-champagne-500 mb-6">BrandyBabe.com Reality</h3>
 
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">

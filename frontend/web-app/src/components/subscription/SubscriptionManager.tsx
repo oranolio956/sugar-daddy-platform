@@ -117,39 +117,39 @@ export const SubscriptionManager: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
+    <div className="max-w-2xl lg:max-w-6xl mx-auto space-y-6 lg:space-y-8">
       {/* Current Subscription Status */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-3">
               {getTierIcon(currentTier)}
-              Current Subscription
+              <span className="text-lg lg:text-xl">Current Subscription</span>
             </CardTitle>
-            <Badge className={`${tierColors[currentTier]} border-current`}>
+            <Badge className={`${tierColors[currentTier]} border-current text-sm lg:text-base`}>
               {SUBSCRIPTION_TIERS[currentTier].name}
             </Badge>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
             <div>
-              <p className="text-sm text-neutral-500 mb-1">Status</p>
-              <p className="font-semibold capitalize">{user.subscription.status}</p>
+              <p className="text-xs lg:text-sm text-neutral-500 mb-1">Status</p>
+              <p className="font-semibold capitalize text-sm lg:text-base">{user.subscription.status}</p>
             </div>
             {user.subscription.expiresAt && (
               <div>
-                <p className="text-sm text-neutral-500 mb-1">Renews</p>
-                <p className="font-semibold">
+                <p className="text-xs lg:text-sm text-neutral-500 mb-1">Renews</p>
+                <p className="font-semibold text-sm lg:text-base">
                   {new Date(user.subscription.expiresAt).toLocaleDateString()}
                 </p>
               </div>
             )}
             <div>
-              <p className="text-sm text-neutral-500 mb-1">Price</p>
-              <p className="font-semibold">
+              <p className="text-xs lg:text-sm text-neutral-500 mb-1">Price</p>
+              <p className="font-semibold text-sm lg:text-base">
                 {currentTier === 'free' ? 'Free' : formatPrice(SUBSCRIPTION_TIERS[currentTier].price)}
-                {currentTier !== 'free' && <span className="text-sm text-neutral-500">/month</span>}
+                {currentTier !== 'free' && <span className="text-xs lg:text-sm text-neutral-500">/month</span>}
               </p>
             </div>
           </div>
@@ -159,32 +159,32 @@ export const SubscriptionManager: React.FC = () => {
       {/* Upgrade Suggestion */}
       {upgradeSuggestion && (
         <Card className="border-champagne-500/20 bg-gradient-to-r from-champagne-500/5 to-transparent">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
+          <CardContent className="pt-4 lg:pt-6">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
               <div>
-                <h3 className="text-lg font-semibold text-champagne-500 mb-2">
+                <h3 className="text-lg lg:text-xl font-semibold text-champagne-500 mb-2">
                   Upgrade to {upgradeSuggestion.name}
                 </h3>
-                <p className="text-neutral-600 mb-3">
+                <p className="text-sm lg:text-base text-neutral-600 mb-3">
                   Unlock {upgradeSuggestion.newFeatures.length} new premium features
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {upgradeSuggestion.newFeatures.map(feature => (
-                    <Badge key={feature} variant="outline" className="text-xs">
+                    <Badge key={feature} variant="outline" className="text-xs lg:text-sm">
                       {FEATURE_DESCRIPTIONS[feature]}
                     </Badge>
                   ))}
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-2xl font-bold text-champagne-500 mb-2">
+                <p className="text-xl lg:text-2xl font-bold text-champagne-500 mb-2">
                   {formatPrice(upgradeSuggestion.price)}
-                  <span className="text-sm font-normal">/month</span>
+                  <span className="text-sm lg:text-sm font-normal">/month</span>
                 </p>
                 <Button
                   onClick={() => handleSubscriptionChange(upgradeSuggestion.tier as SubscriptionTier)}
                   disabled={loading}
-                  className="bg-champagne-500 hover:bg-champagne-600 text-charcoal-900"
+                  className="bg-champagne-500 hover:bg-champagne-600 text-charcoal-900 touch-target"
                 >
                   Upgrade Now
                 </Button>
@@ -195,7 +195,7 @@ export const SubscriptionManager: React.FC = () => {
       )}
 
       {/* Subscription Tiers Comparison */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6">
         {(Object.keys(SUBSCRIPTION_TIERS) as SubscriptionTier[]).map((tier) => {
           const tierInfo = SUBSCRIPTION_TIERS[tier];
           const isCurrentTier = tier === currentTier;
@@ -212,56 +212,56 @@ export const SubscriptionManager: React.FC = () => {
             >
               {isCurrentTier && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <Badge className="bg-champagne-500 text-charcoal-900">Current Plan</Badge>
+                  <Badge className="bg-champagne-500 text-charcoal-900 text-sm lg:text-base">Current Plan</Badge>
                 </div>
               )}
 
-              <CardHeader className="text-center pb-4">
+              <CardHeader className="text-center pb-3 lg:pb-4">
                 <div className="flex justify-center mb-3">
                   {getTierIcon(tier)}
                 </div>
-                <CardTitle className="text-xl">{tierInfo.name}</CardTitle>
-                <div className="text-3xl font-bold">
+                <CardTitle className="text-lg lg:text-xl">{tierInfo.name}</CardTitle>
+                <div className="text-2xl lg:text-3xl font-bold">
                   {tier === 'free' ? 'Free' : (
                     <>
                       {formatPrice(billingInterval === 'year' ? pricing.yearly / 12 : pricing.monthly)}
-                      <span className="text-sm font-normal text-neutral-500">
+                      <span className="text-xs lg:text-sm font-normal text-neutral-500">
                         /{billingInterval === 'year' ? 'mo' : 'month'}
                       </span>
                     </>
                   )}
                 </div>
                 {billingInterval === 'year' && tier !== 'free' && (
-                  <p className="text-sm text-green-600">
+                  <p className="text-xs lg:text-sm text-green-600">
                     Save {formatPrice(pricing.savings)} yearly
                   </p>
                 )}
-                <p className="text-sm text-neutral-600 mt-2">{tierInfo.description}</p>
+                <p className="text-xs lg:text-sm text-neutral-600 mt-2">{tierInfo.description}</p>
               </CardHeader>
 
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3 lg:space-y-4">
                 <div className="space-y-2">
                   {tierInfo.features.slice(0, 5).map((feature) => (
-                    <div key={feature} className="flex items-center gap-2 text-sm">
+                    <div key={feature} className="flex items-center gap-2 text-sm lg:text-base">
                       <Check className="w-4 h-4 text-green-500 flex-shrink-0" />
                       <span>{FEATURE_DESCRIPTIONS[feature]}</span>
                     </div>
                   ))}
                   {tierInfo.features.length > 5 && (
-                    <p className="text-xs text-neutral-500">
+                    <p className="text-xs lg:text-xs text-neutral-500">
                       +{tierInfo.features.length - 5} more features
                     </p>
                   )}
                 </div>
 
                 <Button
-                  className={`w-full ${
+                  className={`w-full py-3 lg:py-4 text-sm lg:text-base ${
                     isCurrentTier
                       ? 'bg-neutral-100 text-neutral-500 cursor-not-allowed'
                       : tier === 'free'
                       ? 'bg-neutral-600 hover:bg-neutral-700'
                       : 'bg-gradient-gold text-charcoal-900 hover:shadow-lg'
-                  }`}
+                  } touch-target-lg`}
                   disabled={isCurrentTier || loading}
                   onClick={() => handleSubscriptionChange(tier)}
                 >
@@ -278,24 +278,24 @@ export const SubscriptionManager: React.FC = () => {
         <div className="bg-charcoal-800 p-1 rounded-lg flex">
           <button
             onClick={() => setBillingInterval('month')}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            className={`px-3 lg:px-4 py-2 rounded-md text-sm lg:text-base font-medium transition-colors ${
               billingInterval === 'month'
                 ? 'bg-champagne-500 text-charcoal-900'
                 : 'text-neutral-400 hover:text-white'
-            }`}
+            } touch-target`}
           >
             Monthly
           </button>
           <button
             onClick={() => setBillingInterval('year')}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            className={`px-3 lg:px-4 py-2 rounded-md text-sm lg:text-base font-medium transition-colors ${
               billingInterval === 'year'
                 ? 'bg-champagne-500 text-charcoal-900'
                 : 'text-neutral-400 hover:text-white'
-            }`}
+            } touch-target`}
           >
             Yearly
-            <Badge className="ml-2 bg-green-600 text-white text-xs">Save 20%</Badge>
+            <Badge className="ml-2 bg-green-600 text-white text-xs lg:text-sm">Save 20%</Badge>
           </button>
         </div>
       </div>
@@ -303,16 +303,16 @@ export const SubscriptionManager: React.FC = () => {
       {/* Feature Comparison Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Complete Feature Comparison</CardTitle>
+          <CardTitle className="text-lg lg:text-xl">Complete Feature Comparison</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full min-w-[600px]">
               <thead>
                 <tr className="border-b border-neutral-700">
-                  <th className="text-left py-3 px-4 font-semibold">Feature</th>
+                  <th className="text-left py-3 px-3 lg:px-4 font-semibold text-sm lg:text-base">Feature</th>
                   {(Object.keys(SUBSCRIPTION_TIERS) as SubscriptionTier[]).map((tier) => (
-                    <th key={tier} className="text-center py-3 px-4 font-semibold">
+                    <th key={tier} className="text-center py-3 px-3 lg:px-4 font-semibold text-sm lg:text-base">
                       {SUBSCRIPTION_TIERS[tier].name}
                     </th>
                   ))}
@@ -321,16 +321,16 @@ export const SubscriptionManager: React.FC = () => {
               <tbody>
                 {Object.entries(FEATURE_DESCRIPTIONS).map(([feature, description]) => (
                   <tr key={feature} className="border-b border-neutral-800">
-                    <td className="py-3 px-4 flex items-center gap-2">
+                    <td className="py-3 px-3 lg:px-4 flex items-center gap-2">
                       {getFeatureIcon(feature)}
-                      <span className="text-sm">{description}</span>
+                      <span className="text-sm lg:text-base">{description}</span>
                     </td>
                     {(Object.keys(SUBSCRIPTION_TIERS) as SubscriptionTier[]).map((tier) => (
-                      <td key={tier} className="text-center py-3 px-4">
+                      <td key={tier} className="text-center py-3 px-3 lg:px-4">
                         {SUBSCRIPTION_TIERS[tier].features.includes(feature) ? (
-                          <Check className="w-5 h-5 text-green-500 mx-auto" />
+                          <Check className="w-4 lg:w-5 h-4 lg:h-5 text-green-500 mx-auto" />
                         ) : (
-                          <X className="w-5 h-5 text-red-500 mx-auto" />
+                          <X className="w-4 lg:w-5 h-4 lg:h-5 text-red-500 mx-auto" />
                         )}
                       </td>
                     ))}

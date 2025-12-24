@@ -1,5 +1,5 @@
 {
-  "name": "sugar-daddy-matching-service",
+  "name": "dandy-babe-matching-service",
   "version": "1.0.0",
   "description": "Matching Service for Sugar Daddy Platform",
   "private": true,
@@ -40,7 +40,7 @@
     "nodemon": "^3.0.2"
   },
   "engines": {
-    "node": ">=24.0.0",
-    "npm": ">=24.0.0"
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   }
 }

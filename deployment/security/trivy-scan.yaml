@@ -1,0 +1,93 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: trivy-security-scan
+  namespace: dandy-babe
+  labels:
+    app: trivy-security-scan
+    security-scan: "true"
+spec:
+  template:
+    metadata:
+      labels:
+        app: trivy-security-scan
+        security-scan: "true"
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: trivy-scan
+          image: aquasec/trivy:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Starting Trivy security vulnerability scan..."
+              echo "Scan started at: $(date)"
+              
+              # Create output directory
+              mkdir -p /tmp/scan-results
+              
+              # Scan all running pods for vulnerabilities
+              echo "Scanning running pods..."
+              kubectl get pods -n dandy-babe -o name | while read pod; do
+                echo "Scanning pod: $pod"
+                kubectl exec -n dandy-babe $pod -- trivy fs / \
+                  --format json \
+                  --output /tmp/scan-results/pod-$(basename $pod)-scan.json \
+                  --severity HIGH,CRITICAL \
+                  --ignore-unfixed \
+                  --timeout 300s || echo "Scan failed for $pod"
+              done
+              
+              # Scan container images
+              echo "Scanning container images..."
+              kubectl get pods -n dandy-babe -o jsonpath='{range .items[*]}{.spec.containers[*].image}{"\n"}{end}' | sort -u | while read image; do
+                echo "Scanning image: $image"
+                trivy image \
+                  --format json \
+                  --output /tmp/scan-results/image-$(echo $image | tr '/' '-' | tr ':' '-')-scan.json \
+                  --severity HIGH,CRITICAL \
+                  --ignore-unfixed \
+                  --timeout 600s \
+                  $image || echo "Image scan failed for $image"
+              done
+              
+              # Scan filesystem for secrets and configuration issues
+              echo "Scanning for secrets and configuration issues..."
+              trivy fs \
+                --format json \
+                --output /tmp/scan-results/filesystem-secrets.json \
+                --scanners secret,config \
+                /app || echo "Filesystem scan failed"
+              
+              # Generate summary report
+              echo "Generating vulnerability summary..."
+              echo "=== Trivy Security Scan Summary ===" > /tmp/scan-results/summary.txt
+              echo "Scan completed at: $(date)" >> /tmp/scan-results/summary.txt
+              echo "" >> /tmp/scan-results/summary.txt
+              
+              # Count vulnerabilities
+              find /tmp/scan-results -name "*.json" -exec jq -r '.Results[] | .Vulnerabilities[]? | select(.Severity == "CRITICAL" or .Severity == "HIGH") | .VulnerabilityID + " (" + .Severity + ")"' {} \; | sort | uniq -c | sort -nr >> /tmp/scan-results/summary.txt
+              
+              echo "Trivy security scan completed at: $(date)"
+              
+              # Exit with error if critical vulnerabilities found
+              if find /tmp/scan-results -name "*.json" -exec jq -e '.Results[] | .Vulnerabilities[]? | select(.Severity == "CRITICAL")' {} \; 2>/dev/null; then
+                echo "CRITICAL vulnerabilities detected!"
+                exit 1
+              fi
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "1000m"
+            limits:
+              memory: "2Gi"
+              cpu: "2000m"
+          volumeMounts:
+            - name: scan-results
+              mountPath: /tmp/scan-results
+      volumes:
+        - name: scan-results
+          emptyDir: {}
+  backoffLimit: 3
+  activeDeadlineSeconds: 1800
+  ttlSecondsAfterFinished: 3600  # Clean up completed jobs after 1 hour

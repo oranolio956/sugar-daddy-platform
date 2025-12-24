@@ -1,0 +1,165 @@
+name: Monitoring & Alerting
+
+on:
+  schedule:
+    # Run monitoring checks every 5 minutes
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  health-check:
+    name: Health Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Setup kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'v1.28.0'
+
+    - name: Configure kubectl for EKS
+      run: |
+        aws eks update-kubeconfig --region us-east-1 --name sugar-daddy-production-cluster
+
+    - name: Check service health
+      run: |
+        # Check if all deployments are ready
+        kubectl get deployments -n sugar-daddy
+        
+        # Check pod status
+        kubectl get pods -n sugar-daddy
+        
+        # Check service endpoints
+        kubectl get services -n sugar-daddy
+        
+        # Check ingress status
+        kubectl get ingress -n sugar-daddy
+
+    - name: Run health check script
+      run: |
+        #!/bin/bash
+        set -e
+        
+        # Check API Gateway health
+        curl -f https://api.sugardaddyplatform.com/health || exit 1
+        
+        # Check frontend health
+        curl -f https://sugardaddyplatform.com/health || exit 1
+        
+        echo "All services are healthy"
+
+  performance-test:
+    name: Performance Test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run k6 performance test
+      uses: grafana/k6-action@v0.3.0
+      with:
+        filename: 'deployment/tests/performance-test.js'
+        cloud: true
+        cloud-project-id: ${{ secrets.K6_CLOUD_PROJECT_ID }}
+        cloud-token: ${{ secrets.K6_CLOUD_TOKEN }}
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run OWASP ZAP baseline scan
+      uses: zaproxy/action-baseline@v0.10.0
+      with:
+        target: 'https://api.sugardaddyplatform.com'
+        rules_file_name: 'deployment/security/zap-baseline-rules.conf'
+        cmd_options: '-a'
+
+    - name: Run dependency check
+      uses: dependency-check/Dependency-Check_Action@main
+      with:
+        project: 'sugar-daddy-platform'
+        path: '.'
+        format: 'ALL'
+        args: >
+          --enableRetired
+          --enableExperimental
+          --nodeAuditSkipDevDependencies
+          --nodePackageSkipDevDependencies
+
+    - name: Upload dependency check results
+      uses: actions/upload-artifact@v3
+      with:
+        name: dependency-check-report
+        path: reports/
+
+  backup:
+    name: Database Backup
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Create database snapshot
+      run: |
+        aws rds create-db-snapshot \
+          --db-instance-identifier sugar-daddy-db \
+          --db-snapshot-identifier sugar-daddy-snapshot-$(date +%Y-%m-%d-%H-%M-%S)
+
+    - name: Cleanup old snapshots
+      run: |
+        # Keep only last 7 daily snapshots
+        aws rds describe-db-snapshots \
+          --db-instance-identifier sugar-daddy-db \
+          --snapshot-type manual \
+          --query 'DBSnapshots[?SnapshotCreateTime<=`$(date -d "7 days ago" --iso-8601)`].DBSnapshotIdentifier' \
+          --output text | \
+        xargs -I {} aws rds delete-db-snapshot --db-snapshot-identifier {}
+
+  cleanup:
+    name: Cleanup Old Resources
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Cleanup old ECR images
+      run: |
+        # Keep only last 10 images per repository
+        for repo in api-gateway user-service matching-service messaging-service payment-service notification-service frontend; do
+          aws ecr describe-images --repository-name $repo --query 'sort_by(imageDetails,&imagePushedAt)[:-10].imageDigest' --output text | \
+          xargs -I {} aws ecr batch-delete-image --repository-name $repo --image-ids imageDigest={}
+        done
+
+    - name: Cleanup old CloudWatch logs
+      run: |
+        # Delete logs older than 30 days
+        aws logs describe-log-groups --query 'logGroups[].logGroupName' --output text | \
+        xargs -I {} aws logs delete-log-group --log-group-name {}

@@ -1,5 +1,5 @@
 {
-  "name": "sugar-daddy-notification-service",
+  "name": "dandy-babe-notification-service",
   "version": "1.0.0",
   "description": "Notification Service for Sugar Daddy Platform",
   "private": true,
@@ -24,7 +24,8 @@
     "reflect-metadata": "^0.1.13",
     "class-validator": "^0.14.0",
     "class-transformer": "^0.5.1",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "nodemailer": "^6.9.8"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
@@ -41,7 +42,7 @@
     "nodemon": "^3.0.2"
   },
   "engines": {
-    "node": ">=24.0.0",
-    "npm": ">=24.0.0"
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   }
 }

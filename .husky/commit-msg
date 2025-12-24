@@ -1,0 +1,39 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "📝 Validating commit message format..."
+
+# Check commit message format
+commit_regex='^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?: .{1,50}'
+
+if ! grep -qE "$commit_regex" "$1"; then
+    echo "❌ Invalid commit message format!"
+    echo ""
+    echo "Commit message should follow Conventional Commits format:"
+    echo "  <type>[optional scope]: <description>"
+    echo ""
+    echo "Types: feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert"
+    echo ""
+    echo "Examples:"
+    echo "  feat: add user registration"
+    echo "  fix: resolve login timeout issue"
+    echo "  docs: update API documentation"
+    echo "  refactor: improve error handling"
+    echo ""
+    exit 1
+fi
+
+# Check for breaking changes
+if grep -q "BREAKING CHANGE" "$1"; then
+    echo "⚠️  Breaking change detected"
+    echo "   Ensure this is intentional and documented"
+fi
+
+# Check for issue references
+if ! grep -qE "#[0-9]+" "$1" && ! grep -qE "no-issue" "$1"; then
+    echo "⚠️  No issue reference found"
+    echo "   Consider adding #issue-number or 'no-issue' to your commit message"
+fi
+
+echo "✅ Commit message format is valid"
+exit 0

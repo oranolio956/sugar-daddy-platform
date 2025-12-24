@@ -1,0 +1,78 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+metadata:
+  name: dandy-babe-staging
+
+resources:
+  - ../../kubernetes/namespace.yaml
+  - ../../kubernetes/configmaps/app-config.yaml
+  - ../../kubernetes/secrets/app-secrets.yaml
+  - ../../kubernetes/services/
+  - ../../kubernetes/deployments/
+
+configMapGenerator:
+  - name: app-config-staging
+    literals:
+      - NODE_ENV=staging
+      - LOG_LEVEL=info
+      - CORS_ORIGIN=https://staging.dandybabe.com
+      - RATE_LIMIT_WINDOW=30
+      - RATE_LIMIT_MAX=500
+      - SESSION_TIMEOUT=7200000
+      - PASSWORD_RESET_EXPIRY=1800000
+      - EMAIL_VERIFICATION_EXPIRY=86400000
+      - MATCH_EXPIRY_HOURS=12
+      - MAX_UPLOAD_SIZE=5242880
+      - ALLOWED_FILE_TYPES=image/jpeg,image/png,image/gif
+      - CACHE_TTL_DEFAULT=300
+      - CACHE_TTL_USER_PROFILE=900
+      - CACHE_TTL_MATCH_RESULTS=300
+      - CACHE_TTL_SEARCH_RESULTS=120
+
+secretGenerator:
+  - name: app-secrets-staging
+    literals:
+      - jwt-secret=staging-jwt-secret-key-change-in-production
+      - db-username=staging_user
+      - db-password=staging_password
+      - db-host=postgres-staging
+      - db-name=sugar_daddy_staging
+      - redis-password=staging_redis_password
+      - redis-host=redis-staging
+      - smtp-host=smtp.gmail.com
+      - smtp-port=587
+      - smtp-user=staging-email@dandybabe.com
+      - smtp-password=staging-app-password
+      - smtp-from=staging-noreply@dandybabe.com
+      - stripe-secret-key=sk_test_staging_stripe_key
+      - stripe-publishable-key=pk_test_staging_stripe_key
+      - paypal-client-id=staging_paypal_client_id
+      - paypal-client-secret=staging_paypal_client_secret
+      - aws-access-key-id=staging_aws_access_key_id
+      - aws-secret-access-key=staging_aws_secret_access_key
+      - aws-region=us-east-1
+      - s3-bucket-name=dandy-babe-staging-uploads
+      - grafana-password=admin
+      - prometheus-retention=336h
+      - encryption-key=staging-32-character-encryption-key
+      - two-factor-secret=staging-two-factor-secret-key
+
+patchesStrategicMerge:
+  - deployment-patches.yaml
+
+images:
+  - name: ghcr.io/dandy-babe-platform/api-gateway
+    newTag: staging-latest
+  - name: ghcr.io/dandy-babe-platform/user-service
+    newTag: staging-latest
+  - name: ghcr.io/dandy-babe-platform/matching-service
+    newTag: staging-latest
+  - name: ghcr.io/dandy-babe-platform/messaging-service
+    newTag: staging-latest
+  - name: ghcr.io/dandy-babe-platform/payment-service
+    newTag: staging-latest
+  - name: ghcr.io/dandy-babe-platform/notification-service
+    newTag: staging-latest
+  - name: ghcr.io/dandy-babe-platform/frontend
+    newTag: staging-latest

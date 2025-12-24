@@ -1,0 +1,298 @@
+name: Security Scanning Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run security scans daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      scan_type:
+        description: 'Type of security scan to run'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+        - full
+        - dependencies-only
+        - containers-only
+        - web-app-only
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  dependency-scan:
+    name: Dependency Vulnerability Scan
+    runs-on: ubuntu-latest
+    if: github.event.inputs.scan_type != 'containers-only'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run OWASP Dependency Check
+      uses: dependency-check/Dependency-Check_Action@main
+      with:
+        project: 'sugar-daddy-platform'
+        path: '.'
+        format: 'ALL'
+        args: >
+          --enableRetired
+          --enableExperimental
+          --nodeAuditSkipDevDependencies
+          --nodePackageSkipDevDependencies
+          --failOnCVSS 7
+          --suppression suppression.xml
+      continue-on-error: true
+
+    - name: Upload dependency scan results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: dependency-scan-results
+        path: reports/
+
+  container-scan:
+    name: Container Security Scan
+    runs-on: ubuntu-latest
+    if: github.event.inputs.scan_type != 'web-app-only'
+    
+    strategy:
+      matrix:
+        service: [user-service, api-gateway, frontend, matching-service, messaging-service, payment-service, notification-service]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build container for scanning
+      run: |
+        cd backend/${{ matrix.service }}
+        docker build -t ${{ matrix.service }}:scan .
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: '${{ matrix.service }}:scan'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        severity: 'CRITICAL,HIGH'
+        exit-code: '1'
+      continue-on-error: true
+
+    - name: Upload Trivy scan results
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+    - name: Run container filesystem scan
+      run: |
+        trivy fs --format sarif --output container-fs-results.sarif backend/${{ matrix.service }}
+      continue-on-error: true
+
+  web-app-security-scan:
+    name: Web Application Security Scan
+    runs-on: ubuntu-latest
+    if: github.event.inputs.scan_type != 'dependencies-only'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: |
+        cd frontend/web-app
+        npm ci
+
+    - name: Build application
+      run: |
+        cd frontend/web-app
+        npm run build
+
+    - name: Start development server
+      run: |
+        cd frontend/web-app
+        npm start &
+        sleep 30
+      env:
+        PORT: 3000
+
+    - name: Run OWASP ZAP Baseline Scan
+      uses: zaproxy/action-baseline@v0.10.0
+      with:
+        target: 'http://localhost:3000'
+        rules_file_name: '.zap/rules.tsv'
+        cmd_options: '-a'
+      continue-on-error: true
+
+    - name: Run OWASP ZAP Full Scan
+      uses: zaproxy/action-full-scan@v0.7.0
+      with:
+        target: 'http://localhost:3000'
+        rules_file_name: '.zap/rules.tsv'
+        cmd_options: '-a'
+      continue-on-error: true
+
+    - name: Upload ZAP scan results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: zap-scan-results
+        path: |
+          report_html.html
+          report_json.json
+          report_md.md
+
+  secrets-scan:
+    name: Secrets and Credentials Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Run TruffleHog OSS
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: main
+        head: HEAD
+        extra_args: --debug --only-verified
+
+    - name: Run GitLeaks
+      uses: gitleaks/gitleaks-action@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+  license-compliance:
+    name: License Compliance Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run License Finder
+      uses: licensefinder/licensefinder@main
+      with:
+        project_path: '.'
+        command: 'license_finder report --format html --columns approved name version licenses'
+      continue-on-error: true
+
+    - name: Upload license report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: license-report
+        path: license-report.html
+
+  security-summary:
+    name: Security Scan Summary
+    runs-on: ubuntu-latest
+    needs: [dependency-scan, container-scan, web-app-security-scan, secrets-scan, license-compliance]
+    if: always()
+    
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: scan-results/
+
+    - name: Generate security summary
+      run: |
+        echo "## Security Scan Summary" > security-summary.md
+        echo "" >> security-summary.md
+        echo "**Scan Date:** $(date)" >> security-summary.md
+        echo "**Branch:** ${{ github.ref_name }}" >> security-summary.md
+        echo "**Commit:** ${{ github.sha }}" >> security-summary.md
+        echo "" >> security-summary.md
+        echo "### Scan Results" >> security-summary.md
+        echo "- Dependency Scan: ${{ needs.dependency-scan.result }}" >> security-summary.md
+        echo "- Container Scan: ${{ needs.container-scan.result }}" >> security-summary.md
+        echo "- Web App Scan: ${{ needs.web-app-security-scan.result }}" >> security-summary.md
+        echo "- Secrets Scan: ${{ needs.secrets-scan.result }}" >> security-summary.md
+        echo "- License Compliance: ${{ needs.license-compliance.result }}" >> security-summary.md
+        echo "" >> security-summary.md
+        echo "### Artifacts" >> security-summary.md
+        echo "All scan results are available in the workflow artifacts." >> security-summary.md
+
+    - name: Upload security summary
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-summary
+        path: security-summary.md
+
+  notify-security-team:
+    name: Notify Security Team
+    runs-on: ubuntu-latest
+    needs: [dependency-scan, container-scan, web-app-security-scan, secrets-scan]
+    if: failure()
+    
+    steps:
+    - name: Send Slack notification
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        channel: '#security-alerts'
+        fields: repo,message,commit,author,action,eventName,ref,workflow
+        text: |
+          Security scan failed for ${{ github.repository }}
+          Please review the scan results and address any critical vulnerabilities.
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Create security issue
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: 'Security Scan Alert: Vulnerabilities Found',
+            body: `
+              ## Security Alert
+              
+              Security scans have detected vulnerabilities in the codebase.
+              
+              **Details:**
+              - Repository: ${{ github.repository }}
+              - Branch: ${{ github.ref_name }}
+              - Commit: ${{ github.sha }}
+              - Scan Date: ${new Date().toISOString()}
+              
+              **Action Required:**
+              Please review the scan results in the workflow artifacts and address any critical vulnerabilities.
+              
+              **Scan Results:**
+              - Dependency Scan: ${{ needs.dependency-scan.result }}
+              - Container Scan: ${{ needs.container-scan.result }}
+              - Web App Scan: ${{ needs.web-app-security-scan.result }}
+              - Secrets Scan: ${{ needs.secrets-scan.result }}
+              
+              **Next Steps:**
+              1. Review the detailed scan results
+              2. Prioritize fixes based on severity
+              3. Update dependencies with known vulnerabilities
+              4. Fix any security issues found
+              5. Re-run scans to verify fixes
+            `,
+            labels: ['security', 'vulnerability', 'high-priority']
+          })

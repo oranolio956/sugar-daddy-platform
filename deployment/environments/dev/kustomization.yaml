@@ -1,0 +1,78 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+metadata:
+  name: dandy-babe-dev
+
+resources:
+  - ../../kubernetes/namespace.yaml
+  - ../../kubernetes/configmaps/app-config.yaml
+  - ../../kubernetes/secrets/app-secrets.yaml
+  - ../../kubernetes/services/
+  - ../../kubernetes/deployments/
+
+configMapGenerator:
+  - name: app-config-dev
+    literals:
+      - NODE_ENV=development
+      - LOG_LEVEL=debug
+      - CORS_ORIGIN=http://localhost:3000,http://localhost:3001
+      - RATE_LIMIT_WINDOW=60
+      - RATE_LIMIT_MAX=1000
+      - SESSION_TIMEOUT=1800000
+      - PASSWORD_RESET_EXPIRY=1800000
+      - EMAIL_VERIFICATION_EXPIRY=1800000
+      - MATCH_EXPIRY_HOURS=1
+      - MAX_UPLOAD_SIZE=10485760
+      - ALLOWED_FILE_TYPES=image/jpeg,image/png,image/gif,image/webp
+      - CACHE_TTL_DEFAULT=60
+      - CACHE_TTL_USER_PROFILE=300
+      - CACHE_TTL_MATCH_RESULTS=60
+      - CACHE_TTL_SEARCH_RESULTS=30
+
+secretGenerator:
+  - name: app-secrets-dev
+    literals:
+      - jwt-secret=dev-jwt-secret-key-change-in-production
+      - db-username=dev_user
+      - db-password=dev_password
+      - db-host=postgres-dev
+      - db-name=sugar_daddy_dev
+      - redis-password=dev_redis_password
+      - redis-host=redis-dev
+      - smtp-host=smtp.gmail.com
+      - smtp-port=587
+      - smtp-user=dev-email@gmail.com
+      - smtp-password=dev-app-password
+      - smtp-from=dev-noreply@dandybabe.com
+      - stripe-secret-key=sk_test_dev_stripe_key
+      - stripe-publishable-key=pk_test_dev_stripe_key
+      - paypal-client-id=dev_paypal_client_id
+      - paypal-client-secret=dev_paypal_client_secret
+      - aws-access-key-id=dev_aws_access_key_id
+      - aws-secret-access-key=dev_aws_secret_access_key
+      - aws-region=us-east-1
+      - s3-bucket-name=dandy-babe-dev-uploads
+      - grafana-password=admin
+      - prometheus-retention=168h
+      - encryption-key=dev-32-character-encryption-key
+      - two-factor-secret=dev-two-factor-secret-key
+
+patchesStrategicMerge:
+  - deployment-patches.yaml
+
+images:
+  - name: ghcr.io/dandy-babe-platform/api-gateway
+    newTag: dev-latest
+  - name: ghcr.io/dandy-babe-platform/user-service
+    newTag: dev-latest
+  - name: ghcr.io/dandy-babe-platform/matching-service
+    newTag: dev-latest
+  - name: ghcr.io/dandy-babe-platform/messaging-service
+    newTag: dev-latest
+  - name: ghcr.io/dandy-babe-platform/payment-service
+    newTag: dev-latest
+  - name: ghcr.io/dandy-babe-platform/notification-service
+    newTag: dev-latest
+  - name: ghcr.io/dandy-babe-platform/frontend
+    newTag: dev-latest

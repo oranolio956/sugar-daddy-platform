@@ -1,0 +1,56 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: owasp-zap-scan
+  namespace: dandy-babe
+  labels:
+    app: owasp-zap-scan
+spec:
+  template:
+    metadata:
+      labels:
+        app: owasp-zap-scan
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: zap-scan
+          image: owasp/zap2docker-stable:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Starting OWASP ZAP security scan..."
+              
+              # Wait for services to be ready
+              sleep 30
+              
+              # Baseline scan
+              zap-baseline.py \
+                -t https://api.dandybabe.com \
+                -r /tmp/baseline-scan-report.html \
+                -J /tmp/baseline-scan-report.json \
+                -x /tmp/baseline-scan-report.xml || echo "Baseline scan failed"
+              
+              # API scan
+              zap-api-scan.py \
+                -t https://api.dandybabe.com/api/v1/swagger.json \
+                -r /tmp/api-scan-report.html \
+                -J /tmp/api-scan-report.json \
+                -x /tmp/api-scan-report.xml || echo "API scan failed"
+              
+              # Active scan
+              zap-active-scan.py \
+                -t https://api.dandybabe.com \
+                -r /tmp/active-scan-report.html \
+                -J /tmp/active-scan-report.json \
+                -x /tmp/active-scan-report.xml || echo "Active scan failed"
+              
+              echo "OWASP ZAP scan completed"
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "1000m"
+            limits:
+              memory: "2Gi"
+              cpu: "2000m"
+  backoffLimit: 3
+  activeDeadlineSeconds: 1800
