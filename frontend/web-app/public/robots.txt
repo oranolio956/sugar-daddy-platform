@@ -19,4 +19,4 @@ Allow: /login
 Crawl-delay: 1
 
 # Sitemap
-Sitemap: https://www.brandybabe.com/sitemap.xml
+Sitemap: https://www.dandybabe.com/sitemap.xml

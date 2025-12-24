@@ -4,7 +4,7 @@ import EnhancedDashboard from '../../src/components/dashboard/EnhancedDashboard'
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateMetaTags(
-    'Dashboard - BrandyBabe.com Premium Dating',
+    'Dashboard - Dandy Babe Premium Dating',
     'Your personalized dashboard for managing connections, messages, and dating activity. Track your progress and find meaningful arrangements.',
     ['dashboard', 'dating dashboard', 'sugar daddy dashboard', 'sugar baby dashboard', 'matches', 'messages'],
     undefined,

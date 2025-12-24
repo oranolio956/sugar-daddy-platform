@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document provides detailed technical specifications for implementing the highest priority missing features identified in the Seeking.com gap analysis. These specifications cover the P1 critical features that should be implemented first to establish a solid foundation for BrandyBabe.com.
+This document provides detailed technical specifications for implementing the highest priority missing features identified in the Seeking.com gap analysis. These specifications cover the P1 critical features that should be implemented first to establish a solid foundation for Dandy Babe.
 
 ## 1. Advanced Search and Filtering System
 
@@ -496,7 +496,7 @@ class VerificationService {
 
     // 3. Send SMS
     await this.twilio.messages.create({
-      body: `Your BrandyBabe.com verification code is: ${code}`,
+      body: `Your Dandy Babe verification code is: ${code}`,
       from: process.env.TWILIO_PHONE_NUMBER,
       to: phoneNumber
     });

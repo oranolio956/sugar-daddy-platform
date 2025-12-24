@@ -26,7 +26,7 @@ interface Profile {
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateMetaTags(
-    'Discover Sugar Daddies & Babies - BrandyBabe.com',
+    'Discover Sugar Daddies & Babies - Dandy Babe',
     'Find your perfect match with our advanced discovery system. Browse verified sugar daddies and sugar babies in your area.',
     ['sugar daddy discovery', 'sugar baby discovery', 'find matches', 'dating discovery'],
     undefined,

@@ -63,7 +63,7 @@ export default function EnhancedLogin({ onSuccess, onError }: EnhancedLoginProps
   // Update SEO meta tags
   useEffect(() => {
     updateMeta({
-      title: 'Login to BrandyBabe.com - Premium Sugar Daddy Dating',
+      title: 'Login to Dandy Babe - Premium Sugar Daddy Dating',
       description: 'Sign in to your BrandyBabe.com account to connect with successful sugar daddies and sugar babies. Safe, discreet, and premium dating experience.',
       keywords: ['login', 'sugar daddy login', 'sugar baby login', 'dating site login'],
       type: 'website',
@@ -350,7 +350,7 @@ export default function EnhancedLogin({ onSuccess, onError }: EnhancedLoginProps
               className="text-purple-600 hover:text-purple-800 font-semibold"
               disabled={!isOnline}
             >
-              Join BrandyBabe.com
+              Join Dandy Babe
             </button>
           </p>
           

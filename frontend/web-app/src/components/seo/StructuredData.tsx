@@ -44,9 +44,9 @@ export const OrganizationSchema = () => {
   const data = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'BrandyBabe.com',
-    url: process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com',
-    logo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com'}/logo.png`,
+    name: 'Dandy Babe',
+    url: process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com',
+    logo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com'}/logo.png`,
     description: 'Premium dating platform connecting successful sugar daddies and sugar babies',
     foundingDate: '2024',
     contactPoint: {
@@ -73,23 +73,23 @@ export const WebsiteSchema = () => {
   const data = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'BrandyBabe.com',
+    name: 'Dandy Babe',
     description: 'Premium sugar daddy dating platform for successful singles',
-    url: process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com',
+    url: process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com',
     potentialAction: {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `${process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com'}/search?q={search_term_string}`,
+        urlTemplate: `${process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com'}/search?q={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
     },
     publisher: {
       '@type': 'Organization',
-      name: 'BrandyBabe.com Inc.',
+      name: 'Dandy Babe Inc.',
       logo: {
         '@type': 'ImageObject',
-        url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com'}/logo.png`,
+        url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com'}/logo.png`,
       },
     },
   };
@@ -115,10 +115,10 @@ export const FAQSchema = () => {
       },
       {
         '@type': 'Question',
-        name: 'Is BrandyBabe.com safe?',
+        name: 'Is Dandy Babe safe?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Yes, BrandyBabe.com prioritizes safety with mandatory verification, background checks, and advanced fraud detection. All profiles are vetted and we provide 24/7 support.',
+          text: 'Yes, Dandy Babe prioritizes safety with mandatory verification, background checks, and advanced fraud detection. All profiles are vetted and we provide 24/7 support.',
         },
       },
       {
@@ -126,7 +126,7 @@ export const FAQSchema = () => {
         name: 'How much does it cost?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'BrandyBabe.com offers flexible pricing: Free basic membership, Premium at $29.99/month, Elite at $99.99/month, and VIP at $299.99/month with exclusive features.',
+          text: 'Dandy Babe offers flexible pricing: Free basic membership, Premium at $29.99/month, Elite at $99.99/month, and VIP at $299.99/month with exclusive features.',
         },
       },
       {
@@ -183,7 +183,7 @@ export const LocalBusinessSchema = ({ city }: { city: string }) => {
       addressLocality: city,
       addressCountry: 'US',
     },
-    url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com'}/city/${city.toLowerCase().replace(/\s+/g, '-')}`,
+    url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com'}/city/${city.toLowerCase().replace(/\s+/g, '-')}`,
     sameAs: [
       'https://www.facebook.com/brandybabe',
       'https://www.instagram.com/brandybabe',
@@ -213,14 +213,14 @@ export const ArticleSchema = ({ article }: { article: any }) => {
       name: 'BrandyBabe.com',
       logo: {
         '@type': 'ImageObject',
-        url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com'}/logo.png`,
+        url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com'}/logo.png`,
       },
     },
     datePublished: article.publishDate,
     dateModified: article.publishDate,
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `${process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com'}/blog/${article.slug}`,
+      '@id': `${process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com'}/blog/${article.slug}`,
     },
     image: article.image ? {
       '@type': 'ImageObject',

@@ -21,13 +21,13 @@ interface ArticleSchemaProps {
 export const generateArticleSchema = ({
   headline,
   description,
-  image = "https://www.brandybabe.com/og-image.jpg",
+  image = "https://www.dandybabe.com/og-image.jpg",
   datePublished,
   dateModified,
   authorName,
-  authorUrl = "https://www.brandybabe.com",
-  publisherName = "BrandyBabe.com",
-  publisherLogo = "https://www.brandybabe.com/logo.png",
+  authorUrl = "https://www.dandybabe.com",
+  publisherName = "Dandy Babe",
+  publisherLogo = "https://www.dandybabe.com/logo.png",
   url,
   wordCount = 800,
   keywords = []

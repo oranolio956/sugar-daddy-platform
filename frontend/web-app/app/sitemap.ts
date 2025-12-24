@@ -48,7 +48,7 @@ const blogPages = [
 
 // Generate sitemap
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com';
   
   const staticUrls: MetadataRoute.Sitemap = staticPages.map(page => ({
     url: `${baseUrl}${page}`,

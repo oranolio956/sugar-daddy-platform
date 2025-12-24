@@ -252,4 +252,4 @@ spec:
               name: app-config-staging
               key: NODE_ENV
         - name: API_BASE_URL
-          value: "https://api-staging.sugardaddyplatform.com"
+          value: "https://api-staging.dandybabe.com"

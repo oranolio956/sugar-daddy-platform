@@ -44,10 +44,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - api.sugardaddyplatform.com
+        - api.dandybabe.com
       secretName: api-gateway-tls
   rules:
-    - host: api.sugardaddyplatform.com
+    - host: api.dandybabe.com
       http:
         paths:
           - path: /

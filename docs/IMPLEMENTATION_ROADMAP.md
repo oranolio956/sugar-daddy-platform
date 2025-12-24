@@ -1,4 +1,4 @@
-# BrandyBabe.com Implementation Roadmap: Seeking.com Feature Parity
+# Dandy Babe Implementation Roadmap: Seeking.com Feature Parity
 
 ## Executive Summary
 

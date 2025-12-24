@@ -105,7 +105,7 @@ export default function CityPage({ params }: CityPageProps) {
               </div>
             </div>
             <div className="bg-gray-50 rounded-lg p-6">
-              <p className="text-gray-600 mb-4">"As a busy executive in LA, I needed someone who understood my lifestyle. BrandyBabe.com delivered."</p>
+              <p className="text-gray-600 mb-4">"As a busy executive in LA, I needed someone who understood my lifestyle. Dandy Babe delivered."</p>
               <div className="flex items-center">
                 <div className="w-10 h-10 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full mr-3"></div>
                 <div>
@@ -135,7 +135,7 @@ export default function CityPage({ params }: CityPageProps) {
             Ready to Find Your Perfect Match in {cityConfig.name}?
           </h2>
           <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-            Join thousands of successful singles in {cityConfig.name} who have found meaningful connections on BrandyBabe.com.
+            Join thousands of successful singles in {cityConfig.name} who have found meaningful connections on Dandy Babe.
           </p>
           <div className="space-x-4">
             <button className="bg-white text-purple-600 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 transition-colors">

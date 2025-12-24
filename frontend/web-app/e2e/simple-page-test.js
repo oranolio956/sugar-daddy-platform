@@ -6,7 +6,7 @@ test.describe('Sugar Daddy Platform - Page Validation', () => {
     await page.goto('http://localhost:3000');
     
     // Check page title
-    await expect(page).toHaveTitle(/BrandyBabe/);
+    await expect(page).toHaveTitle(/Dandy Babe/);
     
     // Check for key elements
     await expect(page.locator('h1')).toBeVisible();

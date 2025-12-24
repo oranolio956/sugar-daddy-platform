@@ -41,7 +41,7 @@ export default function EnhancedDashboard() {
 
   useEffect(() => {
     updateMeta({
-      title: 'Dashboard - BrandyBabe.com Premium Dating',
+      title: 'Dashboard - Dandy Babe Premium Dating',
       description: 'Your personalized dashboard for managing connections, messages, and dating activity. Track your progress and find meaningful arrangements.',
       keywords: ['dashboard', 'dating dashboard', 'sugar daddy dashboard', 'sugar baby dashboard', 'matches', 'messages'],
       type: 'website',

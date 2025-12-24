@@ -6,9 +6,9 @@ import { Metadata, ResolvingMetadata } from 'next';
 
 // Base SEO configuration
 export const SEO_CONFIG = {
-  siteName: 'BrandyBabe.com',
-  baseUrl: process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com',
-  defaultTitle: 'BrandyBabe.com - Premium Sugar Daddy Dating Platform',
+  siteName: 'Dandy Babe',
+  baseUrl: process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com',
+  defaultTitle: 'Dandy Babe - Premium Sugar Daddy Dating Platform',
   defaultDescription: 'Connect with successful sugar daddies and sugar babies in a safe, discreet environment. Find meaningful arrangements with verified profiles and transparent pricing.',
   defaultKeywords: [
     'sugar daddy',
@@ -27,7 +27,7 @@ export const SEO_CONFIG = {
   twitterHandle: '@dandybabe',
   facebookAppId: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID,
   defaultImage: '/og-image.jpg',
-  defaultImageAlt: 'BrandyBabe.com - Premium Sugar Daddy Dating Platform',
+  defaultImageAlt: 'Dandy Babe - Premium Sugar Daddy Dating Platform',
 };
 
 // City-specific configurations for local SEO

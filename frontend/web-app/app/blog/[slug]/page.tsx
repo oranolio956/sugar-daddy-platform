@@ -32,7 +32,7 @@ const blogPosts: BlogPost[] = [
       </ul>
       
       <h2>How to Find the Right Sugar Daddy</h2>
-      <p>Success in sugar dating comes from clear communication, mutual respect, and understanding each other's expectations. Platforms like BrandyBabe.com provide a safe environment to connect with verified profiles.</p>
+      <p>Success in sugar dating comes from clear communication, mutual respect, and understanding each other's expectations. Platforms like Dandy Babe provide a safe environment to connect with verified profiles.</p>
     `,
     author: 'Relationship Expert',
     publishDate: '2024-01-15',
@@ -153,7 +153,7 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
   
   if (!post) {
     return {
-      title: 'Blog Post Not Found | BrandyBabe.com',
+      title: 'Blog Post Not Found | Dandy Babe',
       description: 'The blog post you are looking for does not exist.',
     };
   }

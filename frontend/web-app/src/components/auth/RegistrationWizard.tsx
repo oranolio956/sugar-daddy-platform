@@ -620,7 +620,7 @@ export default function RegistrationWizard() {
             className="text-center space-y-6"
           >
             <CheckCircle className="w-16 h-16 mx-auto text-green-500 mb-4" />
-            <h3 className="text-2xl font-bold text-champagne-500">Welcome to BrandyBabe.com!</h3>
+            <h3 className="text-2xl font-bold text-champagne-500">Welcome to Dandy Babe!</h3>
             <p className="text-gray-600">
               Your account has been created successfully. Please check your email for verification instructions.
             </p>
