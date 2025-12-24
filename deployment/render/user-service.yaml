@@ -1,0 +1,103 @@
+# Render.com Service Configuration for User Service
+# This file contains the specific configuration for the User Service
+
+version: 2
+services:
+  - type: web
+    name: user-service
+    env: node
+    plan: standard
+    region: oregon
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    healthCheckInterval: 30
+    healthCheckTimeout: 10
+    healthCheckRetries: 3
+    healthCheckGracePeriod: 5
+    
+    # Environment Variables
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3002
+      - key: CORS_ORIGIN
+        value: https://sugar-daddy-platform.vercel.app
+      - key: LOG_LEVEL
+        value: info
+      - key: RATE_LIMIT_WINDOW_MS
+        value: 900000
+      - key: RATE_LIMIT_MAX_REQUESTS
+        value: 100
+      - key: EMAIL_SERVICE_URL
+        value: https://api-gateway.onrender.com
+      - key: NOTIFICATION_SERVICE_URL
+        value: https://notification-service.onrender.com
+      - key: VERIFICATION_TOKEN_EXPIRY
+        value: 3600
+      - key: PASSWORD_RESET_TOKEN_EXPIRY
+        value: 1800
+      - key: SESSION_TIMEOUT
+        value: 86400
+      - key: MAX_LOGIN_ATTEMPTS
+        value: 5
+      - key: ACCOUNT_LOCKOUT_DURATION
+        value: 900
+    
+    # Environment Variable Secrets
+    envVarSecrets:
+      - key: JWT_SECRET
+        fromSecret: jwt-secret
+      - key: DATABASE_URL
+        fromSecret: database-url
+      - key: REDIS_URL
+        fromSecret: redis-url
+      - key: EMAIL_SERVICE_SECRET
+        fromSecret: email-service-secret
+      - key: NOTIFICATION_SERVICE_SECRET
+        fromSecret: notification-service-secret
+      - key: ENCRYPTION_KEY
+        fromSecret: encryption-key
+      - key: TWO_FA_SECRET
+        fromSecret: two-factor-secret
+      - key: CLOUDINARY_CLOUD_NAME
+        fromSecret: cloudinary-cloud-name
+      - key: CLOUDINARY_API_KEY
+        fromSecret: cloudinary-api-key
+      - key: CLOUDINARY_API_SECRET
+        fromSecret: cloudinary-api-secret
+    
+    # Auto-deployment settings
+    autoDeploy: true
+    branch: main
+    
+    # Scaling configuration
+    minInstances: 1
+    maxInstances: 5
+    cpu: 1024
+    memory: 2048
+    
+    # SSL and domain configuration
+    customDomains:
+      - name: users.sugar-daddy-platform.com
+        ssl: auto
+    
+    # Monitoring and alerts
+    alerts:
+      - type: error-rate
+        threshold: 5
+        window: 5m
+      - type: response-time
+        threshold: 2000
+        window: 5m
+      - type: memory-usage
+        threshold: 80
+        window: 5m
+      - type: cpu-usage
+        threshold: 80
+        window: 5m
+      - type: database-connection-pool
+        threshold: 80
+        window: 5m

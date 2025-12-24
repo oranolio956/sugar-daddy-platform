@@ -1,0 +1,153 @@
+name: Deploy to Render
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+  RENDER_APP_ID: ${{ secrets.RENDER_APP_ID }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: |
+        cd backend/api-gateway && npm ci
+        cd ../user-service && npm ci
+        cd ../matching-service && npm ci
+        cd ../messaging-service && npm ci
+        cd ../payment-service && npm ci
+        cd ../notification-service && npm ci
+        
+    - name: Run tests
+      run: |
+        cd backend/api-gateway && npm test
+        cd ../user-service && npm test
+        cd ../matching-service && npm test
+        cd ../messaging-service && npm test
+        cd ../payment-service && npm test
+        cd ../notification-service && npm test
+        
+    - name: Build applications
+      run: |
+        cd backend/api-gateway && npm run build
+        cd ../user-service && npm run build
+        cd ../matching-service && npm run build
+        cd ../messaging-service && npm run build
+        cd ../payment-service && npm run build
+        cd ../notification-service && npm run build
+        
+    - name: Validate deployment configuration
+      run: |
+        # Check if Render configuration files exist
+        if [ ! -f "deployment/render/render.yaml" ]; then
+          echo "Render configuration file not found"
+          exit 1
+        fi
+        
+        # Validate YAML syntax
+        python3 -c "import yaml; yaml.safe_load(open('deployment/render/render.yaml'))"
+        
+    - name: Deploy to Render
+      run: |
+        # Trigger deployment for each service
+        SERVICES=("api-gateway" "user-service" "matching-service" "messaging-service" "payment-service" "notification-service")
+        
+        for service in "${SERVICES[@]}"; do
+          echo "Deploying $service..."
+          
+          # Get service ID from Render
+          SERVICE_ID=$(curl -s -H "Authorization: Bearer $RENDER_API_KEY" \
+            "https://api.render.com/v1/services?name=$service" | \
+            jq -r '.[0].id')
+          
+          if [ "$SERVICE_ID" != "null" ] && [ -n "$SERVICE_ID" ]; then
+            # Trigger deployment
+            curl -X POST \
+              -H "Authorization: Bearer $RENDER_API_KEY" \
+              -H "Content-Type: application/json" \
+              -d '{"deployType":"git"}' \
+              "https://api.render.com/v1/services/$SERVICE_ID/deploy"
+            
+            echo "$service deployment triggered"
+          else
+            echo "Service $service not found, skipping deployment"
+          fi
+        done
+        
+    - name: Wait for deployments
+      run: |
+        # Wait for all services to be deployed
+        SERVICES=("api-gateway" "user-service" "matching-service" "messaging-service" "payment-service" "notification-service")
+        
+        for service in "${SERVICES[@]}"; do
+          echo "Waiting for $service to be ready..."
+          
+          # Check service status
+          for i in {1..30}; do
+            STATUS=$(curl -s -H "Authorization: Bearer $RENDER_API_KEY" \
+              "https://api.render.com/v1/services?name=$service" | \
+              jq -r '.[0].status')
+            
+            if [ "$STATUS" == "live" ]; then
+              echo "$service is live"
+              break
+            fi
+            
+            if [ $i -eq 30 ]; then
+              echo "Timeout waiting for $service"
+              exit 1
+            fi
+            
+            sleep 10
+          done
+        done
+        
+    - name: Health check
+      run: |
+        # Health check all services
+        SERVICES=("api-gateway" "user-service" "matching-service" "messaging-service" "payment-service" "notification-service")
+        
+        for service in "${SERVICES[@]}"; do
+          echo "Health checking $service..."
+          
+          # Get service URL
+          SERVICE_URL=$(curl -s -H "Authorization: Bearer $RENDER_API_KEY" \
+            "https://api.render.com/v1/services?name=$service" | \
+            jq -r '.[0].serviceDetails.url')
+          
+          # Health check
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$SERVICE_URL/health")
+          
+          if [ "$HTTP_STATUS" == "200" ]; then
+            echo "$service health check passed"
+          else
+            echo "$service health check failed with status $HTTP_STATUS"
+            exit 1
+          fi
+        done
+        
+    - name: Notify deployment status
+      run: |
+        echo "All services deployed successfully!"
+        echo "API Gateway: https://api-gateway.onrender.com"
+        echo "User Service: https://user-service.onrender.com"
+        echo "Matching Service: https://matching-service.onrender.com"
+        echo "Messaging Service: https://messaging-service.onrender.com"
+        echo "Payment Service: https://payment-service.onrender.com"
+        echo "Notification Service: https://notification-service.onrender.com"

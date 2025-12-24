@@ -1,0 +1,284 @@
+# Render.com Deployment Configuration
+# This file defines all services, databases, and environment variables for the Sugar Daddy Platform
+
+services:
+  # API Gateway Service
+  - type: web
+    name: api-gateway
+    env: node
+    plan: standard
+    region: oregon
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: REDIS_URL
+        fromDatabase:
+          name: redis-cache
+          property: connectionString
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGIN
+        value: https://sugar-daddy-platform.vercel.app
+      - key: LOG_LEVEL
+        value: info
+      - key: RATE_LIMIT_WINDOW_MS
+        value: 900000
+      - key: RATE_LIMIT_MAX_REQUESTS
+        value: 100
+    envVarSecrets:
+      - key: JWT_SECRET
+        fromSecret: jwt-secret
+      - key: DATABASE_URL
+        fromSecret: database-url
+      - key: REDIS_URL
+        fromSecret: redis-url
+
+  # User Service
+  - type: web
+    name: user-service
+    env: node
+    plan: standard
+    region: oregon
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3002
+      - key: REDIS_URL
+        fromDatabase:
+          name: redis-cache
+          property: connectionString
+      - key: CORS_ORIGIN
+        value: https://sugar-daddy-platform.vercel.app
+      - key: LOG_LEVEL
+        value: info
+      - key: RATE_LIMIT_WINDOW_MS
+        value: 900000
+      - key: RATE_LIMIT_MAX_REQUESTS
+        value: 100
+      - key: EMAIL_SERVICE_URL
+        value: https://api-gateway.onrender.com
+      - key: NOTIFICATION_SERVICE_URL
+        value: https://notification-service.onrender.com
+    envVarSecrets:
+      - key: JWT_SECRET
+        fromSecret: jwt-secret
+      - key: DATABASE_URL
+        fromSecret: database-url
+      - key: REDIS_URL
+        fromSecret: redis-url
+      - key: EMAIL_SERVICE_SECRET
+        fromSecret: email-service-secret
+      - key: NOTIFICATION_SERVICE_SECRET
+        fromSecret: notification-service-secret
+
+  # Matching Service
+  - type: web
+    name: matching-service
+    env: node
+    plan: standard
+    region: oregon
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3003
+      - key: REDIS_URL
+        fromDatabase:
+          name: redis-cache
+          property: connectionString
+      - key: CORS_ORIGIN
+        value: https://sugar-daddy-platform.vercel.app
+      - key: LOG_LEVEL
+        value: info
+      - key: MATCHING_ALGORITHM
+        value: advanced
+      - key: MATCHING_THRESHOLD
+        value: 0.7
+    envVarSecrets:
+      - key: JWT_SECRET
+        fromSecret: jwt-secret
+      - key: DATABASE_URL
+        fromSecret: database-url
+      - key: REDIS_URL
+        fromSecret: redis-url
+      - key: AI_SERVICE_SECRET
+        fromSecret: ai-service-secret
+
+  # Messaging Service
+  - type: web
+    name: messaging-service
+    env: node
+    plan: standard
+    region: oregon
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3004
+      - key: REDIS_URL
+        fromDatabase:
+          name: redis-cache
+          property: connectionString
+      - key: CORS_ORIGIN
+        value: https://sugar-daddy-platform.vercel.app
+      - key: LOG_LEVEL
+        value: info
+      - key: MESSAGE_RETENTION_DAYS
+        value: 90
+      - key: SOCKET_IO_CORS_ORIGIN
+        value: https://sugar-daddy-platform.vercel.app
+    envVarSecrets:
+      - key: JWT_SECRET
+        fromSecret: jwt-secret
+      - key: DATABASE_URL
+        fromSecret: database-url
+      - key: REDIS_URL
+        fromSecret: redis-url
+      - key: SOCKET_IO_SECRET
+        fromSecret: socket-io-secret
+
+  # Payment Service
+  - type: web
+    name: payment-service
+    env: node
+    plan: standard
+    region: oregon
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3005
+      - key: REDIS_URL
+        fromDatabase:
+          name: redis-cache
+          property: connectionString
+      - key: CORS_ORIGIN
+        value: https://sugar-daddy-platform.vercel.app
+      - key: LOG_LEVEL
+        value: info
+      - key: PAYMENT_PROVIDER
+        value: stripe
+      - key: CURRENCY
+        value: USD
+      - key: REFUND_POLICY_DAYS
+        value: 7
+    envVarSecrets:
+      - key: JWT_SECRET
+        fromSecret: jwt-secret
+      - key: DATABASE_URL
+        fromSecret: database-url
+      - key: REDIS_URL
+        fromSecret: redis-url
+      - key: STRIPE_SECRET_KEY
+        fromSecret: stripe-secret-key
+      - key: STRIPE_WEBHOOK_SECRET
+        fromSecret: stripe-webhook-secret
+      - key: PAYMENT_SERVICE_SECRET
+        fromSecret: payment-service-secret
+
+  # Notification Service
+  - type: web
+    name: notification-service
+    env: node
+    plan: standard
+    region: oregon
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3006
+      - key: REDIS_URL
+        fromDatabase:
+          name: redis-cache
+          property: connectionString
+      - key: CORS_ORIGIN
+        value: https://sugar-daddy-platform.vercel.app
+      - key: LOG_LEVEL
+        value: info
+      - key: NOTIFICATION_BATCH_SIZE
+        value: 100
+      - key: NOTIFICATION_RETRY_ATTEMPTS
+        value: 3
+    envVarSecrets:
+      - key: JWT_SECRET
+        fromSecret: jwt-secret
+      - key: DATABASE_URL
+        fromSecret: database-url
+      - key: REDIS_URL
+        fromSecret: redis-url
+      - key: EMAIL_SERVICE_SECRET
+        fromSecret: email-service-secret
+      - key: SMS_SERVICE_SECRET
+        fromSecret: sms-service-secret
+      - key: PUSH_SERVICE_SECRET
+        fromSecret: push-service-secret
+
+databases:
+  # PostgreSQL Database
+  - name: sugar-daddy-db
+    type: postgresql
+    plan: free
+    region: oregon
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sugar-daddy-db
+          property: connectionString
+
+  # Redis Cache
+  - name: redis-cache
+    type: redis
+    plan: free
+    region: oregon
+    envVars:
+      - key: REDIS_URL
+        fromDatabase:
+          name: redis-cache
+          property: connectionString
+
+secrets:
+  - name: jwt-secret
+    description: JWT signing secret for authentication
+  - name: database-url
+    description: Database connection string
+  - name: redis-url
+    description: Redis connection string
+  - name: email-service-secret
+    description: Email service API credentials
+  - name: notification-service-secret
+    description: Notification service API credentials
+  - name: ai-service-secret
+    description: AI service API credentials
+  - name: socket-io-secret
+    description: Socket.IO authentication secret
+  - name: stripe-secret-key
+    description: Stripe API secret key
+  - name: stripe-webhook-secret
+    description: Stripe webhook signing secret
+  - name: payment-service-secret
+    description: Payment service authentication secret
+  - name: sms-service-secret
+    description: SMS service API credentials
+  - name: push-service-secret
+    description: Push notification service API credentials

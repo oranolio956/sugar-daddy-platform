@@ -1,0 +1,102 @@
+# Render.com Service Configuration for Messaging Service
+# This file contains the specific configuration for the Messaging Service
+
+version: 2
+services:
+  - type: web
+    name: messaging-service
+    env: node
+    plan: standard
+    region: oregon
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    healthCheckInterval: 30
+    healthCheckTimeout: 10
+    healthCheckRetries: 3
+    healthCheckGracePeriod: 5
+    
+    # Environment Variables
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3004
+      - key: CORS_ORIGIN
+        value: https://sugar-daddy-platform.vercel.app
+      - key: LOG_LEVEL
+        value: info
+      - key: MESSAGE_RETENTION_DAYS
+        value: 90
+      - key: SOCKET_IO_CORS_ORIGIN
+        value: https://sugar-daddy-platform.vercel.app
+      - key: SOCKET_IO_TRANSPORTS
+        value: websocket,polling
+      - key: MESSAGE_RATE_LIMIT
+        value: 60
+      - key: CONVERSATION_LIMIT_PER_USER
+        value: 100
+      - key: MESSAGE_SIZE_LIMIT
+        value: 1048576
+      - key: FILE_UPLOAD_ENABLED
+        value: true
+      - key: FILE_SIZE_LIMIT
+        value: 10485760
+    
+    # Environment Variable Secrets
+    envVarSecrets:
+      - key: JWT_SECRET
+        fromSecret: jwt-secret
+      - key: DATABASE_URL
+        fromSecret: database-url
+      - key: REDIS_URL
+        fromSecret: redis-url
+      - key: SOCKET_IO_SECRET
+        fromSecret: socket-io-secret
+      - key: FILE_STORAGE_SECRET
+        fromSecret: file-storage-secret
+      - key: MESSAGE_ENCRYPTION_KEY
+        fromSecret: message-encryption-key
+      - key: CLOUDINARY_CLOUD_NAME
+        fromSecret: cloudinary-cloud-name
+      - key: CLOUDINARY_API_KEY
+        fromSecret: cloudinary-api-key
+      - key: CLOUDINARY_API_SECRET
+        fromSecret: cloudinary-api-secret
+    
+    # Auto-deployment settings
+    autoDeploy: true
+    branch: main
+    
+    # Scaling configuration
+    minInstances: 1
+    maxInstances: 5
+    cpu: 1024
+    memory: 2048
+    
+    # SSL and domain configuration
+    customDomains:
+      - name: messaging.sugar-daddy-platform.com
+        ssl: auto
+    
+    # Monitoring and alerts
+    alerts:
+      - type: error-rate
+        threshold: 5
+        window: 5m
+      - type: response-time
+        threshold: 2000
+        window: 5m
+      - type: memory-usage
+        threshold: 80
+        window: 5m
+      - type: cpu-usage
+        threshold: 80
+        window: 5m
+      - type: socket-connection-count
+        threshold: 1000
+        window: 5m
+      - type: message-queue-depth
+        threshold: 1000
+        window: 5m

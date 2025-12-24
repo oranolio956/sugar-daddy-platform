@@ -1,0 +1,104 @@
+# Render.com Service Configuration for Payment Service
+# This file contains the specific configuration for the Payment Service
+
+version: 2
+services:
+  - type: web
+    name: payment-service
+    env: node
+    plan: standard
+    region: oregon
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    healthCheckInterval: 30
+    healthCheckTimeout: 10
+    healthCheckRetries: 3
+    healthCheckGracePeriod: 5
+    
+    # Environment Variables
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3005
+      - key: REDIS_URL
+        fromDatabase:
+          name: redis-cache
+          property: connectionString
+      - key: CORS_ORIGIN
+        value: https://sugar-daddy-platform.vercel.app
+      - key: LOG_LEVEL
+        value: info
+      - key: PAYMENT_PROVIDER
+        value: stripe
+      - key: CURRENCY
+        value: USD
+      - key: REFUND_POLICY_DAYS
+        value: 7
+      - key: MAX_TRANSACTION_AMOUNT
+        value: 10000
+      - key: MIN_TRANSACTION_AMOUNT
+        value: 1
+      - key: PAYMENT_TIMEOUT
+        value: 30000
+      - key: FRAUD_DETECTION_ENABLED
+        value: true
+      - key: PAYMENT_RETRY_ATTEMPTS
+        value: 3
+    
+    # Environment Variable Secrets
+    envVarSecrets:
+      - key: JWT_SECRET
+        fromSecret: jwt-secret
+      - key: DATABASE_URL
+        fromSecret: database-url
+      - key: REDIS_URL
+        fromSecret: redis-url
+      - key: STRIPE_SECRET_KEY
+        fromSecret: stripe-secret-key
+      - key: STRIPE_WEBHOOK_SECRET
+        fromSecret: stripe-webhook-secret
+      - key: PAYMENT_SERVICE_SECRET
+        fromSecret: payment-service-secret
+      - key: FRAUD_DETECTION_SECRET
+        fromSecret: fraud-detection-secret
+      - key: ACCOUNTING_API_SECRET
+        fromSecret: accounting-api-secret
+    
+    # Auto-deployment settings
+    autoDeploy: true
+    branch: main
+    
+    # Scaling configuration
+    minInstances: 1
+    maxInstances: 5
+    cpu: 1024
+    memory: 2048
+    
+    # SSL and domain configuration
+    customDomains:
+      - name: payments.sugar-daddy-platform.com
+        ssl: auto
+    
+    # Monitoring and alerts
+    alerts:
+      - type: error-rate
+        threshold: 5
+        window: 5m
+      - type: response-time
+        threshold: 2000
+        window: 5m
+      - type: memory-usage
+        threshold: 80
+        window: 5m
+      - type: cpu-usage
+        threshold: 80
+        window: 5m
+      - type: payment-failure-rate
+        threshold: 5
+        window: 10m
+      - type: fraud-detection-rate
+        threshold: 10
+        window: 10m

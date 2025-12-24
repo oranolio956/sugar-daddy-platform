@@ -1,0 +1,170 @@
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: |
+        cd frontend/web-app && npm ci
+        
+    - name: Run tests
+      run: |
+        cd frontend/web-app && npm test
+        
+    - name: Build application
+      run: |
+        cd frontend/web-app && npm run build
+        
+    - name: Deploy to Vercel Preview
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        working-directory: frontend/web-app
+        vercel-args: '--prod'
+        
+    - name: Health check
+      run: |
+        # Wait for deployment to be ready
+        sleep 60
+        
+        # Health check the deployed application
+        HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://sugar-daddy-platform.vercel.app/health")
+        
+        if [ "$HTTP_STATUS" == "200" ]; then
+          echo "Frontend health check passed"
+        else
+          echo "Frontend health check failed with status $HTTP_STATUS"
+          exit 1
+        fi
+        
+    - name: Notify deployment status
+      run: |
+        echo "Frontend deployed successfully!"
+        echo "Frontend URL: https://sugar-daddy-platform.vercel.app"
+        
+  deploy-api-gateway:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: |
+        cd backend/api-gateway && npm ci
+        
+    - name: Run tests
+      run: |
+        cd backend/api-gateway && npm test
+        
+    - name: Build application
+      run: |
+        cd backend/api-gateway && npm run build
+        
+    - name: Deploy API Gateway to Vercel
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_API_GATEWAY_PROJECT_ID }}
+        working-directory: backend/api-gateway
+        vercel-args: '--prod'
+        
+    - name: Health check
+      run: |
+        # Wait for deployment to be ready
+        sleep 60
+        
+        # Health check the deployed API Gateway
+        HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://api-gateway.vercel.app/health")
+        
+        if [ "$HTTP_STATUS" == "200" ]; then
+          echo "API Gateway health check passed"
+        else
+          echo "API Gateway health check failed with status $HTTP_STATUS"
+          exit 1
+        fi
+        
+    - name: Notify deployment status
+      run: |
+        echo "API Gateway deployed successfully!"
+        echo "API Gateway URL: https://api-gateway.vercel.app"
+        
+  integration-tests:
+    runs-on: ubuntu-latest
+    needs: [deploy-frontend, deploy-api-gateway]
+    if: github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install test dependencies
+      run: |
+        npm install -g newman
+        npm install -g playwright
+        npx playwright install
+        
+    - name: Run API integration tests
+      run: |
+        # Run Postman collection tests
+        newman run deployment/tests/api-integration-tests.json \
+          --environment deployment/tests/test-environment.json \
+          --reporters cli,json \
+          --reporter-json-export deployment/tests/reports/api-test-results.json
+          
+    - name: Run E2E tests
+      run: |
+        # Run Playwright E2E tests
+        cd frontend/web-app
+        npx playwright test --reporter=json --output=deployment/tests/reports/e2e-test-results.json
+        
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: deployment/tests/reports/
+        
+    - name: Notify test results
+      run: |
+        echo "Integration tests completed!"
+        echo "Frontend: https://sugar-daddy-platform.vercel.app"
+        echo "API Gateway: https://api-gateway.vercel.app"

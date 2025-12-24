@@ -1,0 +1,93 @@
+# Render.com Service Configuration for Matching Service
+# This file contains the specific configuration for the Matching Service
+
+version: 2
+services:
+  - type: web
+    name: matching-service
+    env: node
+    plan: standard
+    region: oregon
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    healthCheckInterval: 30
+    healthCheckTimeout: 10
+    healthCheckRetries: 3
+    healthCheckGracePeriod: 5
+    
+    # Environment Variables
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3003
+      - key: CORS_ORIGIN
+        value: https://sugar-daddy-platform.vercel.app
+      - key: LOG_LEVEL
+        value: info
+      - key: MATCHING_ALGORITHM
+        value: advanced
+      - key: MATCHING_THRESHOLD
+        value: 0.7
+      - key: MATCHING_BATCH_SIZE
+        value: 50
+      - key: MATCHING_REFRESH_INTERVAL
+        value: 300
+      - key: GEOLOCATION_ENABLED
+        value: true
+      - key: GEOLOCATION_RADIUS
+        value: 50
+      - key: PREFERENCE_WEIGHTS_ENABLED
+        value: true
+      - key: AI_MATCHING_ENABLED
+        value: true
+    
+    # Environment Variable Secrets
+    envVarSecrets:
+      - key: JWT_SECRET
+        fromSecret: jwt-secret
+      - key: DATABASE_URL
+        fromSecret: database-url
+      - key: REDIS_URL
+        fromSecret: redis-url
+      - key: AI_SERVICE_SECRET
+        fromSecret: ai-service-secret
+      - key: GEOLOCATION_API_KEY
+        fromSecret: geolocation-api-key
+      - key: MATCHING_ENGINE_SECRET
+        fromSecret: matching-engine-secret
+    
+    # Auto-deployment settings
+    autoDeploy: true
+    branch: main
+    
+    # Scaling configuration
+    minInstances: 1
+    maxInstances: 5
+    cpu: 1024
+    memory: 2048
+    
+    # SSL and domain configuration
+    customDomains:
+      - name: matching.sugar-daddy-platform.com
+        ssl: auto
+    
+    # Monitoring and alerts
+    alerts:
+      - type: error-rate
+        threshold: 5
+        window: 5m
+      - type: response-time
+        threshold: 2000
+        window: 5m
+      - type: memory-usage
+        threshold: 80
+        window: 5m
+      - type: cpu-usage
+        threshold: 80
+        window: 5m
+      - type: matching-failure-rate
+        threshold: 10
+        window: 10m

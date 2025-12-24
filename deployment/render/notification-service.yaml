@@ -1,0 +1,105 @@
+# Render.com Service Configuration for Notification Service
+# This file contains the specific configuration for the Notification Service
+
+version: 2
+services:
+  - type: web
+    name: notification-service
+    env: node
+    plan: standard
+    region: oregon
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    healthCheckInterval: 30
+    healthCheckTimeout: 10
+    healthCheckRetries: 3
+    healthCheckGracePeriod: 5
+    
+    # Environment Variables
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3006
+      - key: REDIS_URL
+        fromDatabase:
+          name: redis-cache
+          property: connectionString
+      - key: CORS_ORIGIN
+        value: https://sugar-daddy-platform.vercel.app
+      - key: LOG_LEVEL
+        value: info
+      - key: NOTIFICATION_BATCH_SIZE
+        value: 100
+      - key: NOTIFICATION_RETRY_ATTEMPTS
+        value: 3
+      - key: NOTIFICATION_RATE_LIMIT
+        value: 1000
+      - key: EMAIL_RATE_LIMIT
+        value: 50
+      - key: SMS_RATE_LIMIT
+        value: 100
+      - key: PUSH_RATE_LIMIT
+        value: 1000
+      - key: NOTIFICATION_QUEUE_TIMEOUT
+        value: 300000
+    
+    # Environment Variable Secrets
+    envVarSecrets:
+      - key: JWT_SECRET
+        fromSecret: jwt-secret
+      - key: DATABASE_URL
+        fromSecret: database-url
+      - key: REDIS_URL
+        fromSecret: redis-url
+      - key: EMAIL_SERVICE_SECRET
+        fromSecret: email-service-secret
+      - key: SMS_SERVICE_SECRET
+        fromSecret: sms-service-secret
+      - key: PUSH_SERVICE_SECRET
+        fromSecret: push-service-secret
+      - key: NOTIFICATION_ENGINE_SECRET
+        fromSecret: notification-engine-secret
+      - key: ANALYTICS_API_SECRET
+        fromSecret: analytics-api-secret
+    
+    # Auto-deployment settings
+    autoDeploy: true
+    branch: main
+    
+    # Scaling configuration
+    minInstances: 1
+    maxInstances: 5
+    cpu: 1024
+    memory: 2048
+    
+    # SSL and domain configuration
+    customDomains:
+      - name: notifications.sugar-daddy-platform.com
+        ssl: auto
+    
+    # Monitoring and alerts
+    alerts:
+      - type: error-rate
+        threshold: 5
+        window: 5m
+      - type: response-time
+        threshold: 2000
+        window: 5m
+      - type: memory-usage
+        threshold: 80
+        window: 5m
+      - type: cpu-usage
+        threshold: 80
+        window: 5m
+      - type: notification-failure-rate
+        threshold: 5
+        window: 10m
+      - type: email-delivery-rate
+        threshold: 95
+        window: 10m
+      - type: notification-queue-depth
+        threshold: 1000
+        window: 5m
