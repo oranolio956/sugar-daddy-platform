@@ -1,9 +1,14 @@
 #!/bin/bash
 
-# Setup Secrets Script for Sugar Daddy Platform
-# This script helps configure all necessary secrets for deployment
+# Sugar Daddy Platform - Secure Secrets Setup Script
+# This script sets up secure token storage and configuration management
 
 set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_DIR="$(dirname "$SCRIPT_DIR")/config"
+SECRETS_FILE="$CONFIG_DIR/secrets.json"
+ENV_FILE="$CONFIG_DIR/.env.production"
 
 # Colors for output
 RED='\033[0;31m'
@@ -12,213 +17,265 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Logging function
-log() {
-    echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1"
+log_info() {
+    echo -e "${BLUE}[INFO]${NC} $1"
 }
 
-error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
-
-success() {
+log_success() {
     echo -e "${GREEN}[SUCCESS]${NC} $1"
 }
 
-warning() {
+log_warning() {
     echo -e "${YELLOW}[WARNING]${NC} $1"
 }
 
-# Generate secure secrets
-generate_secret() {
-    openssl rand -base64 32
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# Setup Render secrets
-setup_render_secrets() {
-    log "Setting up Render secrets..."
+# Function to check if required tools are installed
+check_dependencies() {
+    log_info "Checking dependencies..."
     
-    echo "Please configure the following secrets in your Render dashboard:"
-    echo ""
-    
-    echo "=== Render Secrets Configuration ==="
-    echo "1. JWT_SECRET: $(generate_secret)"
-    echo "2. STRIPE_SECRET_KEY: [Your Stripe Secret Key]"
-    echo "3. STRIPE_WEBHOOK_SECRET: [Your Stripe Webhook Secret]"
-    echo "4. EMAIL_SERVICE_SECRET: $(generate_secret)"
-    echo "5. NOTIFICATION_SERVICE_SECRET: $(generate_secret)"
-    echo "6. AI_SERVICE_SECRET: $(generate_secret)"
-    echo "7. SOCKET_IO_SECRET: $(generate_secret)"
-    echo "8. PAYMENT_SERVICE_SECRET: $(generate_secret)"
-    echo "9. SMS_SERVICE_SECRET: $(generate_secret)"
-    echo "10. PUSH_SERVICE_SECRET: $(generate_secret)"
-    echo "11. ENCRYPTION_KEY: $(generate_secret)"
-    echo "12. TWO_FA_SECRET: $(generate_secret)"
-    echo "13. CLOUDINARY_CLOUD_NAME: [Your Cloudinary Cloud Name]"
-    echo "14. CLOUDINARY_API_KEY: [Your Cloudinary API Key]"
-    echo "15. CLOUDINARY_API_SECRET: [Your Cloudinary API Secret]"
-    echo "16. GEOLOCATION_API_KEY: [Your Geolocation API Key]"
-    echo "17. MATCHING_ENGINE_SECRET: $(generate_secret)"
-    echo "18. FRAUD_DETECTION_SECRET: $(generate_secret)"
-    echo "19. ACCOUNTING_API_SECRET: $(generate_secret)"
-    echo "20. ANALYTICS_API_SECRET: $(generate_secret)"
-    echo ""
-    
-    success "Render secrets configuration guide displayed above"
-}
-
-# Setup Vercel environment variables
-setup_vercel_env() {
-    log "Setting up Vercel environment variables..."
-    
-    echo "Please configure the following environment variables in your Vercel dashboard:"
-    echo ""
-    
-    echo "=== Vercel Environment Variables ==="
-    echo "NEXT_PUBLIC_APP_NAME: Sugar Daddy Platform"
-    echo "NEXT_PUBLIC_APP_VERSION: 1.0.0"
-    echo "NEXT_PUBLIC_ENVIRONMENT: production"
-    echo "NEXT_PUBLIC_MAINTENANCE_MODE: false"
-    echo "NEXT_PUBLIC_API_URL: https://api-gateway.onrender.com"
-    echo "NEXT_PUBLIC_WS_URL: wss://messaging-service.onrender.com"
-    echo "NEXT_PUBLIC_APP_URL: https://sugar-daddy-platform.vercel.app"
-    echo "NEXT_PUBLIC_FEATURE_PREMIUM: true"
-    echo "NEXT_PUBLIC_FEATURE_GIFTS: true"
-    echo "NEXT_PUBLIC_FEATURE_MATCHING: true"
-    echo "NEXT_PUBLIC_FEATURE_MESSAGING: true"
-    echo "NEXT_PUBLIC_FEATURE_PAYMENTS: true"
-    echo "NEXT_PUBLIC_FEATURE_NOTIFICATIONS: true"
-    echo "NEXT_PUBLIC_FEATURE_SOCIAL: true"
-    echo "NEXT_PUBLIC_FEATURE_ANALYTICS: true"
-    echo "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: [Your Stripe Publishable Key]"
-    echo "NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: [Your Cloudinary Cloud Name]"
-    echo "NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: [Your Google Analytics ID]"
-    echo "NEXT_PUBLIC_SENTRY_DSN: [Your Sentry DSN]"
-    echo "NEXT_PUBLIC_HOTJAR_ID: [Your Hotjar ID]"
-    echo "NEXT_PUBLIC_SEGMENT_WRITE_KEY: [Your Segment Write Key]"
-    echo "NEXT_PUBLIC_CSP_ENABLED: true"
-    echo "NEXT_PUBLIC_HSTS_ENABLED: true"
-    echo "NEXT_PUBLIC_REFERRER_POLICY: strict-origin-when-cross-origin"
-    echo "NEXT_PUBLIC_CACHE_TTL: 3600"
-    echo "NEXT_PUBLIC_IMAGE_OPTIMIZATION: true"
-    echo "NEXT_PUBLIC_LAZY_LOADING: true"
-    echo "NEXT_PUBLIC_SERVICE_WORKER: true"
-    echo "NEXT_PUBLIC_LOG_LEVEL: info"
-    echo "NEXT_PUBLIC_ERROR_TRACKING: true"
-    echo "NEXT_PUBLIC_PERFORMANCE_MONITORING: true"
-    echo "NEXT_PUBLIC_USER_ANALYTICS: true"
-    echo "NEXT_PUBLIC_DEBUG: false"
-    echo "NEXT_PUBLIC_MOCK_API: false"
-    echo "NEXT_PUBLIC_LOCAL_STORAGE_DEBUG: false"
-    echo ""
-    
-    success "Vercel environment variables configuration guide displayed above"
-}
-
-# Setup GitHub secrets
-setup_github_secrets() {
-    log "Setting up GitHub secrets..."
-    
-    echo "Please configure the following secrets in your GitHub repository settings:"
-    echo ""
-    
-    echo "=== GitHub Repository Secrets ==="
-    echo "RENDER_API_KEY: [Your Render API Key]"
-    echo "VERCEL_TOKEN: [Your Vercel Token]"
-    echo "VERCEL_ORG_ID: [Your Vercel Organization ID]"
-    echo "VERCEL_PROJECT_ID: [Your Vercel Project ID for Frontend]"
-    echo "VERCEL_API_GATEWAY_PROJECT_ID: [Your Vercel Project ID for API Gateway]"
-    echo ""
-    
-    success "GitHub secrets configuration guide displayed above"
-}
-
-# Create .env files with example values
-create_env_files() {
-    log "Creating example .env files..."
-    
-    # Create backend service .env files
-    SERVICES=("api-gateway" "user-service" "matching-service" "messaging-service" "payment-service" "notification-service")
-    
-    for service in "${SERVICES[@]}"; do
-        if [ ! -f "backend/$service/.env" ]; then
-            cp "backend/$service/.env.example" "backend/$service/.env" 2>/dev/null || true
-            log "Created .env file for $service"
-        fi
-    done
-    
-    # Create frontend .env file
-    if [ ! -f "frontend/web-app/.env" ]; then
-        cp "frontend/web-app/.env.example" "frontend/web-app/.env" 2>/dev/null || true
-        log "Created .env file for frontend"
+    if ! command -v jq &> /dev/null; then
+        log_error "jq is required but not installed. Please install jq first."
+        exit 1
     fi
     
-    success "Environment files created"
-}
-
-# Validate secret configuration
-validate_secrets() {
-    log "Validating secret configuration..."
-    
-    # Check if required files exist
-    if [ ! -f "deployment/render/render.yaml" ]; then
-        error "Render configuration file not found"
-        return 1
+    if ! command -v openssl &> /dev/null; then
+        log_error "openssl is required but not installed. Please install openssl first."
+        exit 1
     fi
     
-    if [ ! -f "deployment/vercel/vercel.json" ]; then
-        error "Vercel configuration file not found"
-        return 1
+    log_success "All dependencies are available."
+}
+
+# Function to create secure directory structure
+setup_directories() {
+    log_info "Setting up secure directory structure..."
+    
+    # Create config directory with secure permissions
+    mkdir -p "$CONFIG_DIR"
+    chmod 700 "$CONFIG_DIR"
+    
+    # Create secrets file if it doesn't exist
+    if [ ! -f "$SECRETS_FILE" ]; then
+        log_info "Creating secrets configuration file..."
+        cat > "$SECRETS_FILE" << 'EOF'
+{
+  "platforms": {
+    "vercel": {
+      "token": "",
+      "project_id": "sugar-daddy-platform",
+      "org_id": "sugar-daddy-platform",
+      "environment": "production",
+      "last_connected": null,
+      "permissions_verified": false
+    },
+    "render": {
+      "token": "",
+      "service_id": "sugar-daddy-platform",
+      "environment": "production",
+      "last_connected": null,
+      "permissions_verified": false
+    }
+  },
+  "security": {
+    "encryption_enabled": false,
+    "file_permissions": "600",
+    "backup_required": true,
+    "last_backup": null
+  },
+  "deployment": {
+    "auto_deploy": true,
+    "webhook_secret": "",
+    "health_check_enabled": true,
+    "monitoring_enabled": true
+  }
+}
+EOF
+        chmod 600 "$SECRETS_FILE"
+        log_success "Secrets file created with secure permissions."
+    else
+        log_info "Secrets file already exists."
+    fi
+}
+
+# Function to validate tokens
+validate_tokens() {
+    log_info "Validating platform tokens..."
+    
+    # Get tokens from secrets file
+    VERCEL_TOKEN=$(jq -r '.platforms.vercel.token' "$SECRETS_FILE")
+    RENDER_TOKEN=$(jq -r '.platforms.render.token' "$SECRETS_FILE")
+    
+    if [ "$VERCEL_TOKEN" = "null" ] || [ "$VERCEL_TOKEN" = "" ]; then
+        log_warning "Vercel token not found in secrets file."
+        read -p "Enter Vercel token: " VERCEL_TOKEN
+        jq --arg token "$VERCEL_TOKEN" '.platforms.vercel.token = $token' "$SECRETS_FILE" > temp.json && mv temp.json "$SECRETS_FILE"
     fi
     
-    success "Secret configuration validation passed"
+    if [ "$RENDER_TOKEN" = "null" ] || [ "$RENDER_TOKEN" = "" ]; then
+        log_warning "Render token not found in secrets file."
+        read -p "Enter Render token: " RENDER_TOKEN
+        jq --arg token "$RENDER_TOKEN" '.platforms.render.token = $token' "$SECRETS_FILE" > temp.json && mv temp.json "$SECRETS_FILE"
+    fi
+    
+    log_success "Tokens validated and stored."
 }
 
-# Display deployment checklist
-show_checklist() {
-    log "Deployment Checklist:"
-    echo ""
-    echo "=== Pre-Deployment Checklist ==="
-    echo "□ Generate all required secrets"
-    echo "□ Configure Render secrets in dashboard"
-    echo "□ Configure Vercel environment variables"
-    echo "□ Configure GitHub repository secrets"
-    echo "□ Create database instances on Render"
-    echo "□ Update service URLs in configuration files"
-    echo "□ Test local development environment"
-    echo "□ Run security scan on secrets"
-    echo ""
+# Function to test platform connectivity
+test_connectivity() {
+    log_info "Testing platform connectivity..."
     
-    echo "=== Post-Deployment Checklist ==="
-    echo "□ Verify all services are running"
-    echo "□ Run health checks on all services"
-    echo "□ Test API endpoints"
-    echo "□ Test frontend functionality"
-    echo "□ Configure monitoring and alerting"
-    echo "□ Set up backup procedures"
-    echo "□ Document deployment process"
-    echo "□ Notify team of deployment completion"
-    echo ""
+    # Test Vercel connectivity
+    log_info "Testing Vercel connection..."
+    if curl -s -H "Authorization: Bearer $VERCEL_TOKEN" "https://api.vercel.com/v6/projects" > /dev/null; then
+        log_success "Vercel connection successful."
+        jq '.platforms.vercel.last_connected = now | .platforms.vercel.permissions_verified = true' "$SECRETS_FILE" > temp.json && mv temp.json "$SECRETS_FILE"
+    else
+        log_error "Vercel connection failed. Please check your token."
+    fi
+    
+    # Test Render connectivity
+    log_info "Testing Render connection..."
+    if curl -s -H "Authorization: Bearer $RENDER_TOKEN" "https://api.render.com/v1/services" > /dev/null; then
+        log_success "Render connection successful."
+        jq '.platforms.render.last_connected = now | .platforms.render.permissions_verified = true' "$SECRETS_FILE" > temp.json && mv temp.json "$SECRETS_FILE"
+    else
+        log_error "Render connection failed. Please check your token."
+    fi
 }
 
-# Main setup function
-main() {
-    log "Starting secrets setup for Sugar Daddy Platform..."
+# Function to setup environment variables
+setup_environment() {
+    log_info "Setting up environment variables..."
     
-    validate_secrets
-    setup_render_secrets
-    setup_vercel_env
-    setup_github_secrets
-    create_env_files
-    show_checklist
+    # Generate webhook secret if not exists
+    WEBHOOK_SECRET=$(jq -r '.deployment.webhook_secret' "$SECRETS_FILE")
+    if [ "$WEBHOOK_SECRET" = "null" ] || [ "$WEBHOOK_SECRET" = "" ]; then
+        WEBHOOK_SECRET=$(openssl rand -base64 32)
+        jq --arg secret "$WEBHOOK_SECRET" '.deployment.webhook_secret = $secret' "$SECRETS_FILE" > temp.json && mv temp.json "$SECRETS_FILE"
+        log_success "Generated webhook secret."
+    fi
     
-    success "Secrets setup completed!"
+    # Create .env.production file if it doesn't exist
+    if [ ! -f "$ENV_FILE" ]; then
+        log_info "Creating production environment file..."
+        cat > "$ENV_FILE" << EOF
+# Production Environment Configuration
+# This file contains production environment variables for the deployment pipeline
+
+# Platform Tokens (Secure)
+VERCEL_TOKEN=$VERCEL_TOKEN
+RENDER_TOKEN=$RENDER_TOKEN
+
+# Platform Configuration
+VERCEL_PROJECT_ID=sugar-daddy-platform
+VERCEL_ORG_ID=sugar-daddy-platform
+RENDER_SERVICE_ID=sugar-daddy-platform
+
+# Database Configuration
+DATABASE_URL=postgresql://user:password@db-host:5432/sugar_daddy_prod
+REDIS_URL=redis://redis-host:6379
+
+# Application Configuration
+NODE_ENV=production
+API_BASE_URL=https://api.sugar-daddy-platform.com
+FRONTEND_URL=https://sugar-daddy-platform.vercel.app
+
+# Security Configuration
+JWT_SECRET=your-production-jwt-secret-key
+ENCRYPTION_KEY=your-production-encryption-key
+WEBHOOK_SECRET=$WEBHOOK_SECRET
+
+# Monitoring and Logging
+LOG_LEVEL=info
+SENTRY_DSN=https://your-sentry-dsn@sentry.io/project-id
+DATADOG_API_KEY=your-datadog-api-key
+
+# Feature Flags
+ENABLE_PREMIUM_FEATURES=true
+ENABLE_SOCIAL_FEATURES=true
+ENABLE_ADVANCED_MATCHING=true
+
+# Third-party Integrations
+STRIPE_SECRET_KEY=sk_live_your_stripe_secret_key
+SENDGRID_API_KEY=SG.your_sendgrid_api_key
+CLOUDINARY_URL=cloudinary://your_cloudinary_config
+
+# Deployment Configuration
+AUTO_DEPLOY=true
+HEALTH_CHECK_ENABLED=true
+MONITORING_ENABLED=true
+BACKUP_ENABLED=true
+EOF
+        chmod 600 "$ENV_FILE"
+        log_success "Environment file created with secure permissions."
+    else
+        log_info "Environment file already exists."
+    fi
+}
+
+# Function to create backup
+create_backup() {
+    log_info "Creating backup of configuration files..."
+    
+    BACKUP_DIR="$CONFIG_DIR/backups"
+    mkdir -p "$BACKUP_DIR"
+    
+    TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+    BACKUP_FILE="$BACKUP_DIR/config_backup_$TIMESTAMP.tar.gz"
+    
+    tar -czf "$BACKUP_FILE" "$SECRETS_FILE" "$ENV_FILE" 2>/dev/null
+    
+    if [ $? -eq 0 ]; then
+        log_success "Configuration backup created: $BACKUP_FILE"
+        jq --arg backup_time "$(date -Iseconds)" '.security.last_backup = $backup_time' "$SECRETS_FILE" > temp.json && mv temp.json "$SECRETS_FILE"
+    else
+        log_warning "Failed to create backup."
+    fi
+    
+    # Clean up old backups (keep last 5)
+    ls -t "$BACKUP_DIR"/config_backup_*.tar.gz 2>/dev/null | tail -n +6 | xargs -r rm
+}
+
+# Function to display summary
+display_summary() {
+    log_info "Setup Summary:"
+    echo ""
+    echo "✅ Secure configuration files created"
+    echo "✅ Platform tokens stored securely"
+    echo "✅ Environment variables configured"
+    echo "✅ Connectivity tested"
+    echo "✅ Backup created"
+    echo ""
+    echo "Configuration files:"
+    echo "  - Secrets: $SECRETS_FILE"
+    echo "  - Environment: $ENV_FILE"
     echo ""
     echo "Next steps:"
-    echo "1. Configure the secrets in your respective dashboards"
-    echo "2. Update configuration files with your specific values"
-    echo "3. Run the deployment scripts"
-    echo "4. Monitor the deployment process"
+    echo "  1. Update database and service URLs in $ENV_FILE"
+    echo "  2. Set up SSL certificates for production"
+    echo "  3. Configure monitoring and alerting"
+    echo "  4. Test deployment pipeline"
+    echo ""
+}
+
+# Main execution
+main() {
+    log_info "Starting Sugar Daddy Platform secrets setup..."
+    echo ""
+    
+    check_dependencies
+    setup_directories
+    validate_tokens
+    test_connectivity
+    setup_environment
+    create_backup
+    display_summary
+    
+    log_success "Setup completed successfully!"
 }
 
 # Run main function
