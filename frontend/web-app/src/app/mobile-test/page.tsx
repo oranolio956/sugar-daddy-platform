@@ -3,16 +3,16 @@ import Layout from '@/components/Layout';
 import { MobileTestSuite } from '@/components/MobileTestSuite';
 
 export const metadata: Metadata = {
-  title: 'Mobile Test Suite - BrandyBabe.com',
+  title: 'Mobile Test Suite - Dandy Babe',
   description: 'Comprehensive mobile responsiveness testing for the BrandyBabe.com platform.',
   openGraph: {
-    title: 'Mobile Test Suite - BrandyBabe.com',
-    description: 'Test mobile responsiveness and compatibility for BrandyBabe.com.',
-    url: `${process.env['NEXT_PUBLIC_APP_URL'] || 'https://brandybabe.com'}/mobile-test`,
+    title: 'Mobile Test Suite - Dandy Babe',
+    description: 'Test mobile responsiveness and compatibility for Dandy Babe.',
+    url: `${process.env['NEXT_PUBLIC_APP_URL'] || 'https://dandybabe.com'}/mobile-test`,
     type: 'website',
   },
   alternates: {
-    canonical: `${process.env['NEXT_PUBLIC_APP_URL'] || 'https://brandybabe.com'}/mobile-test`,
+    canonical: `${process.env['NEXT_PUBLIC_APP_URL'] || 'https://dandybabe.com'}/mobile-test`,
   },
 };
 

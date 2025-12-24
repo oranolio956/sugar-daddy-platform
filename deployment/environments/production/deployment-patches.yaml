@@ -287,4 +287,4 @@ spec:
               name: app-config-production
               key: NODE_ENV
         - name: API_BASE_URL
-          value: "https://api.sugardaddyplatform.com"
+          value: "https://api.dandybabe.com"

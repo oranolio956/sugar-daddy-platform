@@ -39,7 +39,7 @@ spec:
                   name: app-config
                   key: NODE_ENV
             - name: API_BASE_URL
-              value: "https://api.sugardaddyplatform.com"
+              value: "https://api.dandybabe.com"
             - name: STRIPE_PUBLISHABLE_KEY
               valueFrom:
                 secretKeyRef:
@@ -134,11 +134,11 @@ metadata:
 spec:
   tls:
     - hosts:
-        - sugardaddyplatform.com
-        - www.sugardaddyplatform.com
+        - dandybabe.com
+        - www.dandybabe.com
       secretName: frontend-tls
   rules:
-    - host: sugardaddyplatform.com
+    - host: dandybabe.com
       http:
         paths:
           - path: /
@@ -148,7 +148,7 @@ spec:
                 name: frontend-service
                 port:
                   number: 80
-    - host: www.sugardaddyplatform.com
+    - host: www.dandybabe.com
       http:
         paths:
           - path: /

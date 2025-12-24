@@ -139,7 +139,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </motion.div>
               </motion.button>
               <Link href="/dashboard" className="ml-3 text-xl font-display font-bold text-transparent bg-clip-text bg-gradient-gold hover-glow">
-                BrandyBabe.com
+                Dandy Babe
               </Link>
             </div>
             <div className="flex items-center space-x-2">
@@ -197,7 +197,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <Crown className="w-6 h-6 text-luxury-black" />
                 </motion.div>
                 <span className="text-xl font-display font-bold text-white">
-                  BrandyBabe.com
+                  Dandy Babe
                 </span>
               </Link>
               <motion.button

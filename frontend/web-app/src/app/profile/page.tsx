@@ -105,7 +105,7 @@ export default function ProfilePage() {
       updateStructuredData('profile', {
         '@context': 'https://schema.org',
         '@type': 'Person',
-        '@id': `https://brandybabe.com/profile/${mockProfile.id}`,
+        '@id': `https://dandybabe.com/profile/${mockProfile.id}`,
         name: mockProfile.name,
         alternateName: mockProfile.name,
         description: mockProfile.bio,
@@ -117,7 +117,7 @@ export default function ProfilePage() {
           addressLocality: mockProfile.location,
           addressCountry: 'US',
         },
-        sameAs: [`https://brandybabe.com/profile/${mockProfile.id}`],
+        sameAs: [`https://dandybabe.com/profile/${mockProfile.id}`],
         knowsAbout: mockProfile.interests,
         worksFor: {
           '@type': 'Organization',
@@ -129,8 +129,8 @@ export default function ProfilePage() {
         },
         memberOf: {
           '@type': 'Organization',
-          name: 'BrandyBabe.com',
-          url: 'https://brandybabe.com',
+          name: 'Dandy Babe',
+          url: 'https://dandybabe.com',
         },
         isAccessibleForFree: false,
         offers: {
@@ -141,7 +141,7 @@ export default function ProfilePage() {
         },
         mainEntityOfPage: {
           '@type': 'WebPage',
-          '@id': `https://brandybabe.com/profile/${mockProfile.id}`,
+          '@id': `https://dandybabe.com/profile/${mockProfile.id}`,
         },
       });
     }, 1000);

@@ -156,10 +156,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <SchemaMarkup
-          brandName="BrandyBabe.com"
+          brandName="Dandy Babe"
           description="Premium dating platform for meaningful arrangements"
-          url="https://www.brandybabe.com"
-          logo="https://www.brandybabe.com/logo.png"
+          url="https://www.dandybabe.com"
+          logo="https://www.dandybabe.com/logo.png"
           ratingValue="4.7"
           reviewCount="2847"
           price="29.99"

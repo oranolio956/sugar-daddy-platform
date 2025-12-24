@@ -34,11 +34,11 @@ export const SEOProvider = ({ children }: { children: React.ReactNode }) => {
     const schema = {
       '@context': 'https://schema.org',
       '@type': 'Person',
-      '@id': `${process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com'}/profile/${profile.id}`,
+      '@id': `${process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com'}/profile/${profile.id}`,
       name: profile.name,
       alternateName: profile.name,
       description: profile.bio,
-      image: profile.photos[0] || `${process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com'}/default-avatar.jpg`,
+      image: profile.photos[0] || `${process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com'}/default-avatar.jpg`,
       gender: profile.gender || 'Female',
       age: profile.age,
       address: {
@@ -47,17 +47,17 @@ export const SEOProvider = ({ children }: { children: React.ReactNode }) => {
         addressCountry: 'US',
       },
       sameAs: [
-        `${process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com'}/profile/${profile.id}`,
+        `${process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com'}/profile/${profile.id}`,
       ],
       knowsAbout: profile.interests,
       worksFor: {
         '@type': 'Organization',
-        name: 'BrandyBabe.com',
+        name: 'Dandy Babe',
       },
       memberOf: {
         '@type': 'Organization',
-        name: 'BrandyBabe.com',
-        url: process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com',
+        name: 'Dandy Babe',
+        url: process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com',
       },
       isAccessibleForFree: false,
       offers: {
@@ -68,7 +68,7 @@ export const SEOProvider = ({ children }: { children: React.ReactNode }) => {
       },
       mainEntityOfPage: {
         '@type': 'WebPage',
-        '@id': `${process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com'}/profile/${profile.id}`,
+        '@id': `${process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com'}/profile/${profile.id}`,
       },
     };
 
@@ -94,7 +94,7 @@ export const SEOProvider = ({ children }: { children: React.ReactNode }) => {
         '@type': 'SearchAction',
         target: {
           '@type': 'EntryPoint',
-          urlTemplate: `${process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com'}/search?q={search_term_string}`,
+          urlTemplate: `${process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com'}/search?q={search_term_string}`,
         },
         'query-input': 'required name=search_term_string',
       },
@@ -105,13 +105,13 @@ export const SEOProvider = ({ children }: { children: React.ReactNode }) => {
             '@type': 'ListItem',
             position: 1,
             name: 'Home',
-            item: process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com',
+            item: process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com',
           },
           {
             '@type': 'ListItem',
             position: 2,
             name: 'Search',
-            item: `${process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com'}/search`,
+            item: `${process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com'}/search`,
           },
           {
             '@type': 'ListItem',

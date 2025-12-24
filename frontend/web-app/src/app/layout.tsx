@@ -47,10 +47,10 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com'),
   title: {
-    default: 'BrandyBabe.com - Premium Sugar Daddy Dating Platform',
-    template: '%s | BrandyBabe.com'
+    default: 'Dandy Babe - Premium Sugar Daddy Dating Platform',
+    template: '%s | Dandy Babe'
   },
   description: 'Connect with successful sugar daddies and sugar babies in a safe, discreet environment. Find meaningful arrangements with verified profiles and transparent pricing. Join the elite dating platform for sophisticated singles.',
   keywords: [
@@ -67,9 +67,9 @@ export const metadata: Metadata = {
     'verified dating',
     'high-end dating'
   ],
-  authors: [{ name: 'BrandyBabe.com Team' }],
-  creator: 'BrandyBabe.com',
-  publisher: 'BrandyBabe.com Inc.',
+  authors: [{ name: 'Dandy Babe Team' }],
+  creator: 'Dandy Babe',
+  publisher: 'Dandy Babe Inc.',
   formatDetection: {
     email: false,
     address: false,
@@ -81,29 +81,29 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: '/',
-    title: 'BrandyBabe.com - Premium Sugar Daddy Dating Platform',
+    title: 'Dandy Babe - Premium Sugar Daddy Dating Platform',
     description: 'Connect with successful sugar daddies and sugar babies in a safe, discreet environment. Find meaningful arrangements with verified profiles.',
-    siteName: 'BrandyBabe.com',
+    siteName: 'Dandy Babe',
     images: [
       {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'BrandyBabe.com - Premium Sugar Daddy Dating Platform',
+        alt: 'Dandy Babe - Premium Sugar Daddy Dating Platform',
         type: 'image/jpeg',
       },
       {
         url: '/og-image-square.jpg',
         width: 600,
         height: 600,
-        alt: 'BrandyBabe.com Logo',
+        alt: 'Dandy Babe Logo',
         type: 'image/jpeg',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'BrandyBabe.com - Premium Sugar Daddy Dating Platform',
+    title: 'Dandy Babe - Premium Sugar Daddy Dating Platform',
     description: 'Connect with successful sugar daddies and sugar babies in a safe, discreet environment.',
     images: ['/og-image.jpg'],
     creator: '@dandybabe',
@@ -175,12 +175,12 @@ export default function RootLayout({
               '@type': 'WebSite',
               name: 'BrandyBabe.com',
               description: 'Premium sugar daddy dating platform for successful singles',
-              url: process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com',
+              url: process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com',
               potentialAction: {
                 '@type': 'SearchAction',
                 target: {
                   '@type': 'EntryPoint',
-                  urlTemplate: `${process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com'}/search?q={search_term_string}`,
+                  urlTemplate: `${process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com'}/search?q={search_term_string}`,
                 },
                 'query-input': 'required name=search_term_string',
               },
@@ -189,7 +189,7 @@ export default function RootLayout({
                 name: 'BrandyBabe.com Inc.',
                 logo: {
                   '@type': 'ImageObject',
-                  url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com'}/logo.png`,
+                  url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com'}/logo.png`,
                 },
               },
             }),
@@ -203,9 +203,9 @@ export default function RootLayout({
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'Organization',
-              name: 'BrandyBabe.com',
-              url: process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com',
-              logo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://brandybabe.com'}/logo.png`,
+              name: 'Dandy Babe',
+              url: process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com',
+              logo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://dandybabe.com'}/logo.png`,
               description: 'Premium dating platform connecting successful sugar daddies and sugar babies',
               foundingDate: '2024',
               contactPoint: {

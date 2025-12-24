@@ -31,14 +31,14 @@ export default function HomePage() {
     updateStructuredData('homepage', {
       '@context': 'https://schema.org',
       '@type': 'WebPage',
-      '@id': 'https://brandybabe.com',
-      name: 'BrandyBabe.com - Premium Sugar Daddy Dating Platform',
+      '@id': 'https://dandybabe.com',
+      name: 'Dandy Babe - Premium Sugar Daddy Dating Platform',
       description: 'Connect with successful sugar daddies and sugar babies in a safe, discreet environment. Find meaningful arrangements with verified profiles and transparent pricing.',
-      url: 'https://brandybabe.com',
+      url: 'https://dandybabe.com',
       isPartOf: {
         '@type': 'WebSite',
-        name: 'BrandyBabe.com',
-        url: 'https://brandybabe.com',
+        name: 'Dandy Babe',
+        url: 'https://dandybabe.com',
       },
       primaryImageOfPage: {
         '@type': 'ImageObject',
@@ -48,11 +48,11 @@ export default function HomePage() {
       dateModified: '2024-01-01',
       author: {
         '@type': 'Organization',
-        name: 'BrandyBabe.com Inc.',
+        name: 'Dandy Babe Inc.',
       },
       publisher: {
         '@type': 'Organization',
-        name: 'BrandyBabe.com Inc.',
+        name: 'Dandy Babe Inc.',
         logo: {
           '@type': 'ImageObject',
           url: 'https://brandybabe.com/logo.png',
@@ -60,7 +60,7 @@ export default function HomePage() {
       },
       mainEntity: {
         '@type': 'Organization',
-        name: 'BrandyBabe.com',
+        name: 'Dandy Babe',
         url: 'https://brandybabe.com',
         logo: {
           '@type': 'ImageObject',

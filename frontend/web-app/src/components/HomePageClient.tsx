@@ -127,37 +127,37 @@ const HomePageClient: React.FC = () => {
     <Layout>
       {/* SEO Meta Tags */}
       <MetaTags
-        title="BrandyBabe.com - Premium Sugar Daddy Dating Platform"
+        title="Dandy Babe - Premium Sugar Daddy Dating Platform"
         description="Connect with successful sugar daddies and sugar babies in a safe, discreet environment. Find meaningful arrangements with verified profiles and transparent pricing."
         keywords={['sugar daddy', 'sugar baby', 'sugar dating', 'arrangement dating', 'luxury dating', 'mutual benefit dating', 'elite dating', 'premium dating', 'successful singles', 'discreet dating', 'verified dating', 'high-end dating']}
-        canonical="https://brandybabe.com"
-        ogTitle="BrandyBabe.com - Premium Sugar Daddy Dating Platform"
+        canonical="https://dandybabe.com"
+        ogTitle="Dandy Babe - Premium Sugar Daddy Dating Platform"
         ogDescription="Connect with successful sugar daddies and sugar babies in a safe, discreet environment. Find meaningful arrangements with verified profiles."
-        ogImage="https://www.brandybabe.com/og-image.jpg"
-        ogUrl="https://brandybabe.com"
-        twitterTitle="BrandyBabe.com - Premium Sugar Daddy Dating Platform"
+        ogImage="https://www.dandybabe.com/og-image.jpg"
+        ogUrl="https://dandybabe.com"
+        twitterTitle="Dandy Babe - Premium Sugar Daddy Dating Platform"
         twitterDescription="Connect with successful sugar daddies and sugar babies in a safe, discreet environment."
-        twitterImage="https://www.brandybabe.com/og-image.jpg"
+        twitterImage="https://www.dandybabe.com/og-image.jpg"
         robots="index, follow"
         schemaType="WebSite"
-        author="BrandyBabe.com Team"
+        author="Dandy Babe Team"
         category="dating"
         tags={['sugar daddy', 'sugar baby', 'sugar dating', 'arrangement dating', 'luxury dating']}
-        siteName="BrandyBabe.com"
+        siteName="Dandy Babe"
         type="website"
       />
 
       {/* Dating Schema Markup */}
       <DatingSchema
         type="DatingService"
-        name="BrandyBabe.com"
+        name="Dandy Babe"
         description="Premium sugar daddy dating platform connecting successful individuals with attractive companions in a safe, discreet environment."
-        url="https://brandybabe.com"
-        logo="https://www.brandybabe.com/logo.png"
+        url="https://dandybabe.com"
+        logo="https://www.dandybabe.com/logo.png"
         foundingDate="2024"
         contactType="Customer Service"
-        telephone="+1-555-BRANDY"
-        email="support@brandybabe.com"
+        telephone="+1-555-DANDY"
+        email="support@dandybabe.com"
         priceRange="$$$"
         serviceType="Online Dating Service"
         audience={{
@@ -321,7 +321,7 @@ const HomePageClient: React.FC = () => {
               className="text-white font-display font-bold mb-4 lg:mb-6"
               style={{ fontSize: 'clamp(1.75rem, 4vw + 0.5rem, 3rem)' }}
             >
-              The <span className="text-champagne-500">BrandyBabe.com</span> Ecosystem
+              The <span className="text-champagne-500">Dandy Babe</span> Ecosystem
             </motion.h2>
             <p className="text-neutral-400 max-w-xl lg:max-w-2xl mx-auto text-base lg:text-lg">
               A multi-layered approach to high-end matchmaking, combining advanced technology with human intuition.
@@ -456,7 +456,7 @@ const HomePageClient: React.FC = () => {
         <div className="container-custom">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12 mb-12 lg:mb-20">
             <div className="lg:col-span-2">
-              <h3 className="text-2xl lg:text-3xl font-display font-bold text-transparent bg-clip-text bg-gradient-gold mb-4 lg:mb-6">BrandyBabe.com</h3>
+              <h3 className="text-2xl lg:text-3xl font-display font-bold text-transparent bg-clip-text bg-gradient-gold mb-4 lg:mb-6">Dandy Babe</h3>
               <p className="text-neutral-500 text-sm lg:text-base leading-relaxed max-w-md lg:max-w-sm">
                 The world's most exclusive dating platform for successful individuals and sophisticated companions.
                 Redefining luxury connection since 2024.
@@ -482,7 +482,7 @@ const HomePageClient: React.FC = () => {
             </div>
           </div>
           <div className="flex flex-col lg:flex-row justify-between items-center pt-8 lg:pt-12 border-t border-white/5 gap-6">
-            <p className="text-neutral-600 text-xs lg:text-xs tracking-widest uppercase">© 2026 BrandyBabe.com International. All rights reserved.</p>
+            <p className="text-neutral-600 text-xs lg:text-xs tracking-widest uppercase">© 2026 Dandy Babe International. All rights reserved.</p>
             <div className="flex gap-6 lg:gap-8">
               {['Instagram', 'Twitter', 'LinkedIn'].map(social => (
                 <a key={social} href="#" className="text-neutral-600 hover:text-champagne-500 text-xs lg:text-xs tracking-widest uppercase transition-colors touch-target">{social}</a>

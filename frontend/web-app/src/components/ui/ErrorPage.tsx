@@ -100,7 +100,7 @@ const ErrorPage: React.FC<ErrorPageProps> = ({
                 asChild
                 className="text-champagne-600 hover:text-champagne-900"
               >
-                <a href="mailto:support@brandybabe.com">
+                <a href="mailto:support@dandybabe.com">
                   <Mail className="w-4 h-4 mr-2" />
                   Contact Support
                 </a>
