@@ -1,7 +1,6 @@
 import bcrypt from 'bcryptjs';
 import speakeasy from 'speakeasy';
-import QRCode from 'qrcode';
-import crypto from 'crypto';
+import * as crypto from 'crypto';
 import validator from 'validator';
 import xss from 'xss';
 
