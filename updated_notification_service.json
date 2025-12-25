@@ -1,0 +1,50 @@
+{
+  "autoDeployTrigger": "commit",
+  "branch": "main",
+  "createdAt": "2025-12-25T17:23:00.000000Z",
+  "dashboardUrl": "https://dashboard.render.com/web/srv-d56kbqggjchc7393n5d0",
+  "id": "srv-d56kbqggjchc7393n5d0",
+  "name": "notification-service",
+  "notifyOnFail": "default",
+  "ownerId": "tea-d55mmaur433s73dn65l0",
+  "repo": "https://github.com/oranolio956/sugar-daddy-platform",
+  "rootDir": "backend/notification-service",
+  "serviceDetails": {
+    "buildPlan": "starter",
+    "cache": {
+      "profile": "no-cache"
+    },
+    "env": "docker",
+    "envSpecificDetails": {
+      "dockerCommand": "",
+      "dockerContext": ".",
+      "dockerfilePath": "./Dockerfile"
+    },
+    "healthCheckPath": "/health",
+    "maintenanceMode": {
+      "enabled": false,
+      "uri": ""
+    },
+    "numInstances": 1,
+    "openPorts": [
+      {
+        "port": 10000,
+        "protocol": "TCP"
+      }
+    ],
+    "plan": "starter",
+    "previews": {
+      "generation": "off"
+    },
+    "pullRequestPreviewsEnabled": "no",
+    "region": "oregon",
+    "runtime": "docker",
+    "sshAddress": "srv-d56kbqggjchc7393n5d0@ssh.oregon.render.com",
+    "url": "https://notification-service-yn7v.onrender.com"
+  },
+  "slug": "notification-service-yn7v",
+  "suspended": "not_suspended",
+  "suspenders": [],
+  "type": "web_service",
+  "updatedAt": "2025-12-25T17:23:00.000000Z"
+}

@@ -7,8 +7,8 @@ set -e
 
 # Configuration
 SERVICES=(
-    "api-gateway:https://api-gateway.onrender.com"
-    "user-service:https://user-service.onrender.com"
+    "api-gateway:https://api-gateway-obx8.onrender.com"
+    "user-service:https://user-service-ssft.onrender.com"
     "matching-service:https://matching-service.onrender.com"
     "messaging-service:https://messaging-service.onrender.com"
     "payment-service:https://payment-service.onrender.com"
