@@ -2,12 +2,8 @@
 const nextConfig = {
   // Performance optimizations
   experimental: {
-    // Enable app directory optimizations
-    appDir: true,
     // Enable server components
     serverComponentsExternalPackages: [],
-    // Enable concurrent features
-    concurrentFeatures: true,
   },
 
   // Image optimization
@@ -53,16 +49,6 @@ const nextConfig = {
     // Optimize for production
     if (!dev) {
       config.optimization.minimize = true;
-      config.optimization.minimizer = [
-        new webpack.optimize.TerserPlugin({
-          terserOptions: {
-            compress: {
-              drop_console: true,
-              drop_debugger: true,
-            },
-          },
-        }),
-      ];
     }
 
     return config;
@@ -178,7 +164,7 @@ const nextConfig = {
   i18n: {
     locales: ['en-US', 'es-ES', 'fr-FR', 'de-DE'],
     defaultLocale: 'en-US',
-    localeDetection: true,
+    localeDetection: false,
   },
 
   // Typescript configuration
