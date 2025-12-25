@@ -142,44 +142,6 @@ export const LazyWithRetry = (importFn: () => Promise<any>, retries = 3) => {
   });
 };
 
-/**
- * Lazy load components based on viewport intersection
- */
-export const LazyOnVisible = (importFn: () => Promise<any>, threshold = 0.1) => {
-  const LazyComponent = dynamic(importFn, {
-    loading: () => null,
-    ssr: true,
-  });
-
-  return ({ children, ...props }: any) => {
-    const [isVisible, setIsVisible] = React.useState(false);
-    const ref = React.useRef<HTMLDivElement>(null);
-
-    React.useEffect(() => {
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setIsVisible(true);
-            observer.disconnect();
-          }
-        },
-        { threshold }
-      );
-
-      if (ref.current) {
-        observer.observe(ref.current);
-      }
-
-      return () => observer.disconnect();
-    }, []);
-
-    return (
-      <div ref={ref} {...props}>
-        {isVisible ? <LazyComponent>{children}</LazyComponent> : null}
-      </div>
-    );
-  };
-};
 
 /**
  * Preload critical components
