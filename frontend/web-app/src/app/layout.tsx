@@ -2,11 +2,11 @@ import type { Metadata, Viewport } from 'next';
 import { Inter, Playfair_Display, Montserrat } from 'next/font/google';
 import localFont from 'next/font/local';
 import './globals.css';
-import { SEOProvider } from '../components/seo/SEOProvider';
-import { AccessibilityProvider } from '../contexts/AccessibilityContext';
-import { ToastProvider } from '../components/ui/Toast';
-import { TooltipProvider } from '../components/ui/Tooltip';
-import { ErrorBoundary } from '../components/ui/ErrorBoundary';
+import { SEOProvider } from '../src/components/seo/SEOProvider';
+import { AccessibilityProvider } from '../src/contexts/AccessibilityContext';
+import { ToastProvider } from '../src/components/ui/Toast';
+import { TooltipProvider } from '../src/components/ui/Tooltip';
+import { ErrorBoundary } from '../src/components/ui/ErrorBoundary';
 
 const inter = Inter({
   subsets: ['latin'],

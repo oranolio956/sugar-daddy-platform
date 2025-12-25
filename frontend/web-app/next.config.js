@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Source directory
+  srcDir: '.',
   // Performance optimizations
   experimental: {
     // Enable server components
