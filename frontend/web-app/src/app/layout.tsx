@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, Playfair_Display, Montserrat } from 'next/font/google';
-import localFont from 'next/font/local';
 import './globals.css';
 import { SEOProvider } from '../src/components/seo/SEOProvider';
 import { AccessibilityProvider } from '../src/contexts/AccessibilityContext';
@@ -26,13 +25,6 @@ const montserrat = Montserrat({
   variable: '--font-montserrat',
   display: 'swap',
   weight: ['300', '400', '500', '600', '700'],
-});
-
-// Custom luxury font for accents
-const greatVibes = localFont({
-  src: 'https://fonts.gstatic.com/s/greatvibes/v19/RWmMoKWR9v4ksMfaWd_JN9XFiaE.ttf',
-  variable: '--font-great-vibes',
-  display: 'swap',
 });
 
 export const viewport: Viewport = {
@@ -261,7 +253,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.variable} ${playfair.variable} ${montserrat.variable} ${greatVibes.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} ${playfair.variable} ${montserrat.variable} font-sans antialiased`}>
         <ErrorBoundary>
           <AccessibilityProvider>
             <ToastProvider>
