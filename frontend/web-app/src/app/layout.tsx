@@ -30,7 +30,7 @@ const montserrat = Montserrat({
 
 // Custom luxury font for accents
 const greatVibes = localFont({
-  src: './fonts/GreatVibes-Regular.ttf',
+  src: 'https://fonts.gstatic.com/s/greatvibes/v19/RWmMoKWR9v4ksMfaWd_JN9XFiaE.ttf',
   variable: '--font-great-vibes',
   display: 'swap',
 });

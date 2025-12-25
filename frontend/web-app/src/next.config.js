@@ -23,6 +23,9 @@ const nextConfig = {
 
   // Bundle optimization
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    // Add path aliases
+    config.resolve.alias['@'] = require('path').resolve(__dirname, './');
+
     // Optimize bundle splitting
     config.optimization.splitChunks = {
       chunks: 'all',
