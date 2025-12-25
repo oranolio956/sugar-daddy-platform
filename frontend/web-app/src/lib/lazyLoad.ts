@@ -1,3 +1,4 @@
+import React from 'react';
 import dynamic from 'next/dynamic';
 
 /**
@@ -115,7 +116,7 @@ export const LazyPrism = dynamic(
  */
 export const LazyComponent = (importFn: () => Promise<any>, fallback?: React.ComponentType) => {
   return dynamic(importFn, {
-    loading: fallback ? () => <fallback /> : () => null,
+    loading: fallback ? () => React.createElement(fallback) : () => null,
     ssr: true,
   });
 };
