@@ -6,6 +6,38 @@ import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
 import axios from 'axios';
 
+// Resilient HTTP client with retry logic
+const createResilientClient = (baseURL) => {
+  const client = axios.create({
+    baseURL,
+    timeout: 10000,
+    headers: { 'Content-Type': 'application/json' }
+  });
+
+  // Add retry logic
+  client.interceptors.response.use(null, async (error) => {
+    const config = error.config;
+    if (!config || !config.retry) {
+      return Promise.reject(error);
+    }
+
+    config.retryCount = config.retryCount || 0;
+    if (config.retryCount >= config.retry) {
+      return Promise.reject(error);
+    }
+
+    config.retryCount += 1;
+    const delay = config.retryDelay || 1000;
+
+    console.log(`Retrying request to ${config.url}, attempt ${config.retryCount}`);
+    await new Promise(resolve => setTimeout(resolve, delay));
+
+    return client(config);
+  });
+
+  return client;
+};
+
 dotenv.config();
 
 const app = express();
@@ -50,9 +82,12 @@ app.post('/notifications', async (req, res) => {
   try {
     const { userId, type, title, body, data } = req.body;
 
-    // Get user device tokens from user service
-    const userResponse = await axios.get(`${process.env.USER_SERVICE_URL}/users/${userId}/devices`, {
-      headers: req.headers.authorization ? { 'Authorization': req.headers.authorization } : {}
+    // Get user device tokens from user service with retry logic
+    const userServiceClient = createResilientClient(process.env.USER_SERVICE_URL || 'http://user-service:3002');
+    const userResponse = await userServiceClient.get(`/users/${userId}/devices`, {
+      headers: req.headers.authorization ? { 'Authorization': req.headers.authorization } : {},
+      retry: 3,
+      retryDelay: 500
     });
 
     const devices = userResponse.data;
@@ -72,14 +107,17 @@ app.post('/notifications', async (req, res) => {
 
     await Promise.all(pushPromises);
 
-    // Store notification in database
-    await axios.post(`${process.env.USER_SERVICE_URL}/notifications`, {
+    // Store notification in database with retry logic
+    await userServiceClient.post('/notifications', {
       userId,
       type,
       title,
       body,
       data,
       channels: ['push']
+    }, {
+      retry: 3,
+      retryDelay: 500
     });
 
     res.json({ success: true });

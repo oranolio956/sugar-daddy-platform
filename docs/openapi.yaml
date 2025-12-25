@@ -39,6 +39,8 @@ tags:
     description: Premium features and subscription management
   - name: Security
     description: Security features and compliance
+  - name: Verification
+    description: User identity verification and liveness detection
 
 components:
   securitySchemes:
@@ -784,3 +786,238 @@ paths:
                         format: date-time
                       limit:
                         type: integer
+
+  /verification/selfie/initiate:
+    post:
+      tags:
+        - Verification
+      summary: Initiate selfie liveness verification
+      description: Start a new selfie verification session with Jumio liveness detection
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - callbackUrl
+              properties:
+                callbackUrl:
+                  type: string
+                  format: uri
+                  description: URL for Jumio to send verification results
+                  example: https://your-platform.com/verification-callback
+      responses:
+        '200':
+          description: Verification session initiated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: Selfie verification session initiated
+                  data:
+                    type: object
+                    properties:
+                      sessionToken:
+                        type: string
+                        description: Jumio session token
+                      verificationUrl:
+                        type: string
+                        format: uri
+                        description: URL to redirect user for verification
+                      transactionId:
+                        type: string
+                        description: Jumio transaction ID for tracking
+                      requiresManualReview:
+                        type: boolean
+                        default: false
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Verification already in progress
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Service not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /verification/selfie/webhook:
+    post:
+      tags:
+        - Verification
+      summary: Process Jumio verification webhook
+      description: Receive and process verification results from Jumio
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customerInternalReference:
+                  type: string
+                  description: User ID
+                status:
+                  type: string
+                  enum: [APPROVED, REJECTED, ERROR, PENDING]
+                  description: Verification status
+                transactionId:
+                  type: string
+                  description: Jumio transaction ID
+                verificationResult:
+                  type: object
+                  description: Detailed verification results
+                  properties:
+                    livenessScore:
+                      type: number
+                      minimum: 0
+                      maximum: 1
+                    identityMatch:
+                      type: boolean
+                    confidence:
+                      type: number
+                      minimum: 0
+                      maximum: 1
+      responses:
+        '200':
+          description: Webhook processed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    example: Webhook processed successfully
+        '400':
+          description: Invalid webhook signature or payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized - missing signature
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /verification/selfie/status:
+    get:
+      tags:
+        - Verification
+      summary: Check selfie verification status
+      description: Check the current status of a selfie verification session
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: transactionId
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Jumio transaction ID
+      responses:
+        '200':
+          description: Verification status retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  data:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: [pending, approved, rejected, error]
+                        description: Current verification status
+                      verificationResult:
+                        type: object
+                        description: Detailed verification results (if available)
+                        properties:
+                          livenessScore:
+                            type: number
+                          identityMatch:
+                            type: boolean
+                          confidence:
+                            type: number
+                      error:
+                        type: string
+                        description: Error message (if applicable)
+                      documentId:
+                        type: string
+                        format: uuid
+                        description: Verification document ID
+        '400':
+          description: Missing transaction ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Verification not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /verification/service-status:
+    get:
+      tags:
+        - Verification
+      summary: Get verification service status
+      description: Check the status and configuration of verification services
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Service status retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  data:
+                    type: object
+                    properties:
+                      jumio:
+                        type: object
+                        description: Jumio service status
+                        properties:
+                          configured:
+                            type: boolean
+                            description: Whether Jumio service is properly configured
+                          serviceName:
+                            type: string
+                            example: Jumio Identity Verification
+                          apiUrl:
+                            type: string
+                            format: uri
+                            example: https://api.jumio.com

@@ -7,7 +7,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import { Op } from 'sequelize';
-import { initDatabase, User, Profile, VerificationDocument, PersonalityProfile, SuperLike, Match } from './models';
+import { initDatabase, sequelize, User, Profile, VerificationDocument, PersonalityProfile, SuperLike, Match } from './models';
 import {
   ApplicationError,
   globalErrorHandler,
@@ -137,6 +137,48 @@ app.get('/health', (req, res) => {
     status: 'healthy',
     timestamp: new Date().toISOString()
   });
+});
+
+// Database migration health check
+app.get('/health/migrations', async (req, res) => {
+  try {
+    // Check if database is synchronized
+    await sequelize.sync({ alter: false });
+    res.json({
+      status: 'healthy',
+      migrations: 'up_to_date',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Migration health check failed:', error);
+    res.status(503).json({
+      status: 'unhealthy',
+      migrations: 'pending_or_failed',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// Database health check
+app.get('/health/db', async (req, res) => {
+  try {
+    // Test database connection
+    await sequelize.authenticate();
+    res.json({
+      status: 'healthy',
+      database: 'connected',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Database health check failed:', error);
+    res.status(503).json({
+      status: 'unhealthy',
+      database: 'disconnected',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
 });
 
 // User registration

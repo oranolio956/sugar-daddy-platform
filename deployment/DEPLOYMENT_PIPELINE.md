@@ -58,7 +58,7 @@ VERCEL_PROJECT_ID=sugar-daddy-platform
 
 **Render Configuration**:
 ```
-RENDER_TOKEN=rnd_u29oGb92ppRQywF9QyJbtJz2a5I1
+RENDER_API_KEY=rnd_u29oGb92ppRQywF9QyJbtJz2a5I1
 ```
 
 **Environment Variables**:

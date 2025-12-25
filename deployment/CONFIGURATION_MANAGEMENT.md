@@ -75,7 +75,7 @@ deployment/
 **Location**: `deployment/config/.env.production`
 
 **Key Variables**:
-- Platform tokens (VERCEL_TOKEN, RENDER_TOKEN)
+- Platform tokens (VERCEL_TOKEN, RENDER_API_KEY)
 - Database connection strings
 - API endpoints and URLs
 - Security keys and secrets

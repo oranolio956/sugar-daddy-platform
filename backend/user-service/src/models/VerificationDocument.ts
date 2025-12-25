@@ -24,10 +24,10 @@ export class VerificationDocument extends Model {
   user!: User;
 
   @Column({
-    type: DataType.ENUM('photo_id', 'utility_bill', 'bank_statement', 'selfie'),
+    type: DataType.ENUM('photo_id', 'utility_bill', 'bank_statement', 'selfie', 'background_check'),
     allowNull: false,
   })
-  type!: 'photo_id' | 'utility_bill' | 'bank_statement' | 'selfie';
+  type!: 'photo_id' | 'utility_bill' | 'bank_statement' | 'selfie' | 'background_check';
 
   @Column({
     type: DataType.STRING,

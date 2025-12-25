@@ -12,9 +12,25 @@ services:
       - JWT_SECRET=your_jwt_secret_key
       - DATABASE_URL=postgres://user:password@postgres:5432/sugar_daddy_db
       - REDIS_URL=redis://redis:6379
+      - USER_SERVICE_URL=http://user-service:3002
+      - MATCHING_SERVICE_URL=http://matching-service:3003
+      - MESSAGING_SERVICE_URL=http://messaging-service:3004
+      - PAYMENT_SERVICE_URL=http://payment-service:3005
+      - NOTIFICATION_SERVICE_URL=http://notification-service:3006
     depends_on:
       - postgres
       - redis
+      - user-service
+      - matching-service
+      - messaging-service
+      - payment-service
+      - notification-service
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
       - sugar-daddy-network
 
@@ -30,6 +46,12 @@ services:
       - DATABASE_URL=postgres://user:password@postgres:5432/sugar_daddy_db
     depends_on:
       - postgres
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
       - sugar-daddy-network
 
@@ -45,6 +67,12 @@ services:
       - DATABASE_URL=postgres://user:password@postgres:5432/sugar_daddy_db
     depends_on:
       - postgres
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
       - sugar-daddy-network
 
@@ -62,6 +90,12 @@ services:
     depends_on:
       - postgres
       - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
       - sugar-daddy-network
 
@@ -80,6 +114,12 @@ services:
       - PAYPAL_CLIENT_SECRET=${PAYPAL_CLIENT_SECRET:-placeholder}
     depends_on:
       - postgres
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
       - sugar-daddy-network
 
@@ -96,6 +136,12 @@ services:
       - FIREBASE_CREDENTIALS_PATH=${FIREBASE_CREDENTIALS_PATH:-./firebase-credentials.json}
     depends_on:
       - postgres
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3006/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
       - sugar-daddy-network
 

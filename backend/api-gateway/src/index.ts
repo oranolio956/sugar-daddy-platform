@@ -25,13 +25,54 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Service URLs
+// Service URLs - Updated for Docker service discovery
 const services = {
-  user: process.env.USER_SERVICE_URL || 'http://localhost:3002',
-  matching: process.env.MATCHING_SERVICE_URL || 'http://localhost:3003',
-  messaging: process.env.MESSAGING_SERVICE_URL || 'http://localhost:3004',
-  payment: process.env.PAYMENT_SERVICE_URL || 'http://localhost:3005',
-  notification: process.env.NOTIFICATION_SERVICE_URL || 'http://localhost:3006',
+  user: process.env.USER_SERVICE_URL || 'http://user-service:3002',
+  matching: process.env.MATCHING_SERVICE_URL || 'http://matching-service:3003',
+  messaging: process.env.MESSAGING_SERVICE_URL || 'http://messaging-service:3004',
+  payment: process.env.PAYMENT_SERVICE_URL || 'http://payment-service:3005',
+  notification: process.env.NOTIFICATION_SERVICE_URL || 'http://notification-service:3006',
+};
+
+// Service registry for dynamic service discovery
+const serviceRegistry = {
+  'user-service': services.user,
+  'matching-service': services.matching,
+  'messaging-service': services.messaging,
+  'payment-service': services.payment,
+  'notification-service': services.notification,
+};
+
+// Resilient HTTP client with retry logic
+const createResilientClient = (baseURL) => {
+  const client = axios.create({
+    baseURL,
+    timeout: 10000,
+    headers: { 'Content-Type': 'application/json' }
+  });
+
+  // Add retry logic
+  client.interceptors.response.use(null, async (error) => {
+    const config = error.config;
+    if (!config || !config.retry) {
+      return Promise.reject(error);
+    }
+
+    config.retryCount = config.retryCount || 0;
+    if (config.retryCount >= config.retry) {
+      return Promise.reject(error);
+    }
+
+    config.retryCount += 1;
+    const delay = config.retryDelay || 1000;
+
+    console.log(`Retrying request to ${config.url}, attempt ${config.retryCount}`);
+    await new Promise(resolve => setTimeout(resolve, delay));
+
+    return client(config);
+  });
+
+  return client;
 };
 
 // Authentication middleware
@@ -53,15 +94,23 @@ app.use('/api/auth', (req, res) => {
   res.status(404).json({ error: 'Auth routes should be handled by frontend API' });
 });
 
-// Health check
+// Health check with resilient client
 app.get('/health', async (req, res) => {
   try {
+    const healthClients = {
+      user: createResilientClient(services.user),
+      matching: createResilientClient(services.matching),
+      messaging: createResilientClient(services.messaging),
+      payment: createResilientClient(services.payment),
+      notification: createResilientClient(services.notification),
+    };
+
     const healthChecks = await Promise.allSettled([
-      axios.get(`${services.user}/health`),
-      axios.get(`${services.matching}/health`),
-      axios.get(`${services.messaging}/health`),
-      axios.get(`${services.payment}/health`),
-      axios.get(`${services.notification}/health`),
+      healthClients.user.get('/health', { retry: 3, retryDelay: 500 }),
+      healthClients.matching.get('/health', { retry: 3, retryDelay: 500 }),
+      healthClients.messaging.get('/health', { retry: 3, retryDelay: 500 }),
+      healthClients.payment.get('/health', { retry: 3, retryDelay: 500 }),
+      healthClients.notification.get('/health', { retry: 3, retryDelay: 500 }),
     ]);
 
     const results = {
@@ -97,16 +146,16 @@ app.get('/', (req, res) => {
   });
 });
 
-// Proxy function to forward requests to services
+// Proxy function to forward requests to services with resilience
 function createProxy(serviceName: keyof typeof services) {
   return async (req: express.Request, res: express.Response) => {
-    try {
-      const serviceUrl = services[serviceName];
-      const url = `${serviceUrl}${req.path}`;
+    const serviceUrl = services[serviceName];
+    const resilientClient = createResilientClient(serviceUrl);
 
-      const response = await axios({
+    try {
+      const response = await resilientClient({
         method: req.method as any,
-        url,
+        url: req.path,
         data: req.body,
         params: req.query,
         headers: {
@@ -114,6 +163,8 @@ function createProxy(serviceName: keyof typeof services) {
           // Remove host header to avoid conflicts
           host: new URL(serviceUrl).host,
         },
+        retry: 3,
+        retryDelay: 1000,
         timeout: 30000, // 30 second timeout
       });
 
@@ -128,14 +179,16 @@ function createProxy(serviceName: keyof typeof services) {
         res.status(503).json({
           error: 'Service unavailable',
           service: serviceName,
-          message: `${serviceName} service is currently unavailable`
+          message: `${serviceName} service is currently unavailable`,
+          suggestion: 'Please check if the service is running and try again later'
         });
       } else {
         // Other error
         console.error(`Proxy error for ${serviceName}:`, error.message);
         res.status(500).json({
           error: 'Internal server error',
-          service: serviceName
+          service: serviceName,
+          details: error.message
         });
       }
     }

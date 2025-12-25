@@ -107,7 +107,7 @@ validate_tokens() {
     
     # Get tokens from secrets file
     VERCEL_TOKEN=$(jq -r '.platforms.vercel.token' "$SECRETS_FILE")
-    RENDER_TOKEN=$(jq -r '.platforms.render.token' "$SECRETS_FILE")
+    RENDER_API_KEY=$(jq -r '.platforms.render.apiKey' "$SECRETS_FILE")
     
     if [ "$VERCEL_TOKEN" = "null" ] || [ "$VERCEL_TOKEN" = "" ]; then
         log_warning "Vercel token not found in secrets file."

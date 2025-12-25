@@ -57,6 +57,28 @@ check_prerequisites() {
     success "Prerequisites check passed"
 }
 
+# Validate Render API key
+validate_render_api_key() {
+    log "Validating Render API key..."
+
+    # Test API connectivity
+    log "Testing Render API connectivity..."
+    API_RESPONSE=$(curl -s -H "Authorization: Bearer $RENDER_API_KEY" "https://api.render.com/v1/services" 2>&1)
+
+    if [ $? -ne 0 ]; then
+        error "Failed to connect to Render API: $API_RESPONSE"
+        exit 1
+    fi
+
+    # Check for authentication errors
+    if echo "$API_RESPONSE" | grep -q "Unauthorized"; then
+        error "Render API key authentication failed. Please check your RENDER_API_KEY."
+        exit 1
+    fi
+
+    success "Render API key validation passed"
+}
+
 # Validate Render configuration
 validate_configuration() {
     log "Validating Render configuration..."
@@ -188,6 +210,7 @@ main() {
     log "Starting Render deployment for Sugar Daddy Platform..."
     
     check_prerequisites
+    validate_render_api_key
     validate_configuration
     deploy_services
     wait_for_services

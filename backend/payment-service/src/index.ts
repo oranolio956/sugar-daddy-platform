@@ -35,6 +35,27 @@ app.get('/health', (req, res) => {
     status: 'healthy',
     timestamp: new Date().toISOString()
   });
+
+  // Database health check
+  app.get('/health/db', async (req, res) => {
+    try {
+      // Test database connection
+      await sequelize.authenticate();
+      res.json({
+        status: 'healthy',
+        database: 'connected',
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Database health check failed:', error);
+      res.status(503).json({
+        status: 'unhealthy',
+        database: 'disconnected',
+        error: error.message,
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
 });
 
 // Create payment intent for subscription

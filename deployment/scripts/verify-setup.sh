@@ -251,7 +251,7 @@ test_connectivity() {
     
     if [ -f "$SECRETS_FILE" ] && command -v jq &> /dev/null; then
         VERCEL_TOKEN=$(jq -r '.platforms.vercel.token' "$SECRETS_FILE" 2>/dev/null)
-        RENDER_TOKEN=$(jq -r '.platforms.render.token' "$SECRETS_FILE" 2>/dev/null)
+        RENDER_API_KEY=$(jq -r '.platforms.render.apiKey' "$SECRETS_FILE" 2>/dev/null)
         
         if [ "$VERCEL_TOKEN" != "null" ] && [ "$VERCEL_TOKEN" != "" ]; then
             log_info "Testing Vercel connectivity..."
