@@ -1,12 +1,12 @@
 import { Metadata } from 'next';
-import { generateMetaTags, generateSearchResultsSchema } from '../../src/lib/seo';
-import { useSEO } from '../../src/components/seo/SEOProvider';
-import { usePerformanceMonitor } from '../../src/lib/performance';
-import { LazyFramerMotion, LazyLucideIcons } from '../../src/lib/lazyLoad';
-import { OptimizedImage, Gallery } from '../../src/components/ui/OptimizedImage';
-import { Button } from '../../src/components/ui/Button';
-import { Badge } from '../../src/components/ui/Badge';
-import { Card, CardContent, CardHeader, CardTitle } from '../../src/components/ui/Card';
+import { generateMetaTags, generateSearchResultsSchema } from '@/lib/seo';
+import { useSEO } from '@/components/seo/SEOProvider';
+import { usePerformanceMonitor } from '@/lib/performance';
+import { LazyFramerMotion, LazyLucideIcons } from '@/lib/lazyLoad';
+import { OptimizedImage, Gallery } from '@/components/ui/OptimizedImage';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 
 const { motion, AnimatePresence } = LazyFramerMotion;
 const { Users, Filter, Search, Heart, Star, Shield, MapPin, Calendar } = LazyLucideIcons;

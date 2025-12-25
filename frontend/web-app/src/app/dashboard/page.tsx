@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
-import { generateMetaTags } from '../../src/lib/seo';
-import EnhancedDashboard from '../../src/components/dashboard/EnhancedDashboard';
+import { generateMetaTags } from '@/lib/seo';
+import EnhancedDashboard from '@/components/dashboard/EnhancedDashboard';
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateMetaTags(
