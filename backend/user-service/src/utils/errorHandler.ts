@@ -136,10 +136,10 @@ export function globalErrorHandler(
   next: NextFunction
 ): void {
   // Set default values
-  let statusCode = error.statusCode || 500;
+  let statusCode = (error as AppError).statusCode || 500;
   let message = error.message || 'Internal server error';
-  let code = error.code || 'INTERNAL_ERROR';
-  let details = error.details || {};
+  let code = (error as AppError).code || 'INTERNAL_ERROR';
+  let details = (error as AppError).details || {};
 
   // Handle different error types
   if (error.name === 'ValidationError') {
@@ -153,7 +153,7 @@ export function globalErrorHandler(
     statusCode = appError.statusCode;
     message = appError.message;
     code = appError.code;
-  } else if (error.name === 'MongoServerError' && error.code === 11000) {
+  } else if (error.name === 'MongoServerError' && (error as any).code === 11000) {
     const appError = handleDuplicateKeyError(error);
     statusCode = appError.statusCode;
     message = appError.message;
@@ -200,8 +200,8 @@ export function globalErrorHandler(
     error: {
       message,
       code,
-      ...(process.env.NODE_ENV === 'development' && { details }),
-      ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
+      ...(process.env['NODE_ENV'] === 'development' && { details }),
+      ...(process.env['NODE_ENV'] === 'development' && { stack: error.stack })
     }
   };
 
@@ -220,7 +220,7 @@ export function asyncHandler(fn: Function) {
 /**
  * 404 Not Found handler
  */
-export function notFoundHandler(req: Request, res: Response, next: NextFunction): void {
+export function notFoundHandler(req: Request, _res: Response, next: NextFunction): void {
   const error = new ApplicationError(
     `Route ${req.originalUrl} not found`,
     404,

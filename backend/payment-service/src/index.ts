@@ -1,15 +1,15 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
 import Stripe from 'stripe';
 import axios from 'axios';
 
 dotenv.config();
 
 const app = express();
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+const stripe = new Stripe(process.env['STRIPE_SECRET_KEY'] || '', {
   apiVersion: '2023-10-16'
 });
 
@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.get('/', (req, res) => {
+app.get('/', (req: Request, res: Response) => {
   res.json({
     service: 'Sugar Daddy Payment Service',
     status: 'running',
@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
 });
 
 // Health check
-app.get('/health', (req, res) => {
+app.get('/health', (req: Request, res: Response) => {
   res.json({
     status: 'healthy',
     timestamp: new Date().toISOString()
@@ -59,13 +59,13 @@ app.get('/health', (req, res) => {
 });
 
 // Create payment intent for subscription
-app.post('/create-payment-intent', async (req, res) => {
+app.post('/create-payment-intent', async (req: Request, res: Response) => {
   try {
     const { userId, subscriptionTier, amount } = req.body;
 
     // Get user data to verify
     const userResponse = await axios.get(`${process.env.USER_SERVICE_URL}/users/${userId}`, {
-      headers: req.headers.authorization ? { 'Authorization': req.headers.authorization } : {}
+      headers: req.headers.authorization ? { 'Authorization': req.headers.authorization as string } : {}
     });
 
     const user = userResponse.data;
@@ -96,7 +96,7 @@ app.post('/create-payment-intent', async (req, res) => {
 });
 
 // Confirm payment and update subscription
-app.post('/confirm-payment', async (req, res) => {
+app.post('/confirm-payment', async (req: Request, res: Response) => {
   try {
     const { paymentIntentId, userId, subscriptionTier } = req.body;
 
@@ -107,7 +107,7 @@ app.post('/confirm-payment', async (req, res) => {
       // Update user subscription in user service
       const subscriptionData = getSubscriptionData(subscriptionTier);
 
-      await axios.put(`${process.env.USER_SERVICE_URL}/users/${userId}/subscription`, {
+      await axios.put(`${process.env['USER_SERVICE_URL']}/users/${userId}/subscription`, {
         tier: subscriptionTier,
         status: 'active',
         features: subscriptionData.features,
@@ -117,7 +117,7 @@ app.post('/confirm-payment', async (req, res) => {
       });
 
       // Create subscription record
-      await axios.post(`${process.env.USER_SERVICE_URL}/subscriptions`, {
+      await axios.post(`${process.env['USER_SERVICE_URL']}/subscriptions`, {
         userId,
         stripePaymentIntentId: paymentIntentId,
         tier: subscriptionTier,
@@ -140,14 +140,14 @@ app.post('/confirm-payment', async (req, res) => {
 });
 
 // Handle Stripe webhooks
-app.post('/webhooks/stripe', express.raw({ type: 'application/json' }), async (req, res) => {
+app.post('/webhooks/stripe', express.raw({ type: 'application/json' }), async (req: Request, res: Response) => {
   const sig = req.headers['stripe-signature'] as string;
-  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  const endpointSecret = process.env['STRIPE_WEBHOOK_SECRET'];
 
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    event = stripe.webhooks.constructEvent(req.body as any, sig, endpointSecret);
   } catch (err) {
     console.error('Webhook signature verification failed:', err);
     return res.status(400).send('Webhook Error');
@@ -181,13 +181,13 @@ app.post('/webhooks/stripe', express.raw({ type: 'application/json' }), async (r
 });
 
 // Send virtual gift
-app.post('/gifts/send', async (req, res) => {
+app.post('/gifts/send', async (req: Request, res: Response) => {
   try {
     const { senderId, receiverId, giftType, amount } = req.body;
 
     // Verify sender has sufficient balance/credits
     const senderResponse = await axios.get(`${process.env.USER_SERVICE_URL}/users/${senderId}`, {
-      headers: req.headers.authorization ? { 'Authorization': req.headers.authorization } : {}
+      headers: req.headers.authorization ? { 'Authorization': req.headers.authorization as string } : {}
     });
 
     const sender = senderResponse.data;
@@ -212,11 +212,11 @@ app.post('/gifts/send', async (req, res) => {
     await axios.put(`${process.env.USER_SERVICE_URL}/users/${senderId}/balance`, {
       deduct: amount
     }, {
-      headers: req.headers.authorization ? { 'Authorization': req.headers.authorization } : {}
+      headers: req.headers.authorization ? { 'Authorization': req.headers.authorization as string } : {}
     });
 
     // Notify receiver
-    await axios.post(`${process.env.NOTIFICATION_SERVICE_URL}/notifications`, {
+    await axios.post(`${process.env['NOTIFICATION_SERVICE_URL']}/notifications`, {
       userId: receiverId,
       type: 'gift',
       title: 'You received a gift!',
@@ -235,7 +235,7 @@ app.post('/gifts/send', async (req, res) => {
 });
 
 // Get user's transaction history
-app.get('/transactions/:userId', async (req, res) => {
+app.get('/transactions/:userId', async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const { limit = 20, offset = 0 } = req.query;
@@ -243,7 +243,7 @@ app.get('/transactions/:userId', async (req, res) => {
     // Get transactions from database
     const transactionsResponse = await axios.get(`${process.env.USER_SERVICE_URL}/transactions`, {
       params: { userId, limit, offset },
-      headers: req.headers.authorization ? { 'Authorization': req.headers.authorization } : {}
+      headers: req.headers.authorization ? { 'Authorization': req.headers.authorization as string } : {}
     });
 
     res.json(transactionsResponse.data);
@@ -254,7 +254,7 @@ app.get('/transactions/:userId', async (req, res) => {
 });
 
 // Get available subscription tiers
-app.get('/subscriptions/tiers', (req, res) => {
+app.get('/subscriptions/tiers', (req: Request, res: Response) => {
   res.json({
     tiers: {
       free: {

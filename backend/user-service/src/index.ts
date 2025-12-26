@@ -15,8 +15,10 @@ import {
   notFoundHandler,
   createNotFoundError,
   createUnauthorizedError,
+  createForbiddenError,
   createValidationError,
-  createServiceUnavailableError
+  createServiceUnavailableError,
+  createConflictError
 } from './utils/errorHandler';
 import {
   registerSchema,

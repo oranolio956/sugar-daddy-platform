@@ -1,8 +1,8 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import axios from 'axios';
@@ -26,7 +26,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.get('/', (req, res) => {
+app.get('/', (req: Request, res: Response) => {
   res.json({
     service: 'Messaging Service',
     status: 'running',
@@ -43,7 +43,7 @@ app.get('/', (req, res) => {
 });
 
 // Health check
-app.get('/health', (req, res) => {
+app.get('/health', (req: Request, res: Response) => {
   res.json({
     status: 'healthy',
     timestamp: new Date().toISOString()
@@ -72,7 +72,7 @@ app.get('/health', (req, res) => {
 });
 
 // Get conversations for user
-app.get('/conversations/:userId', async (req, res) => {
+app.get('/conversations/:userId', async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const { limit = 20, offset = 0 } = req.query;
@@ -105,7 +105,7 @@ app.get('/conversations/:userId', async (req, res) => {
 });
 
 // Create new conversation
-app.post('/conversations', async (req, res) => {
+app.post('/conversations', async (req: Request, res: Response) => {
   try {
     const { participants, type = 'direct', initialMessage } = req.body;
 
@@ -144,7 +144,7 @@ app.post('/conversations', async (req, res) => {
 });
 
 // Get messages for conversation
-app.get('/conversations/:conversationId/messages', async (req, res) => {
+app.get('/conversations/:conversationId/messages', async (req: Request, res: Response) => {
   try {
     const { conversationId } = req.params;
     const { limit = 50, before } = req.query;
@@ -165,7 +165,7 @@ app.get('/conversations/:conversationId/messages', async (req, res) => {
 });
 
 // Send message
-app.post('/conversations/:conversationId/messages', async (req, res) => {
+app.post('/conversations/:conversationId/messages', async (req: Request, res: Response) => {
   try {
     const { conversationId } = req.params;
     const { content, type = 'text', metadata } = req.body;
@@ -208,7 +208,7 @@ app.post('/conversations/:conversationId/messages', async (req, res) => {
 });
 
 // Mark messages as read
-app.post('/conversations/:conversationId/messages/read', async (req, res) => {
+app.post('/conversations/:conversationId/messages/read', async (req: Request, res: Response) => {
   try {
     const { conversationId } = req.params;
     const { messageIds } = req.body;
@@ -244,7 +244,7 @@ app.post('/conversations/:conversationId/messages/read', async (req, res) => {
 });
 
 // Send typing indicator
-app.post('/conversations/:conversationId/typing', async (req, res) => {
+app.post('/conversations/:conversationId/typing', async (req: Request, res: Response) => {
   try {
     const { conversationId } = req.params;
     const { isTyping } = req.body;
@@ -277,7 +277,7 @@ app.post('/conversations/:conversationId/typing', async (req, res) => {
 });
 
 // Get message templates
-app.get('/message-templates', async (req, res) => {
+app.get('/message-templates', async (req: Request, res: Response) => {
   try {
     const { userId } = req.query;
     const templates = await getMessageTemplates(userId as string);
@@ -290,7 +290,7 @@ app.get('/message-templates', async (req, res) => {
 });
 
 // Send message template
-app.post('/conversations/:conversationId/templates/:templateId/send', async (req, res) => {
+app.post('/conversations/:conversationId/templates/:templateId/send', async (req: Request, res: Response) => {
   try {
     const { conversationId, templateId } = req.params;
     const senderId = (req as any).user.id;
@@ -331,7 +331,7 @@ app.post('/conversations/:conversationId/templates/:templateId/send', async (req
 });
 
 // Video call endpoints
-app.post('/video-calls', async (req, res) => {
+app.post('/video-calls', async (req: Request, res: Response) => {
   try {
     const { callerId, receiverId, conversationId } = req.body;
 
@@ -358,7 +358,7 @@ app.post('/video-calls', async (req, res) => {
     });
 
     // Send push notification
-    await axios.post(`${process.env.NOTIFICATION_SERVICE_URL}/notifications`, {
+    await axios.post(`${process.env['NOTIFICATION_SERVICE_URL']}/notifications`, {
       userId: receiverId,
       type: 'video_call',
       title: 'Incoming Video Call',
@@ -378,7 +378,7 @@ app.post('/video-calls', async (req, res) => {
 });
 
 // Accept video call
-app.post('/video-calls/:callId/accept', async (req, res) => {
+app.post('/video-calls/:callId/accept', async (req: Request, res: Response) => {
   try {
     const { callId } = req.params;
     const userId = (req as any).user.id;
@@ -403,7 +403,7 @@ app.post('/video-calls/:callId/accept', async (req, res) => {
 });
 
 // Reject video call
-app.post('/video-calls/:callId/reject', async (req, res) => {
+app.post('/video-calls/:callId/reject', async (req: Request, res: Response) => {
   try {
     const { callId } = req.params;
     const userId = (req as any).user.id;
@@ -425,7 +425,7 @@ app.post('/video-calls/:callId/reject', async (req, res) => {
 });
 
 // End video call
-app.post('/video-calls/:callId/end', async (req, res) => {
+app.post('/video-calls/:callId/end', async (req: Request, res: Response) => {
   try {
     const { callId } = req.params;
     const userId = (req as any).user.id;

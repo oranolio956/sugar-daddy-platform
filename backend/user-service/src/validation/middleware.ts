@@ -3,8 +3,8 @@ import { sanitizeInput } from './schemas';
 import * as Joi from 'joi';
 
 // Validation middleware factory
-export const validate = (schema: any): ((req: Request, res: Response, next: NextFunction) => void) => {
-  return (req: Request, res: Response, next: NextFunction): void => {
+export const validate = (schema: any): ((req: Request, res: Response, next: NextFunction) => void | Response) => {
+  return (req: Request, res: Response, next: NextFunction): void | Response => {
     // Sanitize input first
     const sanitizedBody = sanitizeInput(req.body);
     const sanitizedQuery = sanitizeInput(req.query);
@@ -39,7 +39,7 @@ export const validate = (schema: any): ((req: Request, res: Response, next: Next
 };
 
 // Rate limiting validation middleware
-export const validateRateLimit = (req: Request, res: Response, next: NextFunction): void => {
+export const validateRateLimit = (req: Request, res: Response, next: NextFunction): void | Response => {
   // Check if rate limit headers exist
   const remaining = res.getHeader('X-RateLimit-Remaining');
   const resetTime = res.getHeader('X-RateLimit-Reset');
@@ -60,7 +60,7 @@ export const validateRateLimit = (req: Request, res: Response, next: NextFunctio
 };
 
 // Security headers validation middleware
-export const validateSecurityHeaders = (req: Request, res: Response, next: NextFunction): void => {
+export const validateSecurityHeaders = (req: Request, res: Response, next: NextFunction): void | Response => {
   // Check for required security headers
   const userAgent = req.get('User-Agent');
   const origin = req.get('Origin');
@@ -105,7 +105,7 @@ export const validateSecurityHeaders = (req: Request, res: Response, next: NextF
 };
 
 // CSRF token validation middleware
-export const validateCSRF = (req: Request, res: Response, next: NextFunction): void => {
+export const validateCSRF = (req: Request, res: Response, next: NextFunction): void | Response => {
   // Skip CSRF validation for GET requests
   if (req.method === 'GET') {
     return next();
@@ -135,7 +135,7 @@ export const validateCSRF = (req: Request, res: Response, next: NextFunction): v
 };
 
 // Content-Type validation middleware
-export const validateContentType = (req: Request, res: Response, next: NextFunction): void => {
+export const validateContentType = (req: Request, res: Response, next: NextFunction): void | Response => {
   const contentType = req.get('Content-Type');
 
   // For POST/PUT/PATCH requests, require proper content type
@@ -173,7 +173,7 @@ interface MulterFile {
   buffer: Buffer;
 }
 
-export const validateFileUpload = (req: Request, res: Response, next: NextFunction): void => {
+export const validateFileUpload = (req: Request, res: Response, next: NextFunction): void | Response => {
   if (!req.file && !req.files) {
     return next();
   }
@@ -239,7 +239,7 @@ export const validateFileUpload = (req: Request, res: Response, next: NextFuncti
 };
 
 // Enhanced SQL injection prevention middleware
-export const preventSQLInjection = (req: Request, res: Response, next: NextFunction): void => {
+export const preventSQLInjection = (req: Request, res: Response, next: NextFunction): void | Response => {
   const suspiciousPatterns = [
     // SQL keywords
     /(\bselect\b|\binsert\b|\bupdate\b|\bdelete\b|\bdrop\b|\bunion\b|\bexec\b|\bexecute\b|\bcreate\b|\balter\b|\btruncate\b|\bdeclare\b)/i,
@@ -291,7 +291,7 @@ export const preventSQLInjection = (req: Request, res: Response, next: NextFunct
 };
 
 // Enhanced XSS prevention middleware
-export const preventXSS = (req: Request, res: Response, next: NextFunction): void => {
+export const preventXSS = (req: Request, res: Response, next: NextFunction): void | Response => {
   const xssPatterns = [
     // Script tags
     /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
@@ -357,7 +357,7 @@ export const preventXSS = (req: Request, res: Response, next: NextFunction): voi
 };
 
 // Command injection prevention middleware
-export const preventCommandInjection = (req: Request, res: Response, next: NextFunction): void => {
+export const preventCommandInjection = (req: Request, res: Response, next: NextFunction): void | Response => {
   const commandPatterns = [
     // Command execution
     /(\bexec\b|\bsystem\b|\bpassthru\b|\bshell_exec\b|\bproc_open\b|\bpopen\b|\bpcntl_exec\b)/i,
@@ -403,7 +403,7 @@ export const preventCommandInjection = (req: Request, res: Response, next: NextF
 };
 
 // Path traversal prevention middleware
-export const preventPathTraversal = (req: Request, res: Response, next: NextFunction): void => {
+export const preventPathTraversal = (req: Request, res: Response, next: NextFunction): void | Response => {
   const pathPatterns = [
     // Directory traversal
     /\.\.\/|\.\.\\|\.\.\/\.\.\/|\.\.\\\.\.\\/,
@@ -449,7 +449,7 @@ export const preventPathTraversal = (req: Request, res: Response, next: NextFunc
 };
 
 // LDAP injection prevention middleware
-export const preventLDAPInjection = (req: Request, res: Response, next: NextFunction): void => {
+export const preventLDAPInjection = (req: Request, res: Response, next: NextFunction): void | Response => {
   const ldapPatterns = [
     // LDAP special characters
     /[()\\*|&!]/,

@@ -1,8 +1,8 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
 import axios from 'axios';
 
 dotenv.config();
@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.get('/', (req, res) => {
+app.get('/', (req: Request, res: Response) => {
   res.json({
     service: 'Matching Service',
     status: 'running',
@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
 });
 
 // Health check
-app.get('/health', (req, res) => {
+app.get('/health', (req: Request, res: Response) => {
   res.json({
     status: 'healthy',
     timestamp: new Date().toISOString()
@@ -41,7 +41,7 @@ app.get('/health', (req, res) => {
 });
 
 // Advanced search with AI ranking
-app.post('/search', async (req, res) => {
+app.post('/search', async (req: Request, res: Response) => {
   try {
     const {
       userId,
@@ -54,7 +54,7 @@ app.post('/search', async (req, res) => {
 
     // Get user's profile and preferences
     const userResponse = await axios.get(`${process.env.USER_SERVICE_URL}/users/${userId}`, {
-      headers: req.headers.authorization ? { 'Authorization': req.headers.authorization } : {}
+      headers: req.headers.authorization ? { 'Authorization': req.headers.authorization as string } : {}
     });
 
     const user = userResponse.data;
@@ -86,7 +86,7 @@ app.post('/search', async (req, res) => {
 });
 
 // Get matches for user
-app.get('/matches/:userId', async (req, res) => {
+app.get('/matches/:userId', async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const { limit = 50, offset = 0 } = req.query;
@@ -117,7 +117,7 @@ app.get('/matches/:userId', async (req, res) => {
 });
 
 // Create a match between users
-app.post('/matches', async (req, res) => {
+app.post('/matches', async (req: Request, res: Response) => {
   try {
     const { userId, targetUserId, type = 'like' } = req.body;
 
@@ -139,7 +139,7 @@ app.post('/matches', async (req, res) => {
       await createConversation(userId, targetUserId);
 
       // Send match notification
-      await axios.post(`${process.env.NOTIFICATION_SERVICE_URL}/notifications/match`, {
+      await axios.post(`${process.env['NOTIFICATION_SERVICE_URL']}/notifications/match`, {
         userId: targetUserId,
         matchedUserId: userId,
         matchId: match.id
@@ -158,13 +158,13 @@ app.post('/matches', async (req, res) => {
 });
 
 // Get AI-powered recommendations
-app.get('/recommendations/:userId', async (req, res) => {
+app.get('/recommendations/:userId', async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const { limit = 10, type = 'compatibility' } = req.query;
 
     // Get AI recommendations from matching engine
-    const recommendations = await axios.get(`${process.env.AI_SERVICE_URL}/match-suggestions/${userId}`, {
+    const recommendations = await axios.get(`${process.env['AI_SERVICE_URL']}/match-suggestions/${userId}`, {
       params: { limit, type }
     });
 
@@ -176,14 +176,14 @@ app.get('/recommendations/:userId', async (req, res) => {
 });
 
 // Get AI-powered discovery feed
-app.get('/discovery/:userId', async (req, res) => {
+app.get('/discovery/:userId', async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const { limit = 20, offset = 0 } = req.query;
 
     // Get user profile and preferences
     const userResponse = await axios.get(`${process.env.USER_SERVICE_URL}/users/${userId}`, {
-      headers: req.headers.authorization ? { 'Authorization': req.headers.authorization } : {}
+      headers: req.headers.authorization ? { 'Authorization': req.headers.authorization as string } : {}
     });
 
     const user = userResponse.data;
@@ -204,7 +204,7 @@ app.get('/discovery/:userId', async (req, res) => {
 });
 
 // Get compatibility analysis
-app.get('/compatibility/:userId1/:userId2', async (req, res) => {
+app.get('/compatibility/:userId1/:userId2', async (req: Request, res: Response) => {
   try {
     const { userId1, userId2 } = req.params;
 
@@ -222,7 +222,7 @@ app.get('/compatibility/:userId1/:userId2', async (req, res) => {
 });
 
 // Get match insights
-app.get('/insights/:userId', async (req, res) => {
+app.get('/insights/:userId', async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
 
@@ -241,7 +241,7 @@ app.get('/insights/:userId', async (req, res) => {
 });
 
 // Smart search with AI filters
-app.post('/search/smart', async (req, res) => {
+app.post('/search/smart', async (req: Request, res: Response) => {
   try {
     const { userId, query, filters } = req.body;
 
@@ -269,7 +269,7 @@ app.post('/search/smart', async (req, res) => {
 });
 
 // Location-based search
-app.post('/search/nearby', async (req, res) => {
+app.post('/search/nearby', async (req: Request, res: Response) => {
   try {
     const { userId, latitude, longitude, radiusKm = 50 } = req.body;
 
@@ -297,7 +297,7 @@ app.post('/search/nearby', async (req, res) => {
 });
 
 // Pass on a user (remove from potential matches)
-app.post('/pass/:userId/:targetUserId', async (req, res) => {
+app.post('/pass/:userId/:targetUserId', async (req: Request, res: Response) => {
   try {
     const { userId, targetUserId } = req.params;
 
@@ -315,7 +315,7 @@ app.post('/pass/:userId/:targetUserId', async (req, res) => {
 });
 
 // Get user's activity (likes, passes, matches)
-app.get('/activity/:userId', async (req, res) => {
+app.get('/activity/:userId', async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const { type, limit = 20, offset = 0 } = req.query;
@@ -445,7 +445,7 @@ async function checkMutualMatches(results: any[], userId: string) {
 
 async function calculateCompatibility(userId1: string, userId2: string) {
   try {
-    const response = await axios.post(`${process.env.AI_SERVICE_URL}/calculate-compatibility`, {
+    const response = await axios.post(`${process.env['AI_SERVICE_URL']}/calculate-compatibility`, {
       userId1,
       userId2,
       profile1: {}, // Would fetch actual profiles
@@ -486,7 +486,7 @@ async function checkMutualMatch(userId: string, targetUserId: string) {
 
 async function createConversation(userId: string, targetUserId: string) {
   // Create conversation in messaging service
-  await axios.post(`${process.env.MESSAGING_SERVICE_URL}/conversations`, {
+  await axios.post(`${process.env['MESSAGING_SERVICE_URL']}/conversations`, {
     participants: [userId, targetUserId],
     type: 'match'
   });

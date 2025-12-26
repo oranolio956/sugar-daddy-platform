@@ -1,8 +1,8 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
 import axios from 'axios';
 
 dotenv.config();
@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Admin authentication middleware
-const requireAdmin = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+const requireAdmin = (req: Request, res: Response, next: NextFunction) => {
   const user = (req as any).user;
   if (!user || user.role !== 'admin') {
     return res.status(403).json({ error: 'Admin access required' });
@@ -26,7 +26,7 @@ const requireAdmin = (req: express.Request, res: express.Response, next: express
 };
 
 // Admin dashboard stats
-app.get('/stats', requireAdmin, async (req, res) => {
+app.get('/stats', requireAdmin, async (req: Request, res: Response) => {
   try {
     // Get comprehensive platform statistics
     const stats = await getPlatformStats();
@@ -39,7 +39,7 @@ app.get('/stats', requireAdmin, async (req, res) => {
 });
 
 // User management
-app.get('/users', requireAdmin, async (req, res) => {
+app.get('/users', requireAdmin, async (req: Request, res: Response) => {
   try {
     const {
       page = 1,
@@ -65,7 +65,7 @@ app.get('/users', requireAdmin, async (req, res) => {
 });
 
 // User details
-app.get('/users/:userId', requireAdmin, async (req, res) => {
+app.get('/users/:userId', requireAdmin, async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
 
@@ -83,7 +83,7 @@ app.get('/users/:userId', requireAdmin, async (req, res) => {
 });
 
 // Update user status
-app.put('/users/:userId/status', requireAdmin, async (req, res) => {
+app.put('/users/:userId/status', requireAdmin, async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const { status, reason } = req.body;
@@ -105,7 +105,7 @@ app.put('/users/:userId/status', requireAdmin, async (req, res) => {
 });
 
 // Content moderation queue
-app.get('/moderation/queue', requireAdmin, async (req, res) => {
+app.get('/moderation/queue', requireAdmin, async (req: Request, res: Response) => {
   try {
     const { type, status = 'pending', page = 1, limit = 20 } = req.query;
 
@@ -119,7 +119,7 @@ app.get('/moderation/queue', requireAdmin, async (req, res) => {
 });
 
 // Review content
-app.post('/moderation/:contentId/review', requireAdmin, async (req, res) => {
+app.post('/moderation/:contentId/review', requireAdmin, async (req: Request, res: Response) => {
   try {
     const { contentId } = req.params;
     const { action, reason, notes } = req.body;
@@ -136,7 +136,7 @@ app.post('/moderation/:contentId/review', requireAdmin, async (req, res) => {
 
     // Notify user if content was rejected
     if (action === 'reject' && result.userId) {
-      await axios.post(`${process.env.NOTIFICATION_SERVICE_URL}/notifications`, {
+      await axios.post(`${process.env['NOTIFICATION_SERVICE_URL']}/notifications`, {
         userId: result.userId,
         type: 'content_rejected',
         title: 'Content Review',
@@ -153,7 +153,7 @@ app.post('/moderation/:contentId/review', requireAdmin, async (req, res) => {
 });
 
 // Verification document review
-app.put('/verification/:documentId/review', requireAdmin, async (req, res) => {
+app.put('/verification/:documentId/review', requireAdmin, async (req: Request, res: Response) => {
   try {
     const { documentId } = req.params;
     const { status, notes } = req.body;
@@ -169,7 +169,7 @@ app.put('/verification/:documentId/review', requireAdmin, async (req, res) => {
 
     // Notify user
     if (result.userId) {
-      await axios.post(`${process.env.NOTIFICATION_SERVICE_URL}/notifications`, {
+      await axios.post(`${process.env['NOTIFICATION_SERVICE_URL']}/notifications`, {
         userId: result.userId,
         type: 'verification_update',
         title: 'Verification Update',
@@ -186,7 +186,7 @@ app.put('/verification/:documentId/review', requireAdmin, async (req, res) => {
 });
 
 // Fraud reports
-app.get('/fraud-reports', requireAdmin, async (req, res) => {
+app.get('/fraud-reports', requireAdmin, async (req: Request, res: Response) => {
   try {
     const { status = 'open', page = 1, limit = 20 } = req.query;
 
@@ -200,7 +200,7 @@ app.get('/fraud-reports', requireAdmin, async (req, res) => {
 });
 
 // Investigate fraud report
-app.post('/fraud-reports/:reportId/investigate', requireAdmin, async (req, res) => {
+app.post('/fraud-reports/:reportId/investigate', requireAdmin, async (req: Request, res: Response) => {
   try {
     const { reportId } = req.params;
     const { action, findings, sanctions } = req.body;
@@ -228,7 +228,7 @@ app.post('/fraud-reports/:reportId/investigate', requireAdmin, async (req, res) 
 });
 
 // System settings
-app.get('/settings', requireAdmin, async (req, res) => {
+app.get('/settings', requireAdmin, async (req: Request, res: Response) => {
   try {
     const settings = await getSystemSettings();
 
@@ -240,7 +240,7 @@ app.get('/settings', requireAdmin, async (req, res) => {
 });
 
 // Update system settings
-app.put('/settings', requireAdmin, async (req, res) => {
+app.put('/settings', requireAdmin, async (req: Request, res: Response) => {
   try {
     const updates = req.body;
 
@@ -257,7 +257,7 @@ app.put('/settings', requireAdmin, async (req, res) => {
 });
 
 // Analytics dashboard
-app.get('/analytics', requireAdmin, async (req, res) => {
+app.get('/analytics', requireAdmin, async (req: Request, res: Response) => {
   try {
     const { period = '30d' } = req.query;
 
@@ -271,7 +271,7 @@ app.get('/analytics', requireAdmin, async (req, res) => {
 });
 
 // Admin action logs
-app.get('/logs', requireAdmin, async (req, res) => {
+app.get('/logs', requireAdmin, async (req: Request, res: Response) => {
   try {
     const { page = 1, limit = 50, adminId, action } = req.query;
 
@@ -496,7 +496,7 @@ async function getAdminActionLogs({ page, limit, filters }: any) {
   };
 }
 
-const PORT = process.env.ADMIN_PORT || 3007;
+const PORT = process.env['ADMIN_PORT'] || 3007;
 app.listen(PORT, () => {
   console.log(`Admin Service is running on port ${PORT}`);
 });
