@@ -47,7 +47,7 @@ export const validateRateLimit = (req: Request, res: Response, next: NextFunctio
   // Use req to check the path or method for more specific rate limiting
   const path = req.path;
 
-  if (remaining !== undefined && parseInt(remaining as string) === 0) {
+  if (remaining !== undefined && typeof remaining === 'string' && parseInt(remaining, 10) === 0) {
     return res.status(429).json({
       success: false,
       error: 'Too many requests',

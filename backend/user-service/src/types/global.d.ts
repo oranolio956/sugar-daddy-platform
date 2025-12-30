@@ -1,5 +1,4 @@
 // Global type declarations for missing modules
-declare module 'express';
 declare module 'cors';
 declare module 'morgan';
 declare module 'jsonwebtoken';
