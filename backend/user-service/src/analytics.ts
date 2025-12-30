@@ -1,8 +1,8 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
 import axios from 'axios';
 
 dotenv.config();
@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // User analytics
-app.get('/users/:userId/analytics', async (req, res) => {
+app.get('/users/:userId/analytics', async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const { period = '30d' } = req.query;
@@ -38,7 +38,7 @@ app.get('/users/:userId/analytics', async (req, res) => {
 });
 
 // Profile insights
-app.get('/users/:userId/insights', async (req, res) => {
+app.get('/users/:userId/insights', async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
 
@@ -57,7 +57,7 @@ app.get('/users/:userId/insights', async (req, res) => {
 });
 
 // Match analytics
-app.get('/matches/analytics', async (req, res) => {
+app.get('/matches/analytics', async (req: Request, res: Response) => {
   try {
     const { userId, period = '30d' } = req.query;
 
@@ -76,7 +76,7 @@ app.get('/matches/analytics', async (req, res) => {
 });
 
 // Messaging analytics
-app.get('/messages/analytics', async (req, res) => {
+app.get('/messages/analytics', async (req: Request, res: Response) => {
   try {
     const { userId, period = '30d' } = req.query;
 
@@ -95,7 +95,7 @@ app.get('/messages/analytics', async (req, res) => {
 });
 
 // Profile performance
-app.get('/profiles/:userId/performance', async (req, res) => {
+app.get('/profiles/:userId/performance', async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const { period = '30d' } = req.query;
@@ -115,7 +115,7 @@ app.get('/profiles/:userId/performance', async (req, res) => {
 });
 
 // Compatibility trends
-app.get('/compatibility/trends', async (req, res) => {
+app.get('/compatibility/trends', async (req: Request, res: Response) => {
   try {
     const { userId, period = '30d' } = req.query;
 
@@ -134,7 +134,7 @@ app.get('/compatibility/trends', async (req, res) => {
 });
 
 // Activity heatmap
-app.get('/activity/heatmap', async (req, res) => {
+app.get('/activity/heatmap', async (req: Request, res: Response) => {
   try {
     const { userId, year = new Date().getFullYear() } = req.query;
 
@@ -153,7 +153,7 @@ app.get('/activity/heatmap', async (req, res) => {
 });
 
 // Success predictions
-app.get('/predictions/success', async (req, res) => {
+app.get('/predictions/success', async (req: Request, res: Response) => {
   try {
     const { userId } = req.query;
 
@@ -172,7 +172,7 @@ app.get('/predictions/success', async (req, res) => {
 });
 
 // Behavioral insights
-app.get('/behavior/insights', async (req, res) => {
+app.get('/behavior/insights', async (req: Request, res: Response) => {
   try {
     const { userId, period = '30d' } = req.query;
 
@@ -191,7 +191,7 @@ app.get('/behavior/insights', async (req, res) => {
 });
 
 // Optimization recommendations
-app.get('/recommendations/optimization', async (req, res) => {
+app.get('/recommendations/optimization', async (req: Request, res: Response) => {
   try {
     const { userId } = req.query;
 
